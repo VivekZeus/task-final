@@ -1,0 +1,114 @@
+.containerGrid {
+  display: grid;
+  grid-template-rows: 60px repeat(5, 100px);
+  grid-template-columns: 100px 100px 100px 140px 100px 140px;
+  gap: 2px 2px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+
+.header {
+  grid-area: 1/1/2/7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  background: #6e54d9;
+  background: linear-gradient(
+    120deg,
+    rgba(110, 84, 217, 1) 35%,
+    rgba(144, 125, 227, 1) 75%
+  );
+}
+
+.footer {
+  grid-area: 6/1/7/7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  /* background: #6e54d9;
+  background: linear-gradient(
+    159deg,
+    rgba(110, 84, 217, 1) 57%,
+    rgba(144, 125, 227, 1) 79%
+  ); */
+  background: #6e54d9;
+  background: linear-gradient(
+    120deg,
+    rgba(110, 84, 217, 1) 35%,
+    rgba(144, 125, 227, 1) 75%
+  );
+  color: white;
+  font-weight: 900;
+}
+
+.sidebar {
+  grid-area: 2/1/6/3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: #2aa69f;
+  background: linear-gradient(
+    0deg,
+    rgba(42, 166, 159, 1) 54%,
+    rgba(53, 197, 189, 1) 79%,
+    rgba(60, 218, 210, 1) 92%
+  );
+  color: white;
+}
+
+.content-1 {
+  grid-area: 2/3/4 / span 4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: #6659dc;
+  background: linear-gradient(
+    120deg,
+    rgba(102, 89, 220, 1) 14%,
+    rgba(68, 140, 240, 1) 66%,
+    rgba(59, 217, 219, 1) 91%
+  );
+  color: white;
+}
+
+.content-2 {
+  grid-area: 4/3/6/5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: #6659dc;
+  background: linear-gradient(
+    120deg,
+    rgba(102, 89, 220, 1) 14%,
+    rgba(68, 140, 240, 1) 66%,
+    rgba(59, 217, 219, 1) 91%
+  );
+  color: white;
+}
+
+.content-3 {
+  grid-area: 4 / 5 / 6 / 7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: #6659dc;
+  background: linear-gradient(120deg, #6659dc 14%, #448cf0 66%, #3bd9db 91%);
+  color: white;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  height: 100vh;
+  margin: 0;
+}

@@ -1,0 +1,115 @@
+.dashboardContainer {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  margin-bottom: 80px;
+
+  .courseClassToggle {
+    margin-top: 24px;
+    display: grid;
+    grid-template-rows: 64px 4px;
+    grid-template-columns: repeat(2, 1fr);
+    justify-items: center;
+    align-items: center;
+    background-color: #8ddc97;
+    position: relative;
+    .courseClass {
+      width: 114px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+      &:hover {
+        transform: scale(1.1);
+        cursor: pointer;
+      }
+      .img {
+        width: 21px;
+        height: 32px;
+      }
+      .courseClassNumber {
+        font-size: 22px;
+        color: #222222;
+        font-family: Quicksand;
+        font-weight: 700;
+      }
+      .courseClassText {
+        color: #222222;
+        font-size: 16px/20px;
+        font-family: Quicksand;
+        font-weight: 500;
+      }
+    }
+    #togglerContainer {
+      height: 4px;
+      background-color: black;
+      width: 100%;
+      grid-row: 2;
+      grid-column: 1;
+      justify-self: center;
+      transition: all 0.3s ease;
+    }
+  }
+
+  .courseActions {
+    height: 45px;
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    border-bottom: 1px solid rgb(194, 190, 190);
+    .courseActionsText {
+      color: #686868;
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 13px;
+      margin-bottom: 17px;
+    }
+    .courseActionsSortContainer {
+      display: grid;
+      grid-template-columns: auto auto auto;
+      height: 28px;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 23px;
+      gap: 6px;
+      .courseActionsText {
+        color: #686868;
+        font-size: 12px;
+        font-weight: 500;
+        margin-top: 13px;
+        margin-bottom: 17px;
+      }
+      .courseClassSelect {
+        width: 166px;
+        border-bottom: 1px solid rgb(194, 190, 190);
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 48px;
+        padding-bottom: 0px;
+        .img {
+          width: 10px;
+        }
+        .courseSelect {
+          margin-left: 0px;
+          border: none;
+          appearance: none;
+          background-color: transparent;
+          color: #333333;
+          font-size: 16px;
+          font-weight: 530;
+        }
+      }
+      .sortIcon {
+        margin-left: 24px;
+        img {
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+  }
+
+  @import "./courses";
+}

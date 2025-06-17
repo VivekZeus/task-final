@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My first web page</title>
+    <link rel="stylesheet" 
+            href="styles.css">
+</head>
+<body>
+    <h1>My First Web page</h1>
+
+    <h2>What is this</h2>
+   <p id="welcomeText"> Welcome to <i>my first webpage.</i> I created this webpage without the assistance of a webpage editor. Just my little text editor and a keen <i><b>UNDERSTANDING OF HTML</b></i>.</p>
+
+    <h2>Why is this</h2>
+
+    <ul class="list">
+        <li>To learn HTML</li>
+        <li>List element
+            <ol>
+                <li>Home</li>
+                <li>FAQ</li>
+                <li>Contact</li>
+                <li>About</li>
+            </ol>
+        </li>
+        <li>Here i have created ordered and unordered list</li>
+    </ul>
+
+    <h2>ZeusLearning.com</h2>
+
+    <a style="text-decoration: none;" target="_blank" href="https://www.zeuslearning.com/">This link will open zeuslearning.com in new tab</a>
+
+    <h2>On click of following image navigate to Google.com</h2>
+
+    <a href="https://www.google.co.in/"><img src="https://th.bing.com/th/id/OIP.QpKq9camTnqYRPH7R1WvNgHaEK?w=324&h=182&c=7&r=0&o=7&pid=1.7&rm=3" alt="google-logo" height="115"></a>
+
+    <h4>Some random table</h4>
+<br>
+    <table border="1">
+        <tr>
+            <td>Row 1, cell 1</td>
+            <td>Row 1, cell 2</td>
+            <td>Row 1, cell 3</td>
+        </tr>
+        <tr>
+            <td>Row 2, cell 1</td>
+            <td>Row 2, cell 2</td>
+            <td>Row 2, cell 3</td>
+        </tr>
+        <tr>
+            <td>Row 3, cell 1</td>
+            <td>Row 3, cell 2</td>
+            <td>Row 3, cell 3</td>
+        </tr>
+        <tr>
+            <td>Row 4, cell 1</td>
+            <td>Row 4, cell 2</td>
+            <td>Row 4, cell 3</td>
+        </tr>
+    </table>
+    <h4 class="randomText">Some random form</h4>
+    <p id="note"><i><b>Note: </b></i>It looks the part, but wont do a thing.</p>
+    <form action="" id="validationForm">
+        <span>Name:</span><br>
+        <br>
+        <input type="text" name="userName" id="nameInput" placeholder="Your name">
+        <br><br>
+        <span>Comments:</span><br><br>
+        <textarea name="comments" rows="10" id="commentsInput" placeholder="Your comments"></textarea>
+
+        <p>Are you:</p>
+        <input type="radio" name="genderInput" id="genderInputMale" value="male"> Male
+        <br><br>
+        <input type="radio" name="gender" id="genderInputFemale" value="female"> Female
+        <br><br>
+        <input type="submit"  value="Submit Query">
+    </form>
+
+
+
+    <script src="script.js">
+  </script>
+
+
+</body>
+</html

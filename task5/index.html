@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="css/login.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <script src="js/dashboard.js"></script>
+    <script src="js/data.js"></script>
+  </head>
+  <body>
+    <div class="header">
+      <img class="header-image" src="images/header pattern image.png" alt="" />
+      <div class="headerContainer">
+        <img class="headerLogo" src="images/logo used in header.svg" alt="" />
+        <div class="navbar">
+          <div class="navbarPages">
+            <div class="navbarItem">DASHBOARD</div>
+            <div class="navbarItem">CONTENT</div>
+            <div class="navbarItem">USERS</div>
+            <div class="navbarItem">REPORTS</div>
+            <div class="navbarItem">ADMIN</div>
+          </div>
+          <div class="navbarNotification">
+            <div class="notification-icon">
+              <img src="images/alerts.svg" alt="" />
+              <span class="badge">3</span>
+            </div>
+            <div class="notification-icon">
+              <img src="images/announcements.svg" alt="" />
+              <span class="badge">1</span>
+            </div>
+            <div class="notification-icon">
+              <img src="images/account_circle.svg" alt="" />
+              <span class="badge">T</span>
+            </div>
+          </div>
+
+          <div class="hamburger-container">
+            <div class="hamburger-menu">
+              <img src="images/hamburger-menu.svg" alt="Menu" />
+            </div>
+            <div class="dropdown-menu">
+              <div class="navbarItemHamburger">
+                <div>Item 1</div>
+                <img
+                  class="navbarItemHamburgerImg"
+                  src="https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Chevron_Up_01-512.png"
+                  alt=""
+                />
+              </div>
+              <div class="navbarItemHamburger">
+                <div>Item 1</div>
+                <img
+                  class="navbarItemHamburgerImg"
+                  src="https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Chevron_Up_01-512.png"
+                  alt=""
+                />
+              </div>
+              <div class="navbarItemHamburger">
+                <div>Item 1</div>
+                <img
+                  class="navbarItemHamburgerImg"
+                  src="https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Chevron_Up_01-512.png"
+                  alt=""
+                />
+              </div>
+              <div class="navbarItemHamburger">
+                <div>Item 1</div>
+                <img
+                  class="navbarItemHamburgerImg"
+                  src="https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Chevron_Up_01-512.png"
+                  alt=""
+                />
+              </div>
+              <div class="navbarItemHamburger">
+                <div>Item 1</div>
+                <img
+                  class="navbarItemHamburgerImg"
+                  src="https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Chevron_Up_01-512.png"
+                  alt=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboardContainer">
+      <div class="courseClassToggle">
+        <div class="courseClass" id="courseSection">
+          <div><img src="images/courses.svg" alt="" /></div>
+          <div class="courseClassNumber" id="totalCourses">3</div>
+          <div class="courseClassText">Courses</div>
+        </div>
+        <div class="courseClass" id="classSection">
+          <div><img src="images/classes.svg" alt="" /></div>
+          <div class="courseClassNumber" id="totalClasses">3</div>
+          <div class="courseClassText">Classes</div>
+        </div>
+        <div id="togglerContainer"></div>
+      </div>
+
+      <div class="courseActions">
+        <div class="courseActionsText" id="courseClassPageDetails">
+          Showing 4 of 4 courses
+        </div>
+        <div class="courseActionsSortContainer">
+          <div class="courseActionsText">Sort By:</div>
+          <div class="courseClassSelect">
+            <select name="" id="courseSelect" class="courseSelect">
+              <option value="select course">Select Course</option>
+            </select>
+            <img src="images/arrow-down.svg" alt="" />
+          </div>
+          <div class="sortIcon"><img src="images/sort.svg" alt="" /></div>
+        </div>
+      </div>
+
+      <div class="courses">
+        <!-- <div class="courseCard">
+          <div class="courseTag">EXPIRED</div>
+          <div class="courseDetails">
+              <div class="courseCardImage">
+                  <img src="images/imageMask.png" alt="">
+              </div>
+              <div class="courseCardDetails">
+                      <div class="courseTitle">
+                          Some title
+                      </div>
+                      <div class="courseSubjectGrade">
+                          <div class="courseSubject">
+                              Subject
+                          </div>
+                          <div class="textSeparator">|</div>
+                          <div class="courseGradeDetails">
+                              <div class="courseGrade">Grade</div>
+                              <div class="courseGradeAdditional">
+                                  +2
+                              </div>
+                          </div>
+                      </div>
+                      <div class="courseContentDetails">
+                          <div class="courseContentDetailsDetails">
+                              <div class="courseContentNumber">
+                                  1
+                              </div>
+                              <div class="courseContentText">
+                                  Text
+                              </div>
+                          </div>
+                          <div class="courseContentDetailsDetails">
+                              <div class="courseContentNumber">1</div>
+                              <div class="courseContentText">Text</div>
+                          </div>
+                          <div class="courseContentDetailsDetails">
+                              <div class="courseContentNumber">1</div>
+                              <div class="courseContentText">Text</div>
+                          </div>
+                      </div>
+                      <div class="courseInstructor">
+                          <select name="" id="" class="courseInstructorSelect">
+
+                          </select>
+                          <img src="images/arrow-down.svg" alt="">
+                      </div>
+                      <div class="courseExtraDetails">
+                          <div class="courseStudents">
+                              <div class="courseStudentsNumber">
+                                  50
+                              </div>
+                              <div>
+                                  Students
+                              </div>
+                          </div>
+                          <div class="textSeparator">|</div>
+                          <div class="courseStartEndDate">
+                              21-Jan-2020 - 21-Aug-2020
+                          </div>
+                      </div>
+              </div>
+              <div class="courseFavButton">
+                  <img src="images/favourite.svg" alt="">
+              </div>
+          </div>
+          <div class="courseButtons">
+              <img src="images/preview.svg" alt="">
+              <img src="images/manage course.svg" alt="">
+              <img src="images/grade submissions.svg" alt="">
+              <img src="images/reports.svg" alt="">
+          </div>
+        </div> -->
+        <!-- <div class="courseCard"></div>
+           <div class="courseCard"></div> -->
+      </div>
+    </div>
+
+    <div class="footerWrapper">
+      <div class="shortLinks">
+        <div class="shortLink link"><a href="#">About</a></div>
+        <div class="footerPipe">|</div>
+        <div class="shortLink link"><a href="#">Contact Us</a></div>
+      </div>
+      <div class="footer">
+        <div class="footerDetails">
+          <div class="footerImage">
+            <img src="images/logo used in footer.svg" alt="" />
+          </div>
+
+          <div class="footerPipe">|</div>
+
+          <div class="footerCompanyDetails">
+            <div>Copyright © 2020-2021</div>
+            <div id="companyName">Zeus Systems Pvt. Ltd.</div>
+            <div>All rights reserved.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,81 @@
+.footerWrapper {
+  width: 100%;
+  height: 74px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #eeeeee;
+  margin-top: 40px;
+
+  .shortLinks {
+    display: flex;
+    width: 155px;
+    height: 18px;
+    gap: 10px;
+    align-items: center;
+    justify-items: center;
+    text-align: center;
+    color: #616161;
+    opacity: 1;
+    font-family: "Quicksand";
+    font-weight: 500;
+    font-size: 14px/18px;
+    .shortLink {
+      color: #1f7a54;
+    }
+  }
+
+  .footer {
+    width: 100%;
+    height: 40px;
+    margin-top: auto;
+    margin-bottom: 0px;
+    background-color: #e0e1e1;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+    .footerDetails {
+      width: 507px;
+      height: 24px;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      justify-items: center;
+      .footerImage {
+        img {
+          padding-top: 5px;
+        }
+      }
+
+      .footerPipe {
+        opacity: 0.5;
+      }
+      .footerCompanyDetails {
+        display: flex;
+        width: 385px;
+        height: 15px;
+        padding-top: 13px;
+        padding-bottom: 12px;
+        margin-bottom: 6px;
+        gap: 8px;
+        color: #616161;
+        opacity: 1;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0px;
+        font-family: Quicksand;
+        > div {
+          padding-top: 5px;
+          padding-bottom: 4px;
+        }
+        #companyName {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}

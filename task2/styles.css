@@ -1,0 +1,88 @@
+.profileContainer {
+    display: flex;
+    width: 457px;
+    height: 138px;
+    margin: 4px;
+    gap: 14px;
+    
+}
+
+.profilePicContainer{
+    margin: 4px;
+}
+
+
+#profilePic {
+    width: 130px;
+    height: 130px; 
+    object-fit: cover;
+}
+
+
+
+.profileDetails {
+    display: flex;
+    flex-direction: column;
+    margin-top: 14px;
+    gap: 24px;
+
+}
+
+.profileDetailsPersonal {
+    display: flex;
+    flex-direction:column;
+    gap: 14px; 
+}
+
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+
+#profileUsername {
+    font-family: 'Roboto';
+    font-weight: 700;
+    font-size: 20px;
+    color: #000000;
+  }
+
+#profileBio {
+    font-family: 'Roboto';
+    color: #000000;
+    font-size: 20px;
+
+}
+
+
+
+
+
+.profileDetailsEngagement {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 24px;
+    
+}
+
+.nummm {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    max-height: fit-content;
+    max-width: fit-content;
+}
+
+.postIcon{
+    height: 20px;
+    width: 20px;
+    opacity: 0.5;
+}
+
+.profileDetailsEngagementValue{
+    display: inline;
+    font-size: 15px;
+    font-family: 'Roboto';
+    font-weight: 500;
+    padding: 0px;
+    margin: 0px;
+    color: #858991;
+}

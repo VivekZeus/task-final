@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="scss/login.css" />
+    <script src="js/login.js"></script>
+  </head>
+  <body>
+    <div class="header">
+      <img class="header-image" src="images/header pattern image.png" alt="" />
+      <img class="headerLogo" src="images/logo used in header.svg" alt="" />
+    </div>
+    <div class="loginContainerLighting1"></div>
+
+    <div class="wrapper">
+      <div class="loginContainer">
+        <div class="loginContainerLighting"></div>
+
+        <div class="loginText">
+            <div><img src="images/back.svg" alt="backSVGImage"></div>
+            <div class="loginTextText">Log in with Quantum</div>
+
+        </div>
+
+        <div class="login">
+            <form class="loginForm">
+
+                <div class="radioButtons">
+                    <div class="districtButton" >
+                        <div id="districtButton" class="districtImage">
+                            <img id="districtRadio" src="images/radio-button-on.svg" alt="">
+                        </div>
+                        <div class="districtText">District</div>
+                    </div>
+
+                    <div class="schoolButton" >
+                        <div class="schoolImage" id="schoolButton">
+                            <img id="schoolRadio" src="images/radio-button-off.svg" alt="">
+                        </div>
+                        <div class="schoolText">Independent school</div>
+                    </div>
+                </div>
+
+                <div class="selectInputContainer">
+                    <div class="requiredText">
+                        State*
+                    </div>
+                    <div class="selectABC">
+                        <select name="" id="stateSelect" class="selectInput">
+                        </select>
+                         <img src="images/arrow-down.svg" alt="" id="stateSelectButton">
+                    </div>
+                </div>
+
+                <div class="selectInputContainer">
+                    <div class="requiredText" id="districtSchoolText">
+                        District*
+                    </div>
+                    <div class="selectABC">
+                        <select name="" id="districtSchoolSelect" class="selectInput">
+                        </select>
+                        <img src="images/arrow-down.svg" alt="" id="districtSelectButton">
+                    </div>
+                </div>
+
+                <div class="normalInput">
+                    <div>
+                        <input type="text"id="username" placeholder="Username/Email ID*">
+                    </div>
+                    <div class="forgotText link">
+                       <a href="#">FORGOT USERNAME?</a>
+                    </div>
+                </div>
+
+                <div class="normalInput">
+                    <div class="paswordWrapper">
+                        <input type="password" id="password" placeholder="Password*">
+                        <img src="images/preview.svg" alt="" id="previewImage">
+                    </div>
+                    <div class="forgotText link">
+                        <a href="#">FORGOT PASSWORD?</a>
+                    </div>
+                </div>
+
+                <div class="rememberCheckBox">
+                    <div id="checkBoxButton">
+                         <img src="images/checkbox-checked.svg" alt="" id="checkBoxButtonImage">
+                    </div>
+                    <div class="checkBoxText">Remember Me</div>
+
+                </div>
+
+                
+                <button class="loginSubmitButton">LOG IN</button>
+
+
+            </form>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div class="footerWrapper">
+      <div class="shortLinks">
+        <div class="shortLink link"><a href="#">About</a></div>
+        <div class="footerPipe">|</div>
+        <div class="shortLink link"><a href="#">Contact Us</a></div>
+      </div>
+      <div class="footer">
+        <div class="footerDetails">
+          <div class="footerImage">
+            <img src="images/logo used in footer.svg" alt="" />
+          </div>
+
+          <div class="footerPipe">|</div>
+
+          <div class="footerCompanyDetails">
+            <div>Copyright © 2020-2021</div>
+            <div id="companyName">Zeus Systems Pvt. Ltd.</div>
+            <div>All rights reserved.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

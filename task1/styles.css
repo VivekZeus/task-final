@@ -1,0 +1,71 @@
+h2 {
+  background-color: green;
+  color: white;
+  padding-left: 14px;
+  margin: 10px;
+}
+
+body {
+  background-color: #ffffcc;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+ul {
+  color: #a11511;
+  font-style: italic;
+  margin: 10px;
+}
+
+h4 {
+  color: grey;
+  margin: 10px;
+}
+
+table {
+  background-color: grey;
+  margin: 10px;
+}
+
+h1 {
+  font-style: italic;
+  letter-spacing: 16px;
+  background-color: #990000;
+  color: bisque;
+  border-bottom: 15px solid #cc0000;
+  padding: 2px;
+  text-align: center;
+  margin: 10px;
+}
+
+img {
+  margin: 10px;
+}
+
+p,
+a {
+  margin: 10px;
+}
+
+#validationForm {
+  margin: 10px;
+}
+
+#note {
+  padding-bottom: 10px;
+}
+
+.randomText {
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+#welcomeText {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+
+.list{
+    padding-top: 10px;
+    padding-left: 50px;
+}

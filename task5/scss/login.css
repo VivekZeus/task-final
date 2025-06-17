@@ -1,0 +1,329 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap");
+* {
+  padding: 0;
+  margin: 0;
+  font: inherit;
+}
+
+*:focus {
+  outline: none;
+}
+
+html,
+body {
+  display: flex;
+  flex-direction: column;
+  background-color: #eeeeee;
+  font-family: Quicksand;
+  justify-content: space-between;
+}
+
+.footerWrapper {
+  width: 100%;
+  height: 74px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #eeeeee;
+  margin-top: 40px;
+}
+.footerWrapper .shortLinks {
+  display: flex;
+  width: 155px;
+  height: 18px;
+  gap: 10px;
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+  color: #616161;
+  opacity: 1;
+  font-family: "Quicksand";
+  font-weight: 500;
+  font-size: 14px/18px;
+}
+.footerWrapper .shortLinks .shortLink {
+  color: #1f7a54;
+}
+.footerWrapper .footer {
+  width: 100%;
+  height: 40px;
+  margin-top: auto;
+  margin-bottom: 0px;
+  background-color: #e0e1e1;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+.footerWrapper .footer .footerDetails {
+  width: 507px;
+  height: 24px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-items: center;
+}
+.footerWrapper .footer .footerDetails .footerImage img {
+  padding-top: 5px;
+}
+.footerWrapper .footer .footerDetails .footerPipe {
+  opacity: 0.5;
+}
+.footerWrapper .footer .footerDetails .footerCompanyDetails {
+  display: flex;
+  width: 385px;
+  height: 15px;
+  padding-top: 13px;
+  padding-bottom: 12px;
+  margin-bottom: 6px;
+  gap: 8px;
+  color: #616161;
+  opacity: 1;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0px;
+  font-family: Quicksand;
+}
+.footerWrapper .footer .footerDetails .footerCompanyDetails > div {
+  padding-top: 5px;
+  padding-bottom: 4px;
+}
+.footerWrapper .footer .footerDetails .footerCompanyDetails #companyName {
+  font-weight: bold;
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #eeeeee;
+  padding-bottom: 74px;
+}
+.wrapper .loginContainer {
+  width: 488px;
+  height: 650px;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  opacity: 1;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  margin-top: 50px;
+}
+.wrapper .loginContainer .loginContainerLighting {
+  height: 4px;
+  background-color: #31b9e4;
+}
+.wrapper .loginContainer .loginText {
+  display: flex;
+  flex-direction: row;
+  margin-top: 22px;
+  margin-left: 32px;
+  gap: 77px;
+  align-items: center;
+}
+.wrapper .loginContainer .loginText .loginTextText {
+  color: #222222;
+  opacity: 1;
+  font-weight: 500;
+  font-size: 24px;
+  font-family: Quicksand;
+}
+.wrapper .loginContainer .loginText img {
+  height: 24px;
+  vertical-align: middle;
+}
+.wrapper .loginContainer .login .loginForm .radioButtons {
+  margin-left: 32px;
+  margin-top: 36px;
+  display: flex;
+  gap: 32px;
+  color: #333333;
+  font-size: 16px;
+  font-weight: 600;
+  align-content: center;
+  padding-top: 6px;
+}
+.wrapper .loginContainer .login .loginForm .radioButtons .districtButton,
+.wrapper .loginContainer .login .loginForm .radioButtons .schoolButton {
+  display: flex;
+  gap: 8px;
+}
+.wrapper .loginContainer .login .loginForm .selectInputContainer {
+  margin-left: 32px;
+  margin-top: 23px;
+  width: 424px;
+  height: 48px;
+}
+.wrapper .loginContainer .login .loginForm .selectInputContainer .requiredText {
+  width: 100%;
+  height: 15px;
+  color: #666666;
+  font-size: 12px;
+  font-weight: 500;
+}
+.wrapper .loginContainer .login .loginForm .selectInputContainer .selectABC {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2392156863);
+}
+.wrapper .loginContainer .login .loginForm .selectInputContainer .selectABC select {
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+}
+.wrapper .loginContainer .login .loginForm .selectInputContainer .selectABC .selectInput {
+  border: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  width: 424px;
+}
+.wrapper .loginContainer .login .loginForm .selectInputContainer .selectABC .selectInput option {
+  font-size: 16px;
+  color: #222222;
+  font-weight: 500;
+  font-family: Quicksand;
+  background-color: white;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  border: none;
+  width: 100%;
+}
+.wrapper .loginContainer .login .loginForm .normalInput {
+  width: 424px;
+  height: 48px;
+  margin-left: 32px;
+  margin-top: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.wrapper .loginContainer .login .loginForm .normalInput .paswordWrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 423px;
+  height: 25px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2392156863);
+}
+.wrapper .loginContainer .login .loginForm .normalInput input[type=text] {
+  width: 423px;
+  height: 25px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2392156863);
+  outline: none;
+}
+.wrapper .loginContainer .login .loginForm .normalInput input[type=text]::-moz-placeholder {
+  font-size: 16px;
+  color: #666666;
+}
+.wrapper .loginContainer .login .loginForm .normalInput input[type=text]::placeholder {
+  font-size: 16px;
+  color: #666666;
+}
+.wrapper .loginContainer .login .loginForm .normalInput input[type=password] {
+  width: 423px;
+  height: 25px;
+  outline: none;
+  border: none;
+}
+.wrapper .loginContainer .login .loginForm .normalInput input[type=password]::-moz-placeholder {
+  font-size: 16px;
+  color: #666666;
+}
+.wrapper .loginContainer .login .loginForm .normalInput input[type=password]::placeholder {
+  font-size: 16px;
+  color: #666666;
+}
+.wrapper .loginContainer .login .loginForm .normalInput .forgotText {
+  margin: 5x;
+  color: #1f7a54;
+  size: 14px;
+  font-weight: 600;
+  margin-left: auto;
+}
+.wrapper .loginContainer .login .loginForm .rememberCheckBox {
+  width: 145px;
+  height: 24px;
+  margin-left: 32px;
+  margin-top: 24px;
+  display: flex;
+  color: #222222;
+  font-size: 16px;
+  opacity: 1;
+  font-weight: 600;
+  gap: 5px;
+}
+.wrapper .loginContainer .login .loginForm .loginSubmitButton {
+  width: 216px;
+  height: 40px;
+  background: #3fd28b 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2392156863);
+  opacity: 1;
+  border: none;
+  color: #1f2834;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 34px;
+  margin-left: 136px;
+}
+
+.header {
+  background-color: #00050b;
+  position: relative;
+  height: 60px;
+  z-index: 0;
+}
+.header .header-image {
+  position: absolute;
+  width: 100%;
+  height: 60px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  opacity: 0.6;
+  z-index: -1;
+}
+.header .headerLogo {
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.header .headerLogo:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.loginContainerLighting1 {
+  height: 2px;
+  background-color: #3ac7ec;
+}
+
+.link a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.link a:visited {
+  color: inherit;
+}
+
+input {
+  background-color: white;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+  -webkit-text-fill-color: black !important;
+}/*# sourceMappingURL=login.css.map */
