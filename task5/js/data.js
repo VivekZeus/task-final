@@ -24,7 +24,7 @@ const courseData = [
     },
   },
   {
-    courseImage: "images/imageMask.png",
+    courseImage: "images/imageMask-1.png",
     courseDetails: {
       courseTitle: "Displacement, Velocity and Speed",
       courseSubject: "Physics 2",
@@ -35,34 +35,34 @@ const courseData = [
         lessons: "15",
         topics: "20",
       },
-      students: "50",
-      startDate: "21-jan-2022",
-      endDate: "21-Aug-2022",
+      students: "0",
+      // startDate: "21-jan-2022",
+      // endDate: "21-Aug-2022",
       classes: [],
       isExpired: true,
     },
   },
   {
-    courseImage: "images/imageMask.png",
+    courseImage: "images/imageMask-2.png",
     courseDetails: {
-      courseTitle: "Displacement, Velocity and Speed",
-      courseSubject: "Physics 2",
-      courseGrade: "6",
-      courseGradeAdditional: "3",
+      courseTitle: "Introduction to Biology: Micro organisms and how they affects",
+      courseSubject: "Biology",
+      courseGrade: "4",
+      courseGradeAdditional: "1",
       courseContent: {
-        units: "2",
-        lessons: "15",
-        topics: "20",
+        units: "5",
+        lessons: "16",
+        topics: "22",
       },
-      students: "50",
-      startDate: "21-jan-2022",
-      endDate: "21-Aug-2022",
-      classes: [],
+      students: "300",
+      // startDate: "21-jan-2022",
+      // endDate: "21-Aug-2022",
+      classes: ["All Classes"],
       isExpired: false,
     },
   },
   {
-    courseImage: "images/imageMask.png",
+    courseImage: "images/imageMask-3.png",
     courseDetails: {
       courseTitle: "Displacement, Velocity and Speed",
       courseSubject: "Physics 2",
@@ -73,9 +73,9 @@ const courseData = [
         lessons: "15",
         topics: "20",
       },
-      students: "50",
-      startDate: "21-jan-2022",
-      endDate: "21-Aug-2022",
+      students: "44",
+      startDate: "14-Oct-2019",
+      endDate: "20-Oct-2020",
       classes: [],
       isExpired: true,
     },
@@ -174,9 +174,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             <div>Students</div>
                         </div>
                         <div class="textSeparator">|</div>
-                        <div class="courseStartEndDate">${
-                          course.courseDetails.startDate
-                        } - ${course.courseDetails.endDate}</div>
+                          ${course.courseDetails.startDate && course.courseDetails.endDate ? `
+      <div class="courseStartEndDate">
+        ${course.courseDetails.startDate} - ${course.courseDetails.endDate}
+      </div>
+    ` : ''}
                     </div>
                 </div>
                 <div class="courseFavButton">
