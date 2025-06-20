@@ -216,7 +216,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     courseSelect.innerHTML = "";
 
-    // Add course option
     const option = document.createElement("option");
     option.value = "course";
     option.textContent = " Select Course";
@@ -228,7 +227,6 @@ document.addEventListener("DOMContentLoaded", function () {
     courseClassPageDetails.innerText = `Showing ${courseClassData.classes} of ${courseClassData.classes} classes`;
     courseSelect.innerHTML = "";
 
-    // Add class option
     const option = document.createElement("option");
     option.value = "class";
     option.textContent = "Select Class";
@@ -248,16 +246,26 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  document.querySelectorAll(".navbarItemHamburger").forEach((item) => {
-    item.addEventListener("click", () => {
-      const img = item.querySelector(".navbarItemHamburgerImg");
-      console.log(img);
-      const dropdown = item.querySelector(".testClass");
-      console.log(dropdown);
 
-      img.classList.toggle("rotate");
-      dropdown.classList.toggle("show");
-      // console.log(dropdown);
-    });
+document.querySelectorAll(".navbarItemHamburger").forEach((item) => {
+  const img = item.querySelector(".navbarItemHamburgerImg");
+  const dropdown = item.querySelector(".testClass");
+
+  item.addEventListener("click", () => {
+    if (!dropdown) return;
+
+    img.classList.toggle("rotate");
+    dropdown.classList.toggle("show");
   });
+
+  if (dropdown) {
+    dropdown.addEventListener("mouseleave", () => {
+      dropdown.classList.remove("show");
+      img.classList.remove("rotate");
+    });
+  }
 });
+
+
+});
+

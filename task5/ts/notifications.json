@@ -1,0 +1,17 @@
+[
+  {
+    "message": "License for Introduction to Algebra has been assigned to your school",
+    "date": "June 18, 2025 10:00 AM",
+    "ticked": true
+  },
+  {
+    "message": "Reminder: Complete your course enrollment",
+    "date": "June 17, 2025 2:30 PM",
+    "ticked": false
+  },
+  {
+    "message": "New assignment uploaded for Math",
+    "date": "June 16, 2025 5:15 PM",
+    "ticked": true
+  }
+]

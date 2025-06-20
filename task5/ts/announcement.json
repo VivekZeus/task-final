@@ -1,0 +1,28 @@
+[
+  {
+    "sender": "PA",
+    "message": "Please attend the meeting at 3 PM today.",
+    "noOffiles": 2,
+    "date": "June 18, 2025 11:30 AM",
+    "ticked": true,
+    "course": false
+  },
+  {
+    "sender": "Admin",
+    "message": "New policy document has been uploaded.",
+    "noOffiles": 0,
+    "date": "June 17, 2025 4:00 PM",
+    "ticked": false,
+    "courseName": "Mathematics 101",
+    "course": true
+  },
+  {
+    "sender": "PA",
+    "message": "Don't forget to submit your project report.",
+    "noOffiles": 4,
+    "date": "June 16, 2025 9:15 AM",
+    "ticked": false,
+    "courseName": "Mathematics 101",
+    "course": true
+  }
+]

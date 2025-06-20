@@ -9,15 +9,15 @@ const userLoginData={
 };
 
 document.addEventListener("DOMContentLoaded", function () {
+
 const states = ["Alabama","Alabama1","Alabama","Alabama3"];
 const districts=["Alabama School District","Alabama School District1"]
-
 const schools=["Alabama School","Alabama School"]
-const stateSelect = document.getElementById("stateSelect");
 
+
+const stateSelect = document.getElementById("stateSelect");
 const rememberMeButton=document.getElementById("checkBoxButton");
 const rememberMeImage=document.getElementById("checkBoxButtonImage");
-
 const passwordInput = document.getElementById('password');
 const previewImage = document.getElementById('previewImage');
 
