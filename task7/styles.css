@@ -29,10 +29,12 @@ html, body {
     background-size: cover;
     background-position: center;
 }
-.child3 {
+
+
+/* .child3 {
     width: 50px;
     height: 50px;
-    /* background-color: lightcoral;; */
+
     position: absolute;
     cursor: grab;
     background-image: url('./tomato.svg');
@@ -44,10 +46,9 @@ html, body {
 .child2 {
     width: 50px;
     height: 50px;
-    /* background-color: lightcoral;; */
     position: absolute;
     cursor: grab;
     background-image: url('./basket.svg');
     background-size: cover;
     background-position: center;
-}
+} */
