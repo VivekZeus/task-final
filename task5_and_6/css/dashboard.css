@@ -441,7 +441,6 @@ body {
   transform: scale(1.1);
 }
 
-
 .badge {
   position: absolute;
   top: 14px;
@@ -483,7 +482,6 @@ body {
   text-transform: uppercase;
   font-size: 14px;
   font-weight: 600;
-  background: var(--unnamed-color-ffffff) 0% 0% no-repeat padding-box;
   background: #ffffff 0% 0% no-repeat padding-box;
   box-shadow: 0px 13px 20px #0000003d;
   border-radius: 2px;
@@ -506,7 +504,7 @@ body {
 .dropdown-menu div:hover {
   background-color: #f2f2f2;
 }
-/* here */
+
 .hamburger-container:hover .dropdown-menu {
   opacity: 1;
   pointer-events: all;
@@ -604,7 +602,6 @@ body {
   font-size: 14px/18px;
   font-weight: 500;
   cursor: pointer;
-  background: var(--unnamed-color-ffffff) 0% 0% no-repeat padding-box;
   background: #ffffff 0% 0% no-repeat padding-box;
   box-shadow: 0px 1px 6px #0000003d;
   border-radius: 0px 0px 2px 2px;
@@ -733,6 +730,15 @@ body {
     filter: brightness(0) invert(1);
   }
 
+  /* .hamburger-menu:hover .dropdown-menu {
+    opacity: 1;
+    pointer-events: all;
+  } */
+
+  /* .hamburger-menu img:hover + .dropdown-menu {
+    opacity: 1;
+    pointer-events: all;
+  } */
 
   .navbar {
     flex-wrap: nowrap;

@@ -1,4 +1,4 @@
-const PARENT_INSTANCE_COUNT = 4;
+const PARENT_INSTANCE_COUNT = 5;
 const CHILD_INSTANCE_COUNT = 4;
 
 class Parent {
