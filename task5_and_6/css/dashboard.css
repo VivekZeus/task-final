@@ -25,15 +25,6 @@ body {
   background-blend-mode: soft-light;
 }
 
-/* .header-image {
-  position: absolute;
-  width: 100%;
-  height: 60px;
-  object-fit: cover;
-  opacity: 0.6;
-  z-index: 0;
-} */
-
 .header-image {
   position: absolute;
   width: 100vw;
@@ -65,6 +56,7 @@ body {
   margin: auto;
   margin-bottom: 80px;
   z-index: -1;
+  /* width: 100%; */
 }
 
 .courseClassToggle {
@@ -216,23 +208,6 @@ body {
   padding-bottom: 0px;
 }
 
-/* @media (max-width: 768px) {
-  .courses {
-    grid-template-columns: 571px;
-  }
-
-  .courseCard {
-    width: 571px;
-  }
-
-  .courseButtons {
-    gap: 132px;
-  }
-  .courseInstructor {
-    width: 375px;
-  }
-} */
-
 .courseDetails {
   margin-top: 25px;
   margin-left: 24px;
@@ -269,7 +244,7 @@ body {
   font-weight: 600;
   color: #222222;
   font-size: 16px;
-  width: 100%;
+  width: 80%;
 
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -883,7 +858,7 @@ body {
   }
 }
 
-@media (max-width: 425px) {
+@media (max-width: 500px) {
   .courses {
     grid-template-columns: 400px;
   }
@@ -966,6 +941,97 @@ body {
   .headerContainer {
     padding-inline: 4px;
   }
+
+  .courseDetails {
+    /* height: 157px; */
+    flex-direction: column !important;
+    align-items: center;
+  }
+}
+
+@media (max-width: 400px) {
+  .navbarPages {
+    display: none;
+  }
+
+  .hamburger-container {
+    position: relative;
+    z-index: 10001;
+    display: block;
+  }
+
+  .hamburger-menu {
+    display: block;
+  }
+
+  .hamburger-menu img {
+    width: 40px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .hamburger-menu img:hover {
+    transform: scale(1.1);
+    filter: brightness(0) invert(1);
+  }
+
+  .navbar {
+    flex-wrap: nowrap;
+    gap: 0px;
+  }
+
+  .dashboardContainer {
+    width: 356px;
+  }
+
+  .courseCard {
+    width: 356px;
+    /* margin: auto; */
+  }
+
+  .courses {
+    /* grid-template-columns: repeat(1, 350px); */
+    grid-template-rows: repeat(auto, auto-fill);
+  }
+
+  .dashboardContainer {
+    width: 100%;
+    max-width: 330px;
+    box-sizing: border-box;
+  }
+  .courseCard {
+    width: 100%;
+    max-width: 210px;
+    /* box-sizing: border-box; */
+  }
+
+  /* .courseCard {
+    width: 400px;
+  } */
+
+  .courseButtons {
+    padding-left: 0px;
+  }
+
+  .courseDetails {
+    /* height: 157px; */
+    flex-direction: column !important;
+    align-items: center;
+  }
+
+  .navbarNotification {
+    gap: 25px;
+  }
+  .dashboardContainer,
+  .courseCard {
+    width: 100%;
+    max-width: 360px;
+    box-sizing: border-box;
+  }
+
+  .courses {
+    grid-template-columns: 1fr; /* ✅ take full available space */
+  }
 }
 
 @media (max-width: 375px) {
@@ -1000,86 +1066,29 @@ body {
   }
 
   .dashboardContainer {
-    width: 356px;
+    width: 315px;
   }
 
   .courseCard {
-    width: 356px;
+    width: 315px;
     /* margin: auto; */
   }
 
   .courses {
     /* grid-template-columns: repeat(1, 350px); */
     grid-template-rows: repeat(auto, auto-fill);
-  }
-
-  /* .courseCard {
-    width: 400px;
-  } */
-
-  .courseButtons {
-    padding-left: 0px;
-  }
-
-  .courseDetails {
-    /* height: 157px; */
-    flex-direction: column !important;
-    align-items: center;
-  }
-
-  .navbarNotification {
-    gap: 25px;
-  }
-}
-
-@media (max-width: 320px) {
-  .navbarPages {
-    display: none;
-  }
-
-  .hamburger-container {
-    position: relative;
-    z-index: 10001;
-    display: block;
-  }
-
-  .hamburger-menu {
-    display: block;
-  }
-
-  .hamburger-menu img {
-    width: 40px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-  }
-
-  .hamburger-menu img:hover {
-    transform: scale(1.1);
-    filter: brightness(0) invert(1);
-  }
-
-  .navbar {
-    flex-wrap: nowrap;
-    gap: 0px;
   }
 
   .dashboardContainer {
-    width: 315px;
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
   }
-
   .courseCard {
-    width: 315px;
-    /* margin: auto; */
+    width: 100%;
+    max-width: 290px;
+    box-sizing: border-box;
   }
-
-  .courses {
-    /* grid-template-columns: repeat(1, 350px); */
-    grid-template-rows: repeat(auto, auto-fill);
-  }
-
-  /* .courseCard {
-    width: 400px;
-  } */
 
   .courseButtons {
     padding-left: 0px;
@@ -1096,14 +1105,18 @@ body {
   }
 
   .courseButtons {
-    gap: 60px;
+    gap: 50px;
   }
 
   .sortIcon {
-    padding-left: 8px;}
+    padding-left: 8px;
+  }
 
-    .headerLogo {
+  .headerLogo {
     width: 105px;
     height: 40px;
-}
+  }
+  .courseInstructor {
+    width: 80%;
+  }
 }

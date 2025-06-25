@@ -8,11 +8,10 @@
   border: 1px solid black;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  /* cursor: url(excelcurs_point.gif), auto; */
-
-
+  cursor: cell;
 }
 
 #selectedCellBorder {
   position: absolute;
+  cursor: cell;
 }

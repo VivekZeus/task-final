@@ -23,16 +23,14 @@
     return { x, y };
   }
 
-  function numberToColheader(num){
-
-    let colHeader="";
-    while(num>0){
-      let remainder=(num-1)%26;
-      colHeader=String.fromCharCode(65+remainder)+colHeader;
-      num=Math.floor((num-1)/26);
+  function numberToColheader(num) {
+    let colHeader = "";
+    while (num > 0) {
+      let remainder = (num - 1) % 26;
+      colHeader = String.fromCharCode(65 + remainder) + colHeader;
+      num = Math.floor((num - 1) / 26);
     }
     return colHeader;
-
   }
 
   const rows = 100;
@@ -43,8 +41,20 @@
   let spreadSheetdata = create2dArray(rows, cols, "");
   let cellProperties = create2dArray(rows, cols, { textAlign: "left" });
 
-  let rowHeights = new Array(rows).fill(26);
+  let rowHeights = new Array(rows).fill(30);
   let colWidths = new Array(rows).fill(100);
+
+
+  for(let r=1;r<rows;r++){
+    spreadSheetdata[r][0]=r.toString();
+  }
+
+  for(let c=1;c<cols;c++){
+    spreadSheetdata[0][c]=numberToColheader(c);
+  }
+
+  console.log(spreadSheetdata);
+  
 
   let canvas;
   let context;
@@ -59,6 +69,33 @@
       if (context) {
         context.strokeRect(pos.x, pos.y, colWidths[row], rowHeights[col]);
       }
+
+      let cellText=spreadSheetdata[row][col];
+      context.font="18px sans-serif";
+      context.fillStyle = "rgba(0, 0, 0, 0.7)"; 
+      context.textAlign="left";
+      context.textBaseline="middle";
+
+      // based on the props change the style;
+
+      const paddingX=5;
+      const paddingY=5;
+      let textX;
+      let textY;
+      if(row==0){
+        textX=pos.x+(colWidths[col]/2)
+      }
+      else if(col==0){
+        textX=pos.x+colWidths[col]-30;
+      }
+      else{
+      textX=paddingX+pos.x;
+
+      }
+      textY=(rowHeights[row]/2)+pos.y;
+      context.fillText(cellText,textX,textY);
+
+
     }
 
     function drawcells() {
@@ -85,24 +122,16 @@
       context.strokeStyle = "rgba(0,0,0,0.2)";
       context.lineWidth = 1;
       drawcells();
+      // context.fillText("hello saboo",26,100);
       drawSelectedCellBorder();
     }
 
     return { drawGrid };
   })();
 
-  // let selectedCell = {
-  //   row: localStorage.getItem("selectedCellRow")
-  //     ? localStorage.getItem("selectedCellRow")
-  //     : 1,
-  //   col: localStorage.getItem("selectedCellCol")
-  //     ? localStorage.getItem("selectedCellCol")
-  //     : 1,
-  // };
-
   let selectedCell = {
     row: 1,
-    col:1,
+    col: 1,
   };
   let selectedcellRange = {
     startRow: selectedCell.row,
@@ -111,7 +140,7 @@
     endCol: selectedCell.col,
   };
 
-  document.addEventListener("DOMContentLoaded", () => {
+  function setupGrid() {
     canvas = document.getElementById("spreadsheet");
     context = canvas.getContext("2d");
 
@@ -131,6 +160,10 @@
     context.scale(ratio, ratio);
 
     DrawComponent.drawGrid();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setupGrid();
   });
 
   function ifCellCanShift(key) {
@@ -184,5 +217,9 @@
       event.preventDefault();
       handleArrowKeyOperations(key);
     }
+  });
+
+  window.addEventListener("resize", () => {
+    setupGrid();
   });
 })();
