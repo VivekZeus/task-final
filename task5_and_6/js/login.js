@@ -100,11 +100,8 @@ document.addEventListener("DOMContentLoaded", function () {
     previewImage.src = isPasswordVisible
       ? "images/preview.svg"
       : "https://cdn-icons-png.flaticon.com/128/10898/10898993.png";
-
-    if (isPasswordVisible) {
       previewImage.style.width = "24px";
       previewImage.style.height = "25px";
-    }
   });
 
   const form = document.querySelector(".loginForm");
@@ -165,6 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("Form Data:", formData);
     alert("Login successful!");
+    window.location.href = "index.html";
 
 
     form.reset();

@@ -45,7 +45,8 @@ const courseData = [
   {
     courseImage: "images/imageMask-2.png",
     courseDetails: {
-      courseTitle: "Introduction to Biology: Micro organisms and how they affects",
+      courseTitle:
+        "Introduction to Biology: Micro organisms and how they affects",
       courseSubject: "Biology",
       courseGrade: "4",
       courseGradeAdditional: "1",
@@ -174,11 +175,16 @@ document.addEventListener("DOMContentLoaded", () => {
                             <div>Students</div>
                         </div>
                         <div class="textSeparator">|</div>
-                          ${course.courseDetails.startDate && course.courseDetails.endDate ? `
+                          ${
+                            course.courseDetails.startDate &&
+                            course.courseDetails.endDate
+                              ? `
       <div class="courseStartEndDate">
         ${course.courseDetails.startDate} - ${course.courseDetails.endDate}
       </div>
-    ` : ''}
+    `
+                              : ""
+                          }
                     </div>
                 </div>
                 <div class="courseFavButton">
@@ -195,7 +201,12 @@ document.addEventListener("DOMContentLoaded", () => {
     coursesContainer.appendChild(card);
     const favIcon = card.querySelector(".favIcon");
     favIcon.addEventListener("click", () => {
-      favIcon.style.opacity = favIcon.style.opacity === "0.5" ? "1" : "0.5";
+      // favIcon.style.opacity = favIcon.style.opacity === "0.5" ? "1" : "0.5";
+      if (favIcon.classList.contains("disabled")) {
+        favIcon.classList.remove("disabled");
+      } else {
+        favIcon.classList.add("disabled");
+      }
     });
 
     const icons = card.querySelectorAll(".clickOpacityToggle");

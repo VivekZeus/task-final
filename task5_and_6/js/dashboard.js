@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
  }
     <div class="notificationOtherDetails">
       <div class="notificationFiles">
-        <img src="https://cdn3.iconfinder.com/data/icons/ios-edge-glyph-1/25/Attachment-512.png" alt="">
+        <img src="../images/attachment.png" alt="">
         <span>${
           announcement.noOffiles > 0
             ? announcement.noOffiles + " files are attached"
@@ -168,8 +168,8 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="item-header">${item.title}</div>
       <img
         class="navbarItemHamburgerImg"
-        src="https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Chevron_Up_01-512.png"
-        alt=""
+        src="../images/chevron.png"
+        alt="chevronDropDownImg"
       />
     </div>
     ${

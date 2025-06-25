@@ -76,7 +76,6 @@ body {
   align-items: center;
   background-color: #8ddc97;
   position: relative;
-
   z-index: 20;
 }
 
@@ -87,6 +86,7 @@ body {
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
+  transition: all 0.3s ease;
 }
 
 .courseClass:hover {
@@ -115,7 +115,7 @@ body {
 
 .courseActions {
   height: 45px;
-  margin-top: 24px;
+  padding-top: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -128,8 +128,6 @@ body {
   color: #686868;
   font-size: 12px;
   font-weight: 500;
-  margin-top: 13px;
-  margin-bottom: 17px;
 }
 
 .courseActionsSortContainer {
@@ -137,7 +135,7 @@ body {
   height: 28px;
   gap: 6px;
   align-items: center;
-  margin-bottom: 23px;
+  /* margin-bottom: 23px; */
   gap: 6px;
 }
 
@@ -165,7 +163,8 @@ body {
 }
 
 .sortIcon {
-  margin-left: 24px;
+  padding-left: 24px;
+  cursor: pointer;
 }
 
 .sortIcon img {
@@ -260,6 +259,10 @@ body {
   height: 29px;
   object-fit: contain;
   padding-right: 5px;
+}
+
+.favIcon.disabled.disabled {
+  filter: grayscale(1);
 }
 
 .courseTitle {
@@ -455,8 +458,8 @@ body {
 
 .badge {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 15px;
+  right: -6px;
   background-color: #2a7ff3;
   color: white;
   font-size: 12px;
@@ -562,14 +565,14 @@ body {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease-in-out;
-  top: 59px;
+  top: 40px;
   right: 0;
   width: 315px;
   z-index: 2;
-  background: var(--unnamed-color-ffffff) 0% 0% no-repeat padding-box;
-  background: #ffffff 0% 0% no-repeat padding-box;
+
   box-shadow: 0px 13px 20px #0000003d;
   border-radius: 2px;
+  border-top: 24px solid transparent;
 }
 
 .notification-icon:hover .dropdownNotificationMenu {
@@ -581,8 +584,8 @@ body {
   display: flex;
   flex-direction: column;
   width: 315px;
-  border: 1px solid #ccc;
-  background: white;
+  /* border: 1px solid #ccc; */
+
   z-index: 4;
 }
 
@@ -593,6 +596,7 @@ body {
   flex-direction: column;
   overflow-y: auto;
   max-height: 420px;
+  background: white;
 }
 
 .notificationDetails {
@@ -605,7 +609,7 @@ body {
 
 .notificationButtons {
   display: flex;
-  gap: 36px;
+  /* gap: 36px; */
   height: 48px;
   justify-content: space-around;
   align-items: center;
@@ -821,10 +825,6 @@ body {
     width: 200px;
   }
 
-  /* .navbarPages {
-    display: none;
-  } */
-
   .hamburger-container {
     position: relative;
     z-index: 10001;
@@ -869,6 +869,17 @@ body {
     height: 40px;
     cursor: pointer;
     padding-block: 15px;
+  }
+
+  .dropdownNotificationMenu {
+    top: 59px;
+    right: -58px;
+    width: 315px;
+  }
+
+  #dropdownNotificationMenuAlerts {
+    right: -105px;
+    width: 282px;
   }
 }
 
@@ -933,6 +944,28 @@ body {
     cursor: pointer;
     padding-block: 15px;
   }
+
+  .dropdownNotificationMenu {
+    top: 64px;
+    right: -101px;
+    width: 282px;
+    border-top: none;
+  }
+
+  #dropdownNotificationMenuAlerts {
+    right: -130px;
+    width: 258px;
+  }
+
+  .dropdown-menu {
+    top: 67px;
+    right: 0;
+    width: 220px;
+  }
+
+  .headerContainer {
+    padding-inline: 4px;
+  }
 }
 
 @media (max-width: 375px) {
@@ -993,4 +1026,84 @@ body {
     flex-direction: column !important;
     align-items: center;
   }
+
+  .navbarNotification {
+    gap: 25px;
+  }
+}
+
+@media (max-width: 320px) {
+  .navbarPages {
+    display: none;
+  }
+
+  .hamburger-container {
+    position: relative;
+    z-index: 10001;
+    display: block;
+  }
+
+  .hamburger-menu {
+    display: block;
+  }
+
+  .hamburger-menu img {
+    width: 40px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .hamburger-menu img:hover {
+    transform: scale(1.1);
+    filter: brightness(0) invert(1);
+  }
+
+  .navbar {
+    flex-wrap: nowrap;
+    gap: 0px;
+  }
+
+  .dashboardContainer {
+    width: 315px;
+  }
+
+  .courseCard {
+    width: 315px;
+    /* margin: auto; */
+  }
+
+  .courses {
+    /* grid-template-columns: repeat(1, 350px); */
+    grid-template-rows: repeat(auto, auto-fill);
+  }
+
+  /* .courseCard {
+    width: 400px;
+  } */
+
+  .courseButtons {
+    padding-left: 0px;
+  }
+
+  .courseDetails {
+    /* height: 157px; */
+    flex-direction: column !important;
+    align-items: center;
+  }
+
+  .navbarNotification {
+    gap: 20px;
+  }
+
+  .courseButtons {
+    gap: 60px;
+  }
+
+  .sortIcon {
+    padding-left: 8px;}
+
+    .headerLogo {
+    width: 105px;
+    height: 40px;
+}
 }
