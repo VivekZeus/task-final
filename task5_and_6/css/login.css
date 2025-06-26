@@ -118,9 +118,6 @@ body {
 
 .footerCompanyDetails {
     display: flex;
-    /* padding-top: 13px;
-    padding-bottom: 50px;
-    margin-bottom: 6px; */
     align-items: center;
     gap: 12px;
     color: #616161;
@@ -360,7 +357,7 @@ input:-webkit-autofill {
   -webkit-text-fill-color: black !important;
 }
 
-@media (max-width: 425px) {
+@media (max-width: 500px) {
   .loginContainer {
     width: 405px;
   }
@@ -392,9 +389,13 @@ input:-webkit-autofill {
   .loginSubmitButton {
     margin-left: 95px;
   }
+
+  /* .footerDetails {
+    flex-direction: column;
+  } */
 }
 
-@media (max-width: 375px) {
+@media (max-width: 400px) {
 
 
   .loginContainer {
@@ -444,7 +445,7 @@ input:-webkit-autofill {
   }
 }
 
-@media (max-width: 320px) {
+@media (max-width: 375px) {
   .loginContainer {
     width: 305px;
     height: 490px;
@@ -490,6 +491,10 @@ input:-webkit-autofill {
     margin-left: 23px;
     margin-top: 18px;
   }
+
+  /* .footerDetails {
+    flex-direction: column;
+  } */
 
 
 

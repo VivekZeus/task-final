@@ -4,14 +4,30 @@
   margin: 0;
 }
 
-#spreadsheet {
-  border: 1px solid black;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-  cursor: cell;
+.canvas-container {
+  overflow: auto;
+  border: 1px solid #ccc;
+  width: 100vw;
+  height: 100vh;
 }
 
-#selectedCellBorder {
-  position: absolute;
+#spreadsheet {
+  border: 1px solid black;
   cursor: cell;
+  z-index: 10;
+
+  width: calc(100vw - 18px);
+  height: calc(100vh - 18px);
+}
+
+#verticalScroller {
+  width: 10000px;
+  height: 10000px;
+}
+
+#spreadsheet,
+#verticalScroller {
+  top: 0;
+  left: 0;
+  position: absolute;
 }

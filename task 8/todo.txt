@@ -1,0 +1,9 @@
+-> draw cells using lines and not individual cells
+-> migrate data from array to hashmap
+-> draw header
+
+
+-> make canvas scrollable
+
+-> select box using key and mouse
+-> after selection corresponding row and col should become greeen
