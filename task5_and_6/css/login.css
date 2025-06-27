@@ -47,16 +47,12 @@ body {
   padding: 12px;
 }
 
-
-
 .footerWrapper {
-  height: 74px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   background-color: #eeeeee;
-  margin-top: 40px;
 }
 
 .shortLinks {
@@ -87,9 +83,6 @@ body {
 }
 
 .footerDetails {
-  height: 24px;
-  margin-top: 8px;
-  margin-bottom: 8px;
   display: flex;
   gap: 15px;
   align-items: center;
@@ -100,38 +93,43 @@ body {
   padding-top: 5px;
 }
 
-.footerCompanyDetails {
+/* .footerCompanyDetails {
   display: flex;
   width: 100%;
   height: 15px;
-  padding-top: 13px;
-  padding-bottom: 12px;
-  margin-bottom: 6px;
-  gap: 8px;
+  color: #616161;
+  opacity: 1;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: Quicksand;
+} */
+
+.footerCompanyDetails {
+  display: flex;
+  align-items: center;
   color: #616161;
   opacity: 1;
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0px;
   font-family: Quicksand;
+  gap: 10px;
 }
 
-.footerCompanyDetails {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: #616161;
-    opacity: 1;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0px;
-    font-family: Quicksand;
+.footerWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #eeeeee;
+  /* padding-top: 40px; */
+  gap: 10px;
 }
 
-.footerCompanyDetails > div {
+/* .footerCompanyDetails > div {
   padding-top: 5px;
   padding-bottom: 4px;
-}
+} */
 
 .footerPipe {
   opacity: 0.5;
@@ -332,6 +330,7 @@ body {
   text-align: center;
   margin-top: 34px;
   margin-left: 136px;
+  cursor: pointer;
 }
 
 .link a {
@@ -390,14 +389,9 @@ input:-webkit-autofill {
     margin-left: 95px;
   }
 
-  /* .footerDetails {
-    flex-direction: column;
-  } */
 }
 
 @media (max-width: 400px) {
-
-
   .loginContainer {
     width: 350px;
     height: 490px;
@@ -442,6 +436,10 @@ input:-webkit-autofill {
   .radioButtons {
     margin-left: 23px;
     margin-top: 18px;
+  }
+
+  .footerDetails {
+    flex-direction: column;
   }
 }
 
@@ -491,11 +489,4 @@ input:-webkit-autofill {
     margin-left: 23px;
     margin-top: 18px;
   }
-
-  /* .footerDetails {
-    flex-direction: column;
-  } */
-
-
-
 }

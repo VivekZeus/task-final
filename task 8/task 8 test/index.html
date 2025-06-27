@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ExcelClone</title>
+<style>
+.canvas-container {
+  position: relative;
+  overflow: auto;
+  width: 100vw;
+  height: 100vh;
+  border: 1px solid #ccc;
+}
+
+/* Canvas stays pinned, doesn’t scroll */
+#spreadsheet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  pointer-events: none; /* Optional: if you’re not interacting directly */
+}
+
+/* Fake scroll area */
+#verticalScroller {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10000px;
+  height: 10000px;
+  z-index: 1;
+}
+
+</style>
+</head>
+<body>
+  <div class="canvas-container" id="container">
+    <canvas id="spreadsheet"></canvas>
+    <div id="verticalScroller"></div>
+  </div>
+
+  <script >
+    const canvas = document.getElementById('spreadsheet');
+const container = document.getElementById('container');
+const ctx = canvas.getContext('2d');
+
+// Set canvas size to visible viewport
+canvas.width = container.clientWidth;
+canvas.height = container.clientHeight;
+
+const cellWidth = 100;
+const cellHeight = 25;
+
+// Listen for scroll and redraw visible area
+container.addEventListener('scroll', () => {
+  const scrollX = container.scrollLeft;
+  const scrollY = container.scrollTop;
+
+  drawVisibleCells(scrollX, scrollY);
+});
+
+function drawVisibleCells(scrollX, scrollY) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const startCol = Math.floor(scrollX / cellWidth);
+  const startRow = Math.floor(scrollY / cellHeight);
+  const endCol = startCol + Math.ceil(canvas.width / cellWidth);
+  const endRow = startRow + Math.ceil(canvas.height / cellHeight);
+
+  for (let row = startRow; row <= endRow; row++) {
+    for (let col = startCol; col <= endCol; col++) {
+      const x = col * cellWidth - scrollX;
+      const y = row * cellHeight - scrollY;
+
+      ctx.strokeStyle = '#ccc';
+      ctx.strokeRect(x, y, cellWidth, cellHeight);
+
+      ctx.fillStyle = '#000';
+      ctx.font = '14px Arial';
+      ctx.fillText(`${String.fromCharCode(65 + col)}${row + 1}`, x + 5, y + 17);
+    }
+  }
+}
+
+// Initial draw
+drawVisibleCells(0, 0);
+
+  </script>
+</body>
+</html>
