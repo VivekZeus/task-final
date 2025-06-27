@@ -12,10 +12,8 @@
 }
 
 #spreadsheet {
-  border: 1px solid black;
   cursor: cell;
   z-index: 10;
-
   width: calc(100vw - 18px);
   height: calc(100vh - 18px);
 }

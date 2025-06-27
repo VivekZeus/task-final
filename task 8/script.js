@@ -1,6 +1,9 @@
 import { Data } from "./data.js";
 import { Config } from "./config.js";
 import { HeaderData } from "./headerData.js";
+import { MouseEventHandler } from "./MouseEventHandler.js";
+import { Utils } from "./Utils.js";
+import { Draw } from "./Draw.js";
 
 (function () {
   // function create2dArray(n, m, cellDefaultvalue = "") {
@@ -27,23 +30,20 @@ import { HeaderData } from "./headerData.js";
     return { x, y };
   }
 
-  function numberToColheader(num) {
-    let colHeader = "";
-    while (num > 0) {
-      let remainder = (num - 1) % 26;
-      colHeader = String.fromCharCode(65 + remainder) + colHeader;
-      num = Math.floor((num - 1) / 26);
-    }
-    return colHeader;
-  }
+  // function numberToColheader(num) {
+  //   let colHeader = "";
+  //   while (num > 0) {
+  //     let remainder = (num - 1) % 26;
+  //     colHeader = String.fromCharCode(65 + remainder) + colHeader;
+  //     num = Math.floor((num - 1) / 26);
+  //   }
+  //   return colHeader;
+  // }
 
   const rows = 100;
   const cols = 100;
 
   let mode = "NORMAL"; // it can be normal or search for formula
-
-  // let spreadSheetdata = create2dArray(rows, cols, "");
-  // let cellProperties = create2dArray(rows, cols, { textAlign: "left" });
 
   let rowHeights = new Array(rows).fill(30);
   let colWidths = new Array(rows).fill(100);
@@ -64,57 +64,16 @@ import { HeaderData } from "./headerData.js";
     return sum;
   }
 
-
-  // insering header data
-  const max = Math.max(Config.rows, Config.cols);
-  for (let i = 1; i < max; i++) {
-    if (i < Config.rows) {
-      HeaderData.putData(`${i}-0`, i.toString());
-    }
-    if (i < Config.cols) {
-      HeaderData.putData(`0-${i}`, numberToColheader(i));
-    }
-  }
+  HeaderData.insertHeaderData();
 
   let canvas;
   let context;
 
+  const checkThreshold = 3;
+
   var DrawComponent = (function () {
-    // function drawSingleCell(row, col) {
-    //   // const properties = cellProperties[row][col];
-    //   const pos = getPosition(row, col);
 
-    //   // if (context) {
-    //   //   context.strokeRect(pos.x, pos.y, colWidths[row], rowHeights[col]);
-    //   // }
-
-    //   let cellText = Data.getData(`${row}-${col}`);
-    //   context.font = "18px sans-serif";
-    //   context.fillStyle = "rgba(0, 0, 0, 0.7)";
-    //   context.textAlign = "left";
-    //   context.textBaseline = "middle";
-
-    //   // based on the props change the style;
-
-    //   const paddingX = 5;
-    //   const paddingY = 5;
-    //   let textX;
-    //   let textY;
-    //   if (row == 0) {
-    //     textX = pos.x + colWidths[col] / 2;
-    //   } else if (col == 0) {
-    //     const measured = context.measureText(cellText).width;
-    //     textX = pos.x + colWidths[col] - measured - paddingX;
-    //   } else {
-    //     textX = paddingX + pos.x;
-    //   }
-    //   textY = rowHeights[row] / 2 + pos.y;
-    //   context.fillText(cellText, textX, textY);
-    // }
-
-
-    function insertText(data=HeaderData.headerSpreadSheetData){
-
+    function insertText(data = HeaderData.headerSpreadSheetData) {
       for (const [rowCol, cellText] of data) {
         const [rowStr, colStr] = rowCol.split("-");
         let row = parseInt(rowStr, 10);
@@ -145,9 +104,6 @@ import { HeaderData } from "./headerData.js";
         textY = rowHeights[row] / 2 + pos.y;
         context.fillText(cellText, textX, textY);
       }
-
-
-
     }
 
     function drawHeaderInsertText() {
@@ -163,47 +119,12 @@ import { HeaderData } from "./headerData.js";
       context.stroke();
 
       insertText();
-
-
     }
 
     function insertspreadSheetText() {
       insertText(Data.spreadSheetData);
     }
 
-    // function drawcells() {
-    //   for (let r = 0; r < rows; r++) {
-    //     for (let c = 0; c < cols; c++) {
-    //       drawSingleCell(r, c);
-    //     }
-    //   }
-    // }
-
-    // function drawRows() {
-    //   let rowSum = 0;
-    //   let colSum = getColumnWidthSum();
-    //   for (let r = 0; r < rows; r++) {
-    //     let rowHeightNeeded = rowHeights[r] + rowSum;
-    //     context.beginPath();
-    //     context.moveTo(0, rowHeightNeeded);
-    //     context.lineTo(colSum, rowHeightNeeded);
-    //     context.stroke();
-    //     rowSum += rowHeights[r];
-    //   }
-    // }
-
-    // function drawCols() {
-    //   let colSum = 0;
-    //   let rowSum = getRowHeightSum();
-    //   for (let c = 0; c < cols; c++) {
-    //     let colWidthNeeded = colWidths[c] + colSum;
-    //     context.beginPath();
-    //     context.moveTo(colWidthNeeded, 0);
-    //     context.lineTo(colWidthNeeded, rowSum);
-    //     context.stroke();
-    //     colSum += colWidths[c];
-    //   }
-    // }
 
     function drawRowsCols() {
       let rowSum = Config.defaultRowHeight;
@@ -261,41 +182,153 @@ import { HeaderData } from "./headerData.js";
     return { drawGrid };
   })();
 
-  let selectedCell = {
-    row: 1,
-    col: 1,
-  };
-
-  let selectedcellRange = {
-    startRow: selectedCell.row,
-    startCol: selectedCell.col,
-    endRow: selectedCell.row,
-    endCol: selectedCell.col,
-  };
+  let drawComponent;
 
   function setupGrid() {
+    const container = document.getElementById("container");
+
     canvas = document.getElementById("spreadsheet");
     context = canvas.getContext("2d");
 
     context.imageSmoothingEnabled = false;
 
-    const ratio = window.devicePixelRatio;
+    // const ratio = window.devicePixelRatio;
 
-    const canvasWidth = window.innerWidth;
-    const canvasHeight = window.innerHeight;
+    // const canvasWidth = window.innerWidth;
+    // const canvasHeight = window.innerHeight;
 
-    canvas.width = canvasWidth * ratio;
-    canvas.height = canvasHeight * ratio;
+    // canvas.width = canvasWidth * ratio;
+    // canvas.height = canvasHeight * ratio;
 
-    canvas.style.width = canvasWidth + "px";
-    canvas.style.height = canvasHeight + "px";
+    // canvas.style.width = canvasWidth + "px";
+    // canvas.style.height = canvasHeight + "px";
 
-    context.scale(ratio, ratio);
-    DrawComponent.drawGrid();
+    // context.scale(ratio, ratio);
+    // DrawComponent.drawGrid();
+
+    const dpr = window.devicePixelRatio || 1;
+
+    // Get new viewport size
+    const viewWidth = container.clientWidth;
+    const viewHeight = container.clientHeight;
+
+    // Update canvas internal resolution
+    canvas.width = viewWidth * dpr;
+    canvas.height = viewHeight * dpr;
+
+    // Match actual css size
+    canvas.style.width = `${viewWidth}px`;
+    canvas.style.height = `${viewHeight}px`;
+
+    // Reset context and scale
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.scale(dpr, dpr);
+    drawComponent=new Draw(canvas,context);
+    drawComponent.drawGrid();
+    // drawComponent=new Draw();
+    // DrawComponent.drawGrid();
   }
+
+  // function handleMouseMovement() {
+  //   canvas.addEventListener("mousemove", (event) => {
+  //     canvas.style.cursor = "cell";
+
+  //     let cursorIsSet = false;
+
+  //     const rect = canvas.getBoundingClientRect();
+  //     const x = event.clientX - rect.left;
+  //     const y = event.clientY - rect.top;
+
+  //     if (y < rowHeights[0] && x > colWidths[0]) {
+  //       canvas.style.cursor = "s-resize";
+  //       let currentX = 0;
+
+  //       for (let i = 0; i < colWidths.length; i++) {
+  //         currentX += colWidths[i];
+  //         if (Math.abs(x - currentX) <= checkThreshold) {
+  //           canvas.style.cursor = "col-resize";
+  //           cursorIsSet = true;
+  //           break;
+  //         }
+  //       }
+  //     } else if (y > rowHeights[0] && x < colWidths[0]) {
+  //       canvas.style.cursor = "w-resize";
+  //       let currentY = 0;
+  //       for (let i = 0; i < rowHeights.length; i++) {
+  //         currentY += rowHeights[i];
+  //         if (Math.abs(currentY - y) <= checkThreshold) {
+  //           canvas.style.cursor = "row-resize";
+  //           cursorIsSet = true;
+  //           break;
+  //         }
+  //       }
+  //     }
+  //   });
+  // }
 
   document.addEventListener("DOMContentLoaded", () => {
     setupGrid();
+    let mouseEventHandler = new MouseEventHandler(
+      canvas,
+      rowHeights,
+      colWidths,
+      checkThreshold,
+      context
+    );
+    mouseEventHandler.handleCursorChange();
+    mouseEventHandler.handleMouseClick();
+    // handleMouseMovement();
+    // canvas.addEventListener("click", (event) => {
+    //   const rect = canvas.getBoundingClientRect();
+    //   const x = event.clientX - rect.left;
+    //   const y = event.clientY - rect.top;
+
+    //   if (
+    //     (y < rowHeights[0] && x > colWidths[0]) ||
+    //     (y > rowHeights[0] && x < colWidths[0])
+    //   ) {
+    //     // select all the rows or cols
+    //     console.log("clicked some header ...");
+
+    //     return;
+    //   }
+
+    //   let currentX = 0;
+    //   let currentY = 0;
+    //   let rowSelected = -1;
+    //   let colSelected = -1;
+
+    //   //   determinging the column
+    //   let prevColPos;
+    //   for (let i = 0; i < colWidths.length; i++) {
+    //     prevColPos = currentX;
+    //     currentX += colWidths[i];
+    //     if (currentX > x) {
+    //       colSelected = i;
+    //       break;
+    //     }
+    //   }
+    //   //   determining the row
+    //   let prevRowPos;
+    //   for (let i = 0; i < rowHeights.length; i++) {
+    //     prevRowPos = currentY;
+    //     currentY += rowHeights[i];
+    //     if (currentY > y) {
+    //       rowSelected = i;
+    //       break;
+    //     }
+    //   }
+
+    //   // context.strokeStyle = "#187c44";
+    //   // context.lineWidth = 2;
+    //   // context.strokeRect(
+    //   //   prevColPos,
+    //   //   prevRowPos,
+    //   //   colWidths[colSelected],
+    //   //   rowHeights[rowSelected]
+    //   // );
+    //   console.log(prevRowPos, prevColPos);
+    // });
   });
 
   function ifCellCanShift(key) {
@@ -354,4 +387,56 @@ import { HeaderData } from "./headerData.js";
   window.addEventListener("resize", () => {
     setupGrid();
   });
+
+  // canvas.addEventListener("click", (event) => {
+  //   const rect = canvas.getBoundingClientRect();
+  //   const x = event.clientX - rect.left;
+  //   const y = event.clientY - rect.top;
+
+  //   if (
+  //     (y < rowHeights[0] && x > colWidths[0]) ||
+  //     (y > rowHeights[0] && x < colWidths[0])
+  //   ) {
+  //     // select all the rows or cols
+  //     console.log("clicked some header ...");
+
+  //     return;
+  //   }
+
+  //   let currentX = 0;
+  //   let currentY = 0;
+  //   let rowSelected = -1;
+  //   let colSelected = -1;
+
+  //   //   determinging the column
+  //   let prevColPos;
+  //   for (let i = 0; i < colWidths.length; i++) {
+  //     prevColPos = currentX;
+  //     currentX += colWidths[i];
+  //     if (currentX > x) {
+  //       colSelected = i;
+  //       break;
+  //     }
+  //   }
+  //   //   determining the row
+  //   let prevRowPos;
+  //   for (let i = 0; i < rowHeights.length; i++) {
+  //     prevRowPos = currentY;
+  //     currentY += rowHeights[i];
+  //     if (currentY > y) {
+  //       rowSelected = i;
+  //       break;
+  //     }
+  //   }
+
+  //   // context.strokeStyle = "#187c44";
+  //   // context.lineWidth = 2;
+  //   // context.strokeRect(
+  //   //   prevColPos,
+  //   //   prevRowPos,
+  //   //   colWidths[colSelected],
+  //   //   rowHeights[rowSelected]
+  //   // );
+  //   console.log(prevRowPos, prevColPos);
+  // });
 })();

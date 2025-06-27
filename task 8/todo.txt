@@ -1,9 +1,16 @@
+Completed
 -> draw cells using lines and not individual cells
 -> migrate data from array to hashmap
 -> draw header
+-> change in cursor when on the col line or row line
+-> changing cursor when change in pos
 
+Todo
 
 -> make canvas scrollable
+
+
+In progress
 
 -> select box using key and mouse
 -> after selection corresponding row and col should become greeen
