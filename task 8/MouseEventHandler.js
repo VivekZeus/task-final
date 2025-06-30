@@ -89,7 +89,7 @@ export class MouseEventHandler {
         }
       }
 
-      this.context.clear;
+      this.context.clear();
       this.context.strokeStyle = "#187c44";
       this.context.lineWidth = 2;
 
