@@ -1,6 +1,5 @@
 import { Config } from "./Config.js";
 import { Utils } from "./Utils.js";
-import { HeaderData } from "./HeaderData.js";
 
 export class Draw {
   constructor() {}
@@ -17,57 +16,53 @@ export class Draw {
     const selRow = Config.SELECTED_CELL.row;
     const selCol = Config.SELECTED_CELL.col;
 
-    if (
-      selRow < startRow ||
-      selRow > endRow ||
-      selCol < startCol ||
-      selCol > endCol ||
-      selRow === -1 ||
-      selCol === -1
-    )
-      return;
+    if (selRow === -1 || selCol === -1) return;
 
-    const handleSize = 6;
-    const handleOffset = 2;
-
-    const highlightColor = "rgba(173, 235, 193, 0.6)"; // light green
+    const highlightColor = "rgba(173, 235, 193, 0.6)";
     const borderColor = "#187c44";
 
-    // === Column Header Highlight ===
-    const colPos = Utils.getPosition(0, selCol);
-    const colX = colPos.x - scrollLeft;
-    const colWidth = Config.COL_WIDTHS[selCol];
-    const colHeight = Config.COL_HEADER_HEIGHT;
+    context.save();
 
-    // Fill
-    context.fillStyle = highlightColor;
-    context.fillRect(colX, 0, colWidth, colHeight);
+    // === Column Header Highlight === (Even if row is out of view)
+    if (selCol >= startCol && selCol <= endCol) {
+      const colPos = Utils.getPosition(0, selCol);
+      const colX = colPos.x - scrollLeft;
+      const colWidth = Config.COL_WIDTHS[selCol];
+      const colHeight = Config.COL_HEADER_HEIGHT;
 
-    // Border bottom
-    context.strokeStyle = borderColor;
-    context.lineWidth = 2;
-    context.beginPath();
-    context.moveTo(colX, colHeight - 1);
-    context.lineTo(colX + colWidth, colHeight - 1);
-    context.stroke();
+      // Fill
+      context.fillStyle = highlightColor;
+      context.fillRect(colX, 0, colWidth, colHeight);
 
-    // === Row Header Highlight ===
-    const rowPos = Utils.getPosition(selRow, 0);
-    const rowY = rowPos.y - scrollTop;
-    const rowWidth = Config.ROW_HEADER_WIDTH;
-    const rowHeight = Config.ROW_HEIGHTS[selRow];
+      // Border bottom
+      context.strokeStyle = borderColor;
+      context.lineWidth = 2;
+      context.beginPath();
+      context.moveTo(colX, colHeight - 1);
+      context.lineTo(colX + colWidth, colHeight - 1);
+      context.stroke();
+    }
 
-    // Fill
-    context.fillStyle = highlightColor;
-    context.fillRect(0, rowY, rowWidth, rowHeight);
+    // === Row Header Highlight === (Even if col is out of view)
+    if (selRow >= startRow && selRow <= endRow) {
+      const rowPos = Utils.getPosition(selRow, 0);
+      const rowY = rowPos.y - scrollTop;
+      const rowWidth = Config.ROW_HEADER_WIDTH;
+      const rowHeight = Config.ROW_HEIGHTS[selRow];
 
-    // Border right
-    context.strokeStyle = borderColor;
-    context.lineWidth = 2;
-    context.beginPath();
-    context.moveTo(rowWidth - 1, rowY);
-    context.lineTo(rowWidth - 1, rowY + rowHeight);
-    context.stroke();
+      // Fill
+      context.fillStyle = highlightColor;
+      context.fillRect(0, rowY, rowWidth, rowHeight);
+
+      // Border right
+      context.strokeStyle = borderColor;
+      context.lineWidth = 2;
+      context.beginPath();
+      context.moveTo(rowWidth - 1, rowY);
+      context.lineTo(rowWidth - 1, rowY + rowHeight);
+      context.stroke();
+    }
+
     context.restore();
   }
 
@@ -165,9 +160,9 @@ export class Draw {
   ) {
     const paddingX = 5;
 
-    for (let row = startRow; row <= endRow; row++) {
-      const text = HeaderData.headerSpreadSheetData.get(`${row}-0`);
-      if (!text) continue;
+    for (let row = Math.max(startRow, 1); row <= endRow; row++) {
+      const text = row.toString();
+      // const text = HeaderData.headerSpreadSheetData.get(`${row}-0`);
 
       const pos = Utils.getPosition(row - 1, 0); // Top-left of (row, 0) cell
       const height = Config.ROW_HEIGHTS[row];
@@ -196,12 +191,9 @@ export class Draw {
     scrollLeft
   ) {
     for (let col = startCol; col <= endCol; col++) {
-      if (col === 0) continue;
+      const text = Utils.numberToColheader(col);
 
-      const key = `0-${col}`;
-      const text = HeaderData.headerSpreadSheetData.get(key);
-
-      const pos = Utils.getPosition(0, col - 1);
+      const pos = Utils.getPosition(0, col);
       const width = Config.COL_WIDTHS[col];
 
       const textX = pos.x - scrollLeft + width / 2;
@@ -214,86 +206,145 @@ export class Draw {
 
       context.fillText(text, textX, textY);
     }
-
-    // for (let i = startCol; i <= endCol; i++) {
-    //   let text = HeaderData.headerSpreadSheetData.get(`0-${i}`);
-    //   let pos = Utils.getPosition(0, 0, startCol, i);
-    //   if (text == undefined) {
-    //     console.log("Undefined value came");
-    //     continue;
-    //   }
-
-    //   context.font = "18px sans-serif";
-    //   context.fillStyle = "rgba(0, 0, 0, 0.7)";
-    //   context.textAlign = "left";
-    //   context.textBaseline = "middle";
-
-    //   let textX;
-    //   let textY;
-
-    //   // if (row == 0) {
-    //   textX = pos.x + Config.COL_WIDTHS[i] / 2;
-    //   // } else if (col == 0) {
-    //   //   const measured = context.measureText(text).width;
-    //   //   textX = pos.x + Config.COL_WIDTHS[col] - measured - paddingX;
-    //   // } else {
-    //   //   textX = paddingX + pos.x;
-    //   // }
-    //   textY = Config.ROW_HEIGHTS[0] / 2 + pos.y + Config.TEXT_PADDING_Y;
-    //   context.fillText(text, textX, textY);
-    // }
-
-    // for (const [rowCol, cellText] of data) {
-
-    //   const [rowStr, colStr] = rowCol.split("-");
-    //   let row = parseInt(rowStr, 10);
-    //   let col = parseInt(colStr, 10);
-
-    //   const pos = Utils.getPosition(row, col);
-    //   context.font = "18px sans-serif";
-    //   context.fillStyle = "rgba(0, 0, 0, 0.7)";
-    //   context.textAlign = "left";
-    //   context.textBaseline = "middle";
-
-    //   const paddingX = 5;
-    //   const paddingY = 5;
-
-    //   let textX;
-    //   let textY;
-
-    //   if (row == 0) {
-    //     textX = pos.x + Config.colWidths[col] / 2;
-    //   } else if (col == 0) {
-    //     const measured = this.context.measureText(cellText).width;
-    //     textX = pos.x + Config.colWidths[col] - measured - paddingX;
-    //   } else {
-    //     textX = paddingX + pos.x;
-    //   }
-    //   textY = Config.rowHeights[row] / 2 + pos.y;
-    //   this.context.fillText(cellText, textX, textY);
-    // }
   }
 
   static drawRowsCols(startRow, startCol, endRow, endCol, canvas, context) {
-    let additional = 0.5 + Config.COL_HEADER_HEIGHT;
+    // let additional = 0.5;
+    // for (let i = startRow; i < endRow; i++) {
+    //   let y = Config.COL_HEADER_HEIGHT;
+    //   for (let r = 1; r < i; r++) {
+    //     y += Config.ROW_HEIGHTS[r];
+    //   }
+
+    //   context.moveTo(startCol * Config.COL_WIDTHS[i], y);
+    //   context.lineTo(endCol * Config.COL_WIDTHS[i], y);
+    // }
+
+    // for (let j = startCol; j < endCol; j++) {
+    //   let x = Config.ROW_HEADER_WIDTH;
+    //   for (let k = 0; k < j; k++) {
+    //     x += Config.COL_WIDTHS[k];
+    //   }
+
+    //   context.moveTo(x + additional, startRow * Config.ROW_HEIGHTS[0]);
+    //   context.lineTo(x + additional, endRow * Config.ROW_HEIGHTS[0]);
+    // }
+
+    let additional = 0.5;
+
+    // Draw horizontal grid lines (row separators)
     for (let i = startRow; i < endRow; i++) {
-      let y = i * Config.ROW_HEIGHTS[i] + additional;
-      context.moveTo(startCol * Config.COL_WIDTHS[i], y);
-      context.lineTo(endCol * Config.COL_WIDTHS[i], y);
+      let y = Config.COL_HEADER_HEIGHT;
+      for (let r = 0; r < i; r++) {
+        y += Config.ROW_HEIGHTS[r];
+      }
+
+      context.moveTo(Config.ROW_HEADER_WIDTH, y + additional);
+      context.lineTo(Config.getColumnWidthSum(0, endCol), y + additional);
     }
 
-    additional = 0.5 + Config.ROW_HEADER_WIDTH;
+    // Draw vertical grid lines (column separators)
     for (let j = startCol; j < endCol; j++) {
-      let x = j * Config.COL_WIDTHS[j] + additional;
-      context.moveTo(x, startRow * Config.ROW_HEIGHTS[j]);
-      context.lineTo(x, endRow * Config.ROW_HEIGHTS[j]);
+      let x = Config.ROW_HEADER_WIDTH;
+      for (let k = 0; k < j; k++) {
+        x += Config.COL_WIDTHS[k];
+      }
+
+      context.moveTo(x + additional, Config.COL_HEADER_HEIGHT);
+      context.lineTo(x + additional, Config.getRowHeightSum(0, endRow));
     }
 
     context.strokeStyle = "rgb(0,0,0)";
     context.lineWidth = 0.1;
     context.stroke();
     context.restore();
+    // let additional = 0.5;
+
+    // for (let i = startRow; i < endRow; i++) {
+    //   let y = Config.COL_HEADER_HEIGHT;
+    //   for (let r = 0; r < i; r++) {
+    //     y += Config.ROW_HEIGHTS[r];
+    //   }
+
+    //   // X positions for full row line
+    //   let startX = Config.ROW_HEADER_WIDTH;
+    //   for (let j = 0; j < startCol; j++) {
+    //     startX += Config.COL_WIDTHS[j];
+    //   }
+    //   let endX = startX;
+    //   for (let j = startCol; j < endCol; j++) {
+    //     endX += Config.COL_WIDTHS[j];
+    //   }
+
+    //   context.moveTo(startX, y + additional);
+    //   context.lineTo(endX, y + additional);
+    // }
+
+    // for (let j = startCol; j < endCol; j++) {
+    //   let x = Config.ROW_HEADER_WIDTH;
+    //   for (let k = 0; k < j; k++) {
+    //     x += Config.COL_WIDTHS[k];
+    //   }
+
+    //   // Y positions for full column line
+    //   let startY = Config.COL_HEADER_HEIGHT;
+    //   for (let i = 0; i < startRow; i++) {
+    //     startY += Config.ROW_HEIGHTS[i];
+    //   }
+    //   let endY = startY;
+    //   for (let i = startRow; i < endRow; i++) {
+    //     endY += Config.ROW_HEIGHTS[i];
+    //   }
+
+    //   context.moveTo(x + additional, startY);
+    //   context.lineTo(x + additional, endY);
+    // }
   }
+
+  //   static drawRowsCols(startRow, startCol, endRow, endCol, canvas, context) {
+  //     context.beginPath();
+
+  //     // Pre-calculate cumulative positions for better performance
+  //     const getCumulativeHeight = (row) => {
+  //         let height = Config.COL_HEADER_HEIGHT;
+  //         for (let r = 0; r < row; r++) {
+  //             height += Config.ROW_HEIGHTS[r];
+  //         }
+  //         return height;
+  //     };
+
+  //     const getCumulativeWidth = (col) => {
+  //         let width = Config.ROW_HEADER_WIDTH;
+  //         for (let k = 0; k < col; k++) {
+  //             width += Config.COL_WIDTHS[k];
+  //         }
+  //         return width;
+  //     };
+
+  //     // Draw horizontal lines (row separators)
+  //     const startX = getCumulativeWidth(startCol);
+  //     const endX = getCumulativeWidth(endCol);
+
+  //     for (let i = startRow; i <= endRow; i++) {
+  //         const y = getCumulativeHeight(i);
+  //         context.moveTo(startX, y + 0.5);
+  //         context.lineTo(endX, y + 0.5);
+  //     }
+
+  //     // Draw vertical lines (column separators)
+  //     const startY = getCumulativeHeight(startRow);
+  //     const endY = getCumulativeHeight(endRow);
+
+  //     for (let j = startCol; j <= endCol; j++) {
+  //         const x = getCumulativeWidth(j);
+  //         context.moveTo(x + 0.5, startY);
+  //         context.lineTo(x + 0.5, endY);
+  //     }
+
+  //     context.strokeStyle = "rgb(0,0,0)";
+  //     context.lineWidth = 0.1;
+  //     context.stroke();
+  // }
 
   static drawColumnHeader(
     startRow,
@@ -311,14 +362,6 @@ export class Draw {
       0,
       Config.getColumnWidthSum(startCol, endCol),
       Config.COL_HEADER_HEIGHT + 0.5
-    );
-    Draw.insertColHeaderText(
-      startRow,
-      endRow,
-      startCol,
-      endCol,
-      context,
-      scrollLeft
     );
 
     // context.save();
@@ -355,14 +398,6 @@ export class Draw {
       0,
       Config.ROW_HEADER_WIDTH + 0.5,
       Config.getRowHeightSum(startRow, endRow)
-    );
-    Draw.insertRowHeaderText(
-      startRow,
-      endRow,
-      startCol,
-      endCol,
-      context,
-      scrollTop
     );
   }
 

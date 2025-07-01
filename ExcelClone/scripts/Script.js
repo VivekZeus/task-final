@@ -1,17 +1,14 @@
 import { Grid } from "./Grid.js";
 import { Config } from "./Config.js";
-import { HeaderData } from "./HeaderData.js";
 import { MouseHoverHandler } from "./MouseHoverHandler.js";
 import { MouseClickHandler } from "./MouseClickHandler.js";
+import { ArrowKeyHandler } from "./ArrowKeyHandler.js";
 
 const canvasContainer = document.getElementById("canvasContainer");
 const canvas = document.getElementById("excelCanvas");
 const context = canvas.getContext("2d");
+const keySet = new Set(["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"]);
 
-// create headers data at start
-console.time("insertHeaderDataTime");
-HeaderData.insertHeaderData();
-console.timeEnd("insertHeaderDataTime");
 
 const grid = new Grid(
   canvasContainer,
@@ -34,12 +31,21 @@ window.addEventListener("resize", () => {
 });
 
 canvas.addEventListener("mousemove", (event) => {
+
+  if (Config.RESIZING_COL !== -1) {
+    const dx = event.clientX - Config.INITIAL_X;
+    let newWidth = Config.COL_WIDTHS[Config.RESIZING_COL] + dx;
+    if (newWidth < 10) newWidth = 10;
+    Config.COL_WIDTHS[Config.RESIZING_COL] = newWidth;
+    Config.INITIAL_X = event.clientX;
+    grid.render();
+    return;
+  }
   canvas.style.cursor = "cell";
 
   const rect = canvas.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
-  // console.log("x is " + x + " and y is " + y);
   const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
     grid.getVisibleRowCols();
   MouseHoverHandler.changeCursorStyleBasedOnPos(
@@ -67,63 +73,49 @@ canvas.addEventListener("click", (event) => {
   ) {
     // select all the rows or cols
     return;
-  }
-  else{
-    MouseClickHandler.handleCellClick(x, y,startRow,endRow,startCol,endCol);
+  } else {
+    MouseClickHandler.handleCellClick(x, y, startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
     grid.render();
   }
 });
 
 
-  function ifCellCanShift(key) {
-    const { row, col } = selectedCell;
-    console.log(row, col);
-    if (key == "ArrowLeft") {
-      return col > 1;
-    } else if (key == "ArrowRight") {
-      return col < cols - 1;
-    } else if (key == "ArrowUp") {
-      return row > 1;
-    } else if (key == "ArrowDown") {
-      return row < rows - 1;
+
+
+window.addEventListener("keydown", (event) => {
+  let key = event.key;
+  if (keySet.has(key)) {
+    event.preventDefault();
+   if( ArrowKeyHandler.handleArrowKeyOperations(key))grid.render();
+  }
+});
+
+
+canvas.addEventListener("mousedown", (e) => {
+  if (Config.HOVERED_COL !== -1) {
+    Config.RESIZING_COL = Config.HOVERED_COL;
+    Config.INITIAL_X = e.clientX;
+  }
+});
+
+canvas.addEventListener("mouseup", (e) => {
+  if (Config.RESIZING_COL !== -1) {
+    Config.RESIZING_COL = -1;
+    grid.render();
+    // After resizing, if mouse is over the grid, trigger selection logic
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    // Only trigger if inside grid area (not header)
+    if (
+      y > Config.COL_HEADER_HEIGHT &&
+      x > Config.ROW_HEADER_WIDTH &&
+      x < canvas.width &&
+      y < canvas.height
+    ) {
+      const { startRow, endRow, startCol, endCol } = grid.getVisibleRowCols();
+      MouseClickHandler.handleCellClick(x, y, startRow, endRow, startCol, endCol);
+      grid.render();
     }
   }
-
-  function shiftSelectedCell(key) {
-    if (key == "ArrowLeft") {
-      selectedCell.col -= 1;
-    } else if (key == "ArrowRight") {
-      selectedCell.col += 1;
-    } else if (key == "ArrowUp") {
-      selectedCell.row -= 1;
-    } else if (key == "ArrowDown") {
-      selectedCell.row += 1;
-    }
-    // localStorage.setItem("selectedCellRow", selectedCell.row);
-    // localStorage.setItem("selectedCellCol", selectedCell.col);
-  }
-
-  function handleNormalArrowKeyOperations(key) {
-    if (!ifCellCanShift(key)) {
-      console.log("cannot shift");
-      return;
-    }
-    shiftSelectedCell(key);
-  }
-
-  function handleArrowKeyOperations(key) {
-    if (mode == "NORMAL") {
-      handleNormalArrowKeyOperations(key);
-    }
-    DrawComponent.drawGrid();
-  }
-
-  const keySet = new Set(["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"]);
-
-  canvas.addEventListener("keydown", (event) => {
-    let key = event.key;
-    if (keySet.has(key)) {
-      event.preventDefault();
-      handleArrowKeyOperations(key);
-    }
-  });
+});

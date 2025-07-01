@@ -127,6 +127,16 @@ export class Grid {
       this.context
     );
 
+    Draw.drawSelectedCellBorder(
+      this.context,
+      startRow,
+      endRow,
+      startCol,
+      endCol,
+      scrollLeft,
+      scrollTop
+    );
+
     Draw.drawColumnHeader(
       startRow,
       startCol,
@@ -149,18 +159,6 @@ export class Grid {
       scrollTop
     );
 
-    Draw.drawCornerBox(this.context);
-
-    Draw.drawSelectedCellBorder(
-      this.context,
-      startRow,
-      endRow,
-      startCol,
-      endCol,
-      scrollLeft,
-      scrollTop
-    );
-
     Draw.drawSelectedCellCorrepondingRowCol(
       this.context,
       startRow,
@@ -170,5 +168,23 @@ export class Grid {
       scrollLeft,
       scrollTop
     );
+    Draw.insertRowHeaderText(
+      startRow,
+      endRow,
+      startCol,
+      endCol,
+      this.context,
+      scrollTop
+    );
+    Draw.insertColHeaderText(
+      startRow,
+      endRow,
+      startCol,
+      endCol,
+      this.context,
+      scrollLeft
+    );
+
+    Draw.drawCornerBox(this.context);
   }
 }

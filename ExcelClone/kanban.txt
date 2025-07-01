@@ -1,0 +1,16 @@
+Todo
+-> text filling
+-> row add
+-> column add
+-> when shifting cell using arrow keys and when scroll happens then it moves outside of the boundary
+-> 
+
+Completed
+-> fixed header inserting part
+-> cell selection
+-> updating drawing of selected cell logic
+-> if cell is selected but not in visible range then also col and row should be highlighted so break the highlighting logic
+
+In progress
+-> column resizing
+-> row resizing
