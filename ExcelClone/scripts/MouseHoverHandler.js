@@ -1,4 +1,5 @@
 import { Config } from "./Config.js";
+import { Draw } from "./Draw.js";
 
 export class MouseHoverHandler {
   static changeCursorStyleBasedOnPos(
@@ -8,7 +9,9 @@ export class MouseHoverHandler {
     startCol,
     endCol,
     startRow,
-    endRow
+    endRow,
+    context,
+    scrollLeft
   ) {
     if (y < Config.COL_HEADER_HEIGHT && x > Config.ROW_HEADER_WIDTH) {
       canvas.style.cursor = "s-resize";
@@ -19,11 +22,11 @@ export class MouseHoverHandler {
         if (Math.abs(x - currentX) <= Config.CURSOR_CHANGE_THRESHOLD) {
           canvas.style.cursor = "col-resize";
           Config.HOVERED_COL = i;
+          // Draw.drawResizeIndicator(context, scrollLeft);
           break;
         }
       }
-    }
-     else if (y > Config.COL_HEADER_HEIGHT && x < Config.ROW_HEADER_WIDTH) {
+    } else if (y > Config.COL_HEADER_HEIGHT && x < Config.ROW_HEADER_WIDTH) {
       canvas.style.cursor = "w-resize";
       let currentY = Config.COL_HEADER_HEIGHT;
       for (let i = startRow; i < endRow; i++) {

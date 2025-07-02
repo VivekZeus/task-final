@@ -16,7 +16,8 @@ export class Config {
 
   static CURSOR_CHANGE_THRESHOLD = 3;
 
-  static MODE="normal"; // can be normal when doing nothing and when formula then formula insertion is happening
+
+  static MODE = "normal"; // can be normal when doing nothing and when formula then formula insertion is happening
 
   static CURSOR_IS_SET = false;
 
@@ -25,13 +26,14 @@ export class Config {
     col: -1,
   };
 
-  static HOVERED_COL=-1;
-  static RESIZING_COL=-1
-  static INITIAL_X=0;
+  static HOVERED_COL = -1;
+  static RESIZING_COL = -1;
+  static INITIAL_X = 0;
+  static RESIZING_COL_OLD_WIDTH = -1;
 
-  static INITIAL_Y=0;
-  static HOVERED_ROW=-1;
-  static RESIZING_ROW=-1;
+  static INITIAL_Y = 0;
+  static HOVERED_ROW = -1;
+  static RESIZING_ROW = -1;
 
   static getColumnWidthSum(startCol, endCol) {
     let sum = 0;

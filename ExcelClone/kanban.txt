@@ -1,4 +1,6 @@
 Todo
+-> column resizing and getting dashed line 
+-> row resizing
 -> text filling
 -> row add
 -> column add
@@ -12,5 +14,7 @@ Completed
 -> if cell is selected but not in visible range then also col and row should be highlighted so break the highlighting logic
 
 In progress
--> column resizing
--> row resizing
+-> creating prefix array as scroll happens
+-> create class for col resizing codes
+-> converting data of array to map
+

@@ -6,8 +6,8 @@ export class Utils {
 
 
   static getPosition(row, col) {
-    let y = Config.COL_HEADER_HEIGHT; // Always leave header height at top
-    let x = Config.ROW_HEADER_WIDTH; // Always leave row header width on left
+    let y = Config.COL_HEADER_HEIGHT;
+    let x = Config.ROW_HEADER_WIDTH;
 
     for (let r = 0; r < row; r++) {
       y += Config.ROW_HEIGHTS[r];

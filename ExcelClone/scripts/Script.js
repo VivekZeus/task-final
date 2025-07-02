@@ -3,12 +3,17 @@ import { Config } from "./Config.js";
 import { MouseHoverHandler } from "./MouseHoverHandler.js";
 import { MouseClickHandler } from "./MouseClickHandler.js";
 import { ArrowKeyHandler } from "./ArrowKeyHandler.js";
+import { PrefixArrayManager } from "./PrefixArrayManager.js";
+import { Draw } from "./Draw.js";
 
 const canvasContainer = document.getElementById("canvasContainer");
 const canvas = document.getElementById("excelCanvas");
 const context = canvas.getContext("2d");
+
 const keySet = new Set(["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"]);
 
+PrefixArrayManager.createColPrefixArray(Config.TOTAL_COLUMNS);
+PrefixArrayManager.createRowPrefixArray(Config.TOTAL_ROWS);
 
 const grid = new Grid(
   canvasContainer,
@@ -19,7 +24,7 @@ const grid = new Grid(
   Config.COL_WIDTH,
   Config.ROW_HEIGHT
 );
-
+``;
 grid.render();
 
 canvasContainer.addEventListener("scroll", (e) => {
@@ -31,14 +36,20 @@ window.addEventListener("resize", () => {
 });
 
 canvas.addEventListener("mousemove", (event) => {
-
   if (Config.RESIZING_COL !== -1) {
+
     const dx = event.clientX - Config.INITIAL_X;
     let newWidth = Config.COL_WIDTHS[Config.RESIZING_COL] + dx;
-    if (newWidth < 10) newWidth = 10;
+     if (newWidth < 10) newWidth = 10;
     Config.COL_WIDTHS[Config.RESIZING_COL] = newWidth;
     Config.INITIAL_X = event.clientX;
     grid.render();
+    Draw.drawVerticalLinesColResizing(Config.RESIZING_COL+1,context,canvas.height);
+
+    if(event.clientX>=PrefixArrayManager.getColXPosition(Config.RESIZING_COL)){
+    Draw.drawVerticalDashedLine(Config.INITIAL_X,context,canvas.height);
+
+    }
     return;
   }
   canvas.style.cursor = "cell";
@@ -55,8 +66,12 @@ canvas.addEventListener("mousemove", (event) => {
     startCol,
     endCol,
     startRow,
-    endRow
+    endRow,
+    context,
+    scrollLeft
   );
+  if(Config.HOVERED_COL===-1)return;
+  grid.render();
 });
 
 canvas.addEventListener("click", (event) => {
@@ -74,35 +89,42 @@ canvas.addEventListener("click", (event) => {
     // select all the rows or cols
     return;
   } else {
-    MouseClickHandler.handleCellClick(x, y, startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
+    MouseClickHandler.handleCellClick(
+      x,
+      y,
+      startRow,
+      endRow,
+      startCol,
+      endCol,
+      scrollLeft,
+      scrollTop
+    );
     grid.render();
   }
 });
-
-
-
 
 window.addEventListener("keydown", (event) => {
   let key = event.key;
   if (keySet.has(key)) {
     event.preventDefault();
-   if( ArrowKeyHandler.handleArrowKeyOperations(key))grid.render();
+    if (ArrowKeyHandler.handleArrowKeyOperations(key)) grid.render();
   }
 });
-
 
 canvas.addEventListener("mousedown", (e) => {
   if (Config.HOVERED_COL !== -1) {
     Config.RESIZING_COL = Config.HOVERED_COL;
     Config.INITIAL_X = e.clientX;
+    Config.RESIZING_COL_OLD_WIDTH = Config.COL_WIDTHS[Config.RESIZING_COL];
   }
 });
 
 canvas.addEventListener("mouseup", (e) => {
   if (Config.RESIZING_COL !== -1) {
+    PrefixArrayManager.updateColumnWidth(Config.RESIZING_COL);
     Config.RESIZING_COL = -1;
     grid.render();
-    // After resizing, if mouse is over the grid, trigger selection logic
+
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -114,7 +136,14 @@ canvas.addEventListener("mouseup", (e) => {
       y < canvas.height
     ) {
       const { startRow, endRow, startCol, endCol } = grid.getVisibleRowCols();
-      MouseClickHandler.handleCellClick(x, y, startRow, endRow, startCol, endCol);
+      MouseClickHandler.handleCellClick(
+        x,
+        y,
+        startRow,
+        endRow,
+        startCol,
+        endCol
+      );
       grid.render();
     }
   }
