@@ -68,34 +68,95 @@ export class Grid {
     this.render();
   }
 
-  getVisibleRowCols() {
+  // getVisibleRowCols() {
+  //   const scrollLeft = this.canvasContainer.scrollLeft;
+  //   const scrollTop = this.canvasContainer.scrollTop;
+  //   const viewportWidth = this.canvasContainer.clientWidth;
+  //   const viewportHeight = this.canvasContainer.clientHeight;
+
+  //   // Calculate Visible Cell Range
+  //   const startCol = Math.floor(scrollLeft / this.cellWidth);
+  //   const endCol = Math.min(
+  //     this.totalColumns,
+  //     startCol + Math.ceil(viewportWidth / this.cellWidth) + 1
+  //   );
+
+  //   const startRow = Math.floor(scrollTop / this.cellHeight);
+  //   const endRow = Math.min(
+  //     this.totalRows,
+  //     startRow + Math.ceil(viewportHeight / this.cellHeight) + 1
+  //   );
+
+  //   return {
+  //     startRow,
+  //     endRow,
+  //     startCol,
+  //     endCol,
+  //     scrollLeft,
+  //     scrollTop,
+  //   };
+  // }
+
+  // Helper method to get X position of any column
+getColumnXPosition(columnIndex) {
+    let x = Config.ROW_HEADER_WIDTH;
+    for (let i = 0; i < columnIndex; i++) {
+        x += Config.COL_WIDTHS[i] || this.cellWidth;
+    }
+    return x;
+}
+
+getVisibleRowCols() {
     const scrollLeft = this.canvasContainer.scrollLeft;
     const scrollTop = this.canvasContainer.scrollTop;
     const viewportWidth = this.canvasContainer.clientWidth;
     const viewportHeight = this.canvasContainer.clientHeight;
 
-    // Calculate Visible Cell Range
-    const startCol = Math.floor(scrollLeft / this.cellWidth);
-    const endCol = Math.min(
-      this.totalColumns,
-      startCol + Math.ceil(viewportWidth / this.cellWidth) + 1
-    );
+    // Calculate visible column range using actual column widths
+    let startCol = 0;
+    let endCol = 0;
+    
+    // Find the first visible column
+    for (let i = 0; i < this.totalColumns; i++) {
+        const colX = this.getColumnXPosition(i);
+        const colWidth = Config.COL_WIDTHS[i] || this.cellWidth;
+        
+        if (colX + colWidth > scrollLeft + Config.ROW_HEADER_WIDTH) {
+            startCol = i;
+            break;
+        }
+    }
 
+    // Find the last visible column
+    for (let i = startCol; i < this.totalColumns; i++) {
+        const colX = this.getColumnXPosition(i);
+        
+        if (colX - scrollLeft > viewportWidth) {
+            endCol = i - 1;
+            break;
+        }
+        endCol = i;
+    }
+    
+    // Add buffer column for smooth scrolling
+    endCol = Math.min(this.totalColumns - 1, endCol + 1);
+
+    // Calculate visible row range (assuming uniform row heights)
     const startRow = Math.floor(scrollTop / this.cellHeight);
     const endRow = Math.min(
-      this.totalRows,
-      startRow + Math.ceil(viewportHeight / this.cellHeight) + 1
+        this.totalRows - 1,
+        startRow + Math.ceil(viewportHeight / this.cellHeight) + 1
     );
 
     return {
-      startRow,
-      endRow,
-      startCol,
-      endCol,
-      scrollLeft,
-      scrollTop,
+        startRow,
+        endRow,
+        startCol,
+        endCol,
+        scrollLeft,
+        scrollTop,
     };
-  }
+}
 
   render() {
     const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =

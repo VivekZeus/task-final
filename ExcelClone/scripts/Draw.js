@@ -109,46 +109,7 @@ export class Draw {
       handleSize
     );
 
-    // const highlightColor = "rgba(173, 235, 193, 0.6)"; // light green
-    // const borderColor = "#187c44";
-
-    // // === Column Header Highlight ===
-    // const colPos = Utils.getPosition(0, selCol);
-    // const colX = colPos.x -scrollLeft;
-    // const colWidth = Config.COL_WIDTHS[selCol];
-    // const colHeight = Config.COL_HEADER_HEIGHT;
-
-    // // Fill
-    // context.fillStyle = highlightColor;
-    // context.fillRect(colX, 0, colWidth, colHeight);
-
-    // // Border bottom
-    // context.strokeStyle = borderColor;
-    // context.lineWidth = 2;
-    // context.beginPath();
-    // context.moveTo(colX, colHeight - 1);
-    // context.lineTo(colX + colWidth, colHeight - 1);
-    // context.stroke();
-
-    // // === Row Header Highlight ===
-    // const rowPos = Utils.getPosition(selRow, 0);
-    // const rowY = rowPos.y - scrollTop;
-    // const rowWidth = Config.ROW_HEADER_WIDTH;
-    // const rowHeight = Config.ROW_HEIGHTS[selRow];
-
-    // // Fill
-    // context.fillStyle = highlightColor;
-    // context.fillRect(0, rowY, rowWidth, rowHeight);
-
-    // // Border right
-    // context.strokeStyle = borderColor;
-    // context.lineWidth = 2;
-    // context.beginPath();
-    // context.moveTo(rowWidth - 1, rowY);
-    // context.lineTo(rowWidth - 1, rowY + rowHeight);
-    // context.stroke();
-    // context.restore();
-  }
+   }
 
   static insertRowHeaderText(
     startRow,
