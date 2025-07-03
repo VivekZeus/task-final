@@ -40,29 +40,27 @@ export class PrefixArrayManager {
   }
 
   static getColXPosition(columnIndex) {
-    this.createColPrefixArray(columnIndex);
+    // this.createColPrefixArray(columnIndex);
     return this.colPrefixArray[columnIndex]; // change here when map integrated
   }
 
   static getRowYPosition(rowIndex) {
-    this.createColPrefixArray(rowIndex);
+    // this.createColPrefixArray(rowIndex);
     return this.rowPrefixArray[rowIndex]; // change here when map integrated
   }
 
   static updateColumnWidth(colIndex) {
     const oldWidth = Config.RESIZING_COL_OLD_WIDTH || Config.COL_WIDTH;
-    const widthDiff = Config.COL_WIDTHS[colIndex] - oldWidth;
+    const widthDiff = (Config.COL_WIDTHS[colIndex]||Config.COL_WIDTH) - oldWidth;
 
     for (let i = colIndex + 1; i < this.colPrefixArray.length; i++) {
       this.colPrefixArray[i] += widthDiff;
     }
   }
 
-  static updateRowHeight(rowIndex, newHeight) {
-    const oldHeight = Config.ROW_HEIGHTS[rowIndex]; // change here when map integrated
-    const heightDiff = newHeight - oldHeight;
-
-    Config.ROW_HEIGHTS[rowIndex] = newHeight; // change here when map integrated
+  static updateRowHeight(rowIndex) {
+    const oldHeight = Config.RESIZING_ROW_OLD_HEIGHT|| Config.ROW_HEIGHT;
+    const heightDiff = (Config.ROW_HEIGHTS[rowIndex]|| Config.ROW_HEIGHT )- oldHeight;
 
     for (let i = rowIndex + 1; i < this.rowPrefixArray.length; i++) {
       this.rowPrefixArray[i] += heightDiff;

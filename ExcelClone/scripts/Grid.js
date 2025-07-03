@@ -69,13 +69,15 @@ export class Grid {
     this.render();
   }
 
-  getColumnXPosition(columnIndex) {
-    let x = Config.ROW_HEADER_WIDTH;
-    for (let i = 0; i < columnIndex; i++) {
-      x += Config.COL_WIDTHS[i] || this.cellWidth;
-    }
-    return x;
-  }
+  // getColumnXPosition(columnIndex) {
+  //   let x = Config.ROW_HEADER_WIDTH;
+  //   for (let i = 0; i < columnIndex; i++) {
+  //     x += Config.COL_WIDTHS[i] ||Config.COL_WIDTH;
+  //   }
+  //   return x;
+  // }
+
+
 
 
   getVisibleRowCols() {
@@ -84,6 +86,7 @@ export class Grid {
     const viewportWidth = this.canvasContainer.clientWidth;
     const viewportHeight = this.canvasContainer.clientHeight;
 
+    // Find startCol using binary search
     let startCol = 0;
     let left = 0,
       right = this.totalColumns - 1;
@@ -113,50 +116,60 @@ export class Grid {
     }
     endCol = Math.min(this.totalColumns - 1, endCol + 1);
 
-    // Similar logic for rows (can also use binary search)
-    const startRow = Math.floor(scrollTop / Config.ROW_HEIGHT);
-    const endRow = Math.min(
-      this.totalRows - 1,
-      startRow + Math.ceil(viewportHeight / Config.ROW_HEIGHT) + 1
-    );
+    // Find startRow using binary search (similar to columns)
+    let startRow = 0;
+    let rowLeft = 0,
+      rowRight = this.totalRows - 1;
+    const targetY = scrollTop + Config.COL_HEADER_HEIGHT;
 
-    // Check if we need to expand columns (when endCol reaches 80% of totalColumns)
-    const colThreshold = Math.floor(this.totalColumns * 0.8);
-    if (endCol >= colThreshold) {
-      Config.TOTAL_COLUMNS += 300;
-      this.totalColumns += 300;
+    while (rowLeft <= rowRight) {
+      const mid = Math.floor((rowLeft + rowRight) / 2);
+      const rowY = PrefixArrayManager.getRowYPosition(mid);
+      const rowHeight = Config.ROW_HEIGHTS[mid] || Config.ROW_HEIGHT;
 
-      // Update prefix array for new columns
-      console.log("col expansion started");
-      console.log(this.totalColumns);
-      PrefixArrayManager.createColPrefixArray(this.totalColumns);
-      console.log("col expansion ended");
+      if (rowY + rowHeight > targetY) {
+        startRow = mid;
+        rowRight = mid - 1;
+      } else {
+        rowLeft = mid + 1;
+      }
     }
 
-    // Check if we need to expand rows (when endRow reaches 80% of totalRows)
-    const rowThreshold = Math.floor(this.totalRows * 0.8);
-    if (endRow >= rowThreshold) {
-      Config.TOTAL_ROWS += 300;
-      this.totalRows += 300;
-
-      // Update prefix array for new rows (if needed)
-      PrefixArrayManager.createRowPrefixArray(this.totalRows);
-
-      // console.log(`Expanded rows from ${oldTotalRows} to ${this.totalRows}`);
+    // Find endRow
+    let endRow = startRow;
+    for (let i = startRow; i < this.totalRows; i++) {
+      const rowY = PrefixArrayManager.getRowYPosition(i);
+      if (rowY - scrollTop > viewportHeight) {
+        break;
+      }
+      endRow = i;
     }
+    endRow = Math.min(this.totalRows - 1, endRow + 1);
 
-    return {
-      startRow,
-      endRow,
-      startCol,
-      endCol,
-      scrollLeft,
-      scrollTop,
-    };
-  }
+    return { startRow, endRow, startCol, endCol, scrollLeft, scrollTop };
+}
 
   render() {
-    const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
+    // const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
+    //   this.getVisibleRowCols();
+
+    // console.log(
+    //   "Drawing rows from",
+    //   startRow,
+    //   "to",
+    //   endRow,
+    //   "and cols",
+    //   startCol,
+    //   "to",
+    //   endCol
+    // );
+
+    // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // this.context.save();
+    // this.context.translate(-scrollLeft, -scrollTop);
+    // this.context.beginPath();
+      const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
       this.getVisibleRowCols();
 
     console.log(
@@ -170,11 +183,22 @@ export class Grid {
       endCol
     );
 
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    // Clear the canvas using viewport dimensions, not internal resolution
+    this.context.clearRect(0, 0, this.viewWidth, this.viewHeight);
 
+    // Save context state before transformations
     this.context.save();
+    
+    // Apply scroll translation
     this.context.translate(-scrollLeft, -scrollTop);
+    
+    // Begin your drawing operations
     this.context.beginPath();
+    
+    // ... rest of your drawing code here ...
+    
+    // Make sure to restore context state after drawing
+    // this.context.restore();
 
     Draw.drawRowsCols(
       startRow,

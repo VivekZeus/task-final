@@ -1,9 +1,10 @@
 import { Config } from "./Config.js";
+import { PrefixArrayManager } from "./PrefixArrayManager.js";
 
 export class ArrowKeyHandler {
   static scrollIntoViewIfNeeded() {
-    const selRow = Config.SELECTED_CELL.row;
-    const selCol = Config.SELECTED_CELL.col;
+    const selRow = Config.SELECTED_CELL_RANGE.startRow;
+    const selCol = Config.SELECTED_CELL_RANGE.startCol;
 
     const canvasContainer = document.getElementById("canvasContainer");
     const scrollLeft = canvasContainer.scrollLeft;
@@ -11,13 +12,21 @@ export class ArrowKeyHandler {
     const visibleWidth = canvasContainer.clientWidth;
     const visibleHeight = canvasContainer.clientHeight;
 
-    let x = Config.ROW_HEADER_WIDTH;
-    for (let c = 0; c < selCol; c++) x += Config.COL_WIDTHS[c];
-    const cellWidth = Config.COL_WIDTHS[selCol];
+    // let x = Config.ROW_HEADER_WIDTH;
+    // for (let c = 0; c < selCol; c++) x += Config.COL_WIDTHS[c];
+    // const cellWidth = Config.COL_WIDTHS[selCol];
 
-    let y = Config.COL_HEADER_HEIGHT;
-    for (let r = 0; r < selRow; r++) y += Config.ROW_HEIGHTS[r];
-    const cellHeight = Config.ROW_HEIGHTS[selRow];
+    let x = PrefixArrayManager.getColXPosition(selCol);
+    // for (let c = 0; c < selCol; c++) x += Config.COL_WIDTHS[c];
+    const cellWidth = Config.COL_WIDTHS[selCol] || Config.COL_WIDTH;
+
+    // let y = Config.COL_HEADER_HEIGHT;
+    // for (let r = 0; r < selRow; r++) y += Config.ROW_HEIGHTS[r];
+    // const cellHeight = Config.ROW_HEIGHTS[selRow];
+
+    let y = PrefixArrayManager.getRowYPosition(selRow);
+    // for (let r = 0; r < selRow; r++) y += Config.ROW_HEIGHTS[r];
+    const cellHeight = Config.ROW_HEIGHTS[selRow] || Config.ROW_HEIGHT;
 
     let newScrollLeft = scrollLeft;
     let newScrollTop = scrollTop;
@@ -45,31 +54,41 @@ export class ArrowKeyHandler {
   }
 
   static ifCellCanShift(key) {
-    const { row, col } = Config.SELECTED_CELL;
+    const { startRow, startCol } = Config.SELECTED_CELL_RANGE;
 
-    if (row == -1 || col == -1) return false;
+    if (startRow == -1 || startCol == -1) return false;
 
     if (key == "ArrowLeft") {
-      return col > 0;
+      return startCol > 0;
     } else if (key == "ArrowRight") {
-      return col < Config.TOTAL_COLUMNS - 1;
+      return startCol < Config.TOTAL_COLUMNS - 1;
     } else if (key == "ArrowUp") {
-      return row > 0;
+      return startRow > 0;
     } else if (key == "ArrowDown") {
-      return row < Config.TOTAL_ROWS - 1;
+      return startRow < Config.TOTAL_ROWS - 1;
     }
   }
 
   static shiftSelectedCell(key) {
-    if (key == "ArrowLeft") {
-      Config.SELECTED_CELL.col -= 1;
-    } else if (key == "ArrowRight") {
-      Config.SELECTED_CELL.col += 1;
-    } else if (key == "ArrowUp") {
-      Config.SELECTED_CELL.row -= 1;
-    } else if (key == "ArrowDown") {
-      Config.SELECTED_CELL.row += 1;
+    const { startRow, startCol,endCol,endRow } = Config.SELECTED_CELL_RANGE;
+    
+    if (startCol !== endCol || endRow !== startRow){
+      Config.SELECTED_CELL_RANGE.endCol=startCol;
+      Config.SELECTED_CELL_RANGE.endRow=startRow;
     }
+      if (key == "ArrowLeft") {
+        Config.SELECTED_CELL_RANGE.startCol -= 1;
+        Config.SELECTED_CELL_RANGE.endCol -= 1;
+      } else if (key == "ArrowRight") {
+        Config.SELECTED_CELL_RANGE.startCol += 1;
+        Config.SELECTED_CELL_RANGE.endCol += 1;
+      } else if (key == "ArrowUp") {
+        Config.SELECTED_CELL_RANGE.startRow -= 1;
+        Config.SELECTED_CELL_RANGE.endRow -= 1;
+      } else if (key == "ArrowDown") {
+        Config.SELECTED_CELL_RANGE.startRow += 1;
+        Config.SELECTED_CELL_RANGE.endRow += 1;
+      }
   }
 
   static handleNormalArrowKeyOperations(key) {
@@ -82,12 +101,11 @@ export class ArrowKeyHandler {
 
   static handleArrowKeyOperations(key) {
     if (Config.MODE == "normal") {
-      if(ArrowKeyHandler.handleNormalArrowKeyOperations(key)){
+      if (ArrowKeyHandler.handleNormalArrowKeyOperations(key)) {
         this.scrollIntoViewIfNeeded();
         return true;
       }
       return false;
-      
     }
   }
 }

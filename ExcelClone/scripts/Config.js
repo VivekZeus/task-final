@@ -8,14 +8,14 @@ export class Config {
   static COL_HEADER_HEIGHT = 40;
   static ROW_HEADER_WIDTH = 70;
 
-  static ROW_HEIGHTS = new Array(this.TOTAL_ROWS).fill(this.ROW_HEIGHT);
-  static COL_WIDTHS = new Array(this.TOTAL_COLUMNS).fill(this.COL_WIDTH);
+
+  static ROW_HEIGHTS = new Map();
+  static COL_WIDTHS = new Map();
 
   static TEXT_PADDING_X = 5;
   static TEXT_PADDING_Y = 5;
 
-  static CURSOR_CHANGE_THRESHOLD = 3;
-
+  static CURSOR_CHANGE_THRESHOLD = 1;
 
   static MODE = "normal"; // can be normal when doing nothing and when formula then formula insertion is happening
 
@@ -26,6 +26,17 @@ export class Config {
     col: -1,
   };
 
+  static SELECTED_COL_HEADER=-1;
+
+  static SELECTED_CELL_RANGE={
+    startRow:-1,
+    endRow:-1,
+    startCol:-1,
+    endCol:-1
+  }
+
+  static IS_SELECTING=false;
+
   static HOVERED_COL = -1;
   static RESIZING_COL = -1;
   static INITIAL_X = 0;
@@ -34,11 +45,12 @@ export class Config {
   static INITIAL_Y = 0;
   static HOVERED_ROW = -1;
   static RESIZING_ROW = -1;
+  static RESIZING_ROW_OLD_HEIGHT = -1;
 
   static getColumnWidthSum(startCol, endCol) {
     let sum = 0;
     for (let i = startCol; i <= endCol; i++) {
-      sum += Config.COL_WIDTHS[i];
+      sum += Config.COL_WIDTHS[i] || this.COL_WIDTH;
     }
     return sum;
   }
@@ -46,7 +58,7 @@ export class Config {
   static getRowHeightSum(startRow, endRow) {
     let sum = 0;
     for (let i = startRow; i <= endRow; i++) {
-      sum += Config.ROW_HEIGHTS[i];
+      sum += Config.ROW_HEIGHTS[i] || this.ROW_HEIGHT;
     }
     return sum;
   }

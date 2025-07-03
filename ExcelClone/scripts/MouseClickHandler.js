@@ -1,34 +1,13 @@
 import { Config } from "./Config.js";
-import { Draw } from "./Draw.js";
+import { Utils } from "./Utils.js";
 
 export class MouseClickHandler {
 
  static handleCellClick(x, y, startRow, endRow, startCol, endCol) {
-    let currentX = Config.ROW_HEADER_WIDTH;
-    let currentY = Config.COL_HEADER_HEIGHT;
-    let rowSelected = -1;
-    let colSelected = -1;
 
-    // Find the selected column
-    for (let i = startCol; i <= endCol; i++) {
-      currentX += Config.COL_WIDTHS[i];
-      if (currentX > x) {
-        colSelected = i;
-        Config.SELECTED_CELL.col = i;
-        console.log('Column selected:', i);
-        break;
-      }
-    }
-
-    // Find the selected row
-    for (let i = startRow; i < endRow; i++) {
-      currentY += Config.ROW_HEIGHTS[i];
-      if (currentY > y) {
-        rowSelected = i;
-        Config.SELECTED_CELL.row = i;
-        console.log('Row selected:', i);
-        break;
-      }
-    }
+    let selCol=Utils.getSelectedCol(startCol,endCol,x);
+    let selRow=Utils.getSelectedRow(startRow,endRow,y);
+    Config.SELECTED_CELL.col =selCol;
+    Config.SELECTED_CELL.row =selRow;
   }
 }

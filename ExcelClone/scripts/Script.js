@@ -5,12 +5,22 @@ import { MouseClickHandler } from "./MouseClickHandler.js";
 import { ArrowKeyHandler } from "./ArrowKeyHandler.js";
 import { PrefixArrayManager } from "./PrefixArrayManager.js";
 import { Draw } from "./Draw.js";
+import { ColumnResizingManager } from "./ColumnResizingManager.js";
+import { RowResizingManager } from "./RowResizingManager.js";
+import { Utils } from "./Utils.js";
 
 const canvasContainer = document.getElementById("canvasContainer");
 const canvas = document.getElementById("excelCanvas");
 const context = canvas.getContext("2d");
 
 const keySet = new Set(["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"]);
+
+function getXY(event) {
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  return { x, y };
+}
 
 PrefixArrayManager.createColPrefixArray(Config.TOTAL_COLUMNS);
 PrefixArrayManager.createRowPrefixArray(Config.TOTAL_ROWS);
@@ -24,7 +34,7 @@ const grid = new Grid(
   Config.COL_WIDTH,
   Config.ROW_HEIGHT
 );
-``;
+
 grid.render();
 
 canvasContainer.addEventListener("scroll", (e) => {
@@ -35,23 +45,16 @@ window.addEventListener("resize", () => {
   grid.resizeCanvas();
 });
 
-canvas.addEventListener("mousemove", (event) => {
+window.addEventListener("mousemove", (event) => {
   if (Config.RESIZING_COL !== -1) {
-
-    const dx = event.clientX - Config.INITIAL_X;
-    let newWidth = Config.COL_WIDTHS[Config.RESIZING_COL] + dx;
-     if (newWidth < 10) newWidth = 10;
-    Config.COL_WIDTHS[Config.RESIZING_COL] = newWidth;
-    Config.INITIAL_X = event.clientX;
-    grid.render();
-    Draw.drawVerticalLinesColResizing(Config.RESIZING_COL+1,context,canvas.height);
-
-    if(event.clientX>=PrefixArrayManager.getColXPosition(Config.RESIZING_COL)){
-    Draw.drawVerticalDashedLine(Config.INITIAL_X,context,canvas.height);
-
-    }
+    ColumnResizingManager.handleOnMouseMouse(event, grid);
     return;
   }
+  if (Config.RESIZING_ROW !== -1) {
+    RowResizingManager.handleOnMouseMouse(event, grid);
+    return;
+  }
+
   canvas.style.cursor = "cell";
 
   const rect = canvas.getBoundingClientRect();
@@ -59,6 +62,10 @@ canvas.addEventListener("mousemove", (event) => {
   const y = event.clientY - rect.top;
   const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
     grid.getVisibleRowCols();
+
+  const prevHoveredCol = Config.HOVERED_COL;
+  const prevHoveredRow = Config.HOVERED_ROW;
+
   MouseHoverHandler.changeCursorStyleBasedOnPos(
     canvas,
     x,
@@ -70,37 +77,32 @@ canvas.addEventListener("mousemove", (event) => {
     context,
     scrollLeft
   );
-  if(Config.HOVERED_COL===-1)return;
-  grid.render();
-});
 
-canvas.addEventListener("click", (event) => {
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  console.log("x is " + x + " and y is " + y);
-  const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
-    grid.getVisibleRowCols();
-
+  // Check if either hovered column or row changed
   if (
-    (y < Config.COL_HEADER_HEIGHT && x > Config.ROW_HEADER_WIDTH) ||
-    (y > Config.COL_HEADER_HEIGHT && x < Config.ROW_HEADER_WIDTH)
+    prevHoveredCol !== Config.HOVERED_COL ||
+    prevHoveredRow !== Config.HOVERED_ROW
   ) {
-    // select all the rows or cols
-    return;
-  } else {
-    MouseClickHandler.handleCellClick(
-      x,
-      y,
-      startRow,
-      endRow,
-      startCol,
-      endCol,
-      scrollLeft,
-      scrollTop
-    );
     grid.render();
+
+    // Draw column indicator if hovering over column edge
+    if (Config.HOVERED_COL !== -1) {
+      Draw.drawResizeIndicator(context, Config.HOVERED_COL, scrollLeft);
+    }
+
+    // Draw row indicator if hovering over row edge
+    if (Config.HOVERED_ROW !== -1) {
+      Draw.drawRowResizeIndicator(context, Config.HOVERED_ROW, scrollTop);
+    }
   }
+
+  if (!Config.IS_SELECTING) return;
+  let selCol = Utils.getSelectedCol(startCol, endCol, x);
+  let selRow = Utils.getSelectedRow(startRow, endRow, y);
+  Config.SELECTED_CELL_RANGE.endRow = selRow;
+  Config.SELECTED_CELL_RANGE.endCol = selCol;
+
+  grid.render();
 });
 
 window.addEventListener("keydown", (event) => {
@@ -113,38 +115,45 @@ window.addEventListener("keydown", (event) => {
 
 canvas.addEventListener("mousedown", (e) => {
   if (Config.HOVERED_COL !== -1) {
-    Config.RESIZING_COL = Config.HOVERED_COL;
-    Config.INITIAL_X = e.clientX;
-    Config.RESIZING_COL_OLD_WIDTH = Config.COL_WIDTHS[Config.RESIZING_COL];
+    ColumnResizingManager.handleOnMouseDown(e);
   }
+  if (Config.HOVERED_ROW !== -1) {
+    RowResizingManager.handleOnMouseDown(e);
+  }
+
+  const { x, y } = getXY(e);
+  const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
+    grid.getVisibleRowCols();
+
+  if (
+    (y < Config.COL_HEADER_HEIGHT && x > Config.ROW_HEADER_WIDTH) ||
+    (y > Config.COL_HEADER_HEIGHT && x < Config.ROW_HEADER_WIDTH)
+  ) {
+    if (y < Config.COL_HEADER_HEIGHT && x > Config.ROW_HEADER_WIDTH) {
+      
+    } else {
+    }
+    return;
+  }
+
+  let selCol = Utils.getSelectedCol(startCol, endCol, x);
+  let selRow = Utils.getSelectedRow(startRow, endRow, y);
+  Config.SELECTED_CELL_RANGE.startCol = selCol;
+  Config.SELECTED_CELL_RANGE.endCol = selCol;
+  Config.SELECTED_CELL_RANGE.startRow = selRow;
+  Config.SELECTED_CELL_RANGE.endRow = selRow;
+  Config.IS_SELECTING = true;
+  // grid.render();
 });
 
-canvas.addEventListener("mouseup", (e) => {
+window.addEventListener("mouseup", (e) => {
   if (Config.RESIZING_COL !== -1) {
-    PrefixArrayManager.updateColumnWidth(Config.RESIZING_COL);
-    Config.RESIZING_COL = -1;
-    grid.render();
-
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    // Only trigger if inside grid area (not header)
-    if (
-      y > Config.COL_HEADER_HEIGHT &&
-      x > Config.ROW_HEADER_WIDTH &&
-      x < canvas.width &&
-      y < canvas.height
-    ) {
-      const { startRow, endRow, startCol, endCol } = grid.getVisibleRowCols();
-      MouseClickHandler.handleCellClick(
-        x,
-        y,
-        startRow,
-        endRow,
-        startCol,
-        endCol
-      );
-      grid.render();
-    }
+    ColumnResizingManager.handleOnMouseUp(e, grid, canvas);
   }
+
+  if (Config.RESIZING_ROW !== -1) {
+    RowResizingManager.handleOnMouseUp(e, grid);
+  }
+  Config.IS_SELECTING = false;
+  grid.render();
 });

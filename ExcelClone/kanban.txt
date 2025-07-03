@@ -1,6 +1,5 @@
 Todo
--> column resizing and getting dashed line 
--> row resizing
+-> fix row resing bug where resize indicator still exists.
 -> text filling
 -> row add
 -> column add
@@ -8,13 +7,18 @@ Todo
 -> 
 
 Completed
+-> converting data of array to map
+-> added binary search while getting visible rows and cols
+-> pill when col and row resizing
+-> row resizing
+-> column resizing and getting dashed line 
+-> creating prefix array as scroll happens
+-> create class for col resizing codes
 -> fixed header inserting part
 -> cell selection
 -> updating drawing of selected cell logic
 -> if cell is selected but not in visible range then also col and row should be highlighted so break the highlighting logic
 
 In progress
--> creating prefix array as scroll happens
--> create class for col resizing codes
--> converting data of array to map
+->range selection
 
