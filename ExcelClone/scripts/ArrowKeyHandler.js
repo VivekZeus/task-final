@@ -60,35 +60,35 @@ export class ArrowKeyHandler {
 
     if (key == "ArrowLeft") {
       return startCol > 0;
-    } else if (key == "ArrowRight") {
+    } else if (key == "ArrowRight" || key == "Tab") {
       return startCol < Config.TOTAL_COLUMNS - 1;
     } else if (key == "ArrowUp") {
       return startRow > 0;
-    } else if (key == "ArrowDown") {
+    } else if (key == "ArrowDown" || key == "Enter") {
       return startRow < Config.TOTAL_ROWS - 1;
     }
   }
 
   static shiftSelectedCell(key) {
-    const { startRow, startCol,endCol,endRow } = Config.SELECTED_CELL_RANGE;
-    
-    if (startCol !== endCol || endRow !== startRow){
-      Config.SELECTED_CELL_RANGE.endCol=startCol;
-      Config.SELECTED_CELL_RANGE.endRow=startRow;
+    const { startRow, startCol, endCol, endRow } = Config.SELECTED_CELL_RANGE;
+
+    if (startCol !== endCol || endRow !== startRow) {
+      Config.SELECTED_CELL_RANGE.endCol = startCol;
+      Config.SELECTED_CELL_RANGE.endRow = startRow;
     }
-      if (key == "ArrowLeft") {
-        Config.SELECTED_CELL_RANGE.startCol -= 1;
-        Config.SELECTED_CELL_RANGE.endCol -= 1;
-      } else if (key == "ArrowRight") {
-        Config.SELECTED_CELL_RANGE.startCol += 1;
-        Config.SELECTED_CELL_RANGE.endCol += 1;
-      } else if (key == "ArrowUp") {
-        Config.SELECTED_CELL_RANGE.startRow -= 1;
-        Config.SELECTED_CELL_RANGE.endRow -= 1;
-      } else if (key == "ArrowDown") {
-        Config.SELECTED_CELL_RANGE.startRow += 1;
-        Config.SELECTED_CELL_RANGE.endRow += 1;
-      }
+    if (key == "ArrowLeft") {
+      Config.SELECTED_CELL_RANGE.startCol -= 1;
+      Config.SELECTED_CELL_RANGE.endCol -= 1;
+    } else if (key == "ArrowRight" || key == "Tab") {
+      Config.SELECTED_CELL_RANGE.startCol += 1;
+      Config.SELECTED_CELL_RANGE.endCol += 1;
+    } else if (key == "ArrowUp") {
+      Config.SELECTED_CELL_RANGE.startRow -= 1;
+      Config.SELECTED_CELL_RANGE.endRow -= 1;
+    } else if (key == "ArrowDown" || key == "Enter") {
+      Config.SELECTED_CELL_RANGE.startRow += 1;
+      Config.SELECTED_CELL_RANGE.endRow += 1;
+    }
   }
 
   static handleNormalArrowKeyOperations(key) {

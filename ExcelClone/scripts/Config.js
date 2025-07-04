@@ -8,14 +8,13 @@ export class Config {
   static COL_HEADER_HEIGHT = 40;
   static ROW_HEADER_WIDTH = 70;
 
-
   static ROW_HEIGHTS = new Map();
   static COL_WIDTHS = new Map();
 
   static TEXT_PADDING_X = 5;
   static TEXT_PADDING_Y = 5;
 
-  static CURSOR_CHANGE_THRESHOLD = 1;
+  static CURSOR_CHANGE_THRESHOLD = 3;
 
   static MODE = "normal"; // can be normal when doing nothing and when formula then formula insertion is happening
 
@@ -26,16 +25,21 @@ export class Config {
     col: -1,
   };
 
-  static SELECTED_COL_HEADER=-1;
+  static SELECTED_COL_HEADER = -1;
+  static ADJUSTED_x1 = -1;
+  static IS_COL_HEADER_SELECTED = false;
 
-  static SELECTED_CELL_RANGE={
-    startRow:-1,
-    endRow:-1,
-    startCol:-1,
-    endCol:-1
-  }
+  static SELECTED_ROW_HEADER = -1;
+  static ADJUSTED_y1 = -1;
 
-  static IS_SELECTING=false;
+  static SELECTED_CELL_RANGE = {
+    startRow: -1,
+    endRow: -1,
+    startCol: -1,
+    endCol: -1,
+  };
+
+  static IS_SELECTING = false;
 
   static HOVERED_COL = -1;
   static RESIZING_COL = -1;
@@ -47,6 +51,18 @@ export class Config {
   static RESIZING_ROW = -1;
   static RESIZING_ROW_OLD_HEIGHT = -1;
 
+  // Add these variables to your Config object:
+
+  static IS_SELECTING_HEADER = false;
+  static HEADER_SELECTION_TYPE = null; // 'column' or 'row'
+  static HEADER_SELECTION_START_ROW = -1;
+  static HEADER_SELECTION_END_ROW = -1;
+  static HEADER_SELECTION_START_COL = -1;
+  static HEADER_SELECTION_END_COL = -1;
+  static SELECTED_COL_RANGE = null; // {startCol, endCol}
+  static SELECTED_ROW_RANGE = null; // {startRow, endRow}
+
+  
   static getColumnWidthSum(startCol, endCol) {
     let sum = 0;
     for (let i = startCol; i <= endCol; i++) {

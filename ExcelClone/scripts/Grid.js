@@ -77,9 +77,6 @@ export class Grid {
   //   return x;
   // }
 
-
-
-
   getVisibleRowCols() {
     const scrollLeft = this.canvasContainer.scrollLeft;
     const scrollTop = this.canvasContainer.scrollTop;
@@ -147,29 +144,10 @@ export class Grid {
     endRow = Math.min(this.totalRows - 1, endRow + 1);
 
     return { startRow, endRow, startCol, endCol, scrollLeft, scrollTop };
-}
+  }
 
   render() {
-    // const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
-    //   this.getVisibleRowCols();
-
-    // console.log(
-    //   "Drawing rows from",
-    //   startRow,
-    //   "to",
-    //   endRow,
-    //   "and cols",
-    //   startCol,
-    //   "to",
-    //   endCol
-    // );
-
-    // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    // this.context.save();
-    // this.context.translate(-scrollLeft, -scrollTop);
-    // this.context.beginPath();
-      const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
+    const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
       this.getVisibleRowCols();
 
     console.log(
@@ -188,15 +166,15 @@ export class Grid {
 
     // Save context state before transformations
     this.context.save();
-    
+
     // Apply scroll translation
     this.context.translate(-scrollLeft, -scrollTop);
-    
+
     // Begin your drawing operations
     this.context.beginPath();
-    
+
     // ... rest of your drawing code here ...
-    
+
     // Make sure to restore context state after drawing
     // this.context.restore();
 
@@ -208,7 +186,6 @@ export class Grid {
       this.canvas,
       this.context
     );
-
 
     Draw.drawSelectedCellBorder(
       this.context,
@@ -268,7 +245,8 @@ export class Grid {
       scrollLeft
     );
 
-    // Draw.drawResizeIndicator(this.context,scrollLeft)
+    Draw.drawHighlighedColumnHeader(this.context, startCol, endCol, scrollLeft);
+    Draw.drawHighlighedRowHeader(this.context, startRow, endRow, scrollTop);
     Draw.drawCornerBox(this.context);
   }
 }
