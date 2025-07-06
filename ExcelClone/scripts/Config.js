@@ -16,7 +16,7 @@ export class Config {
 
   static CURSOR_CHANGE_THRESHOLD = 3;
 
-  static MODE = "normal"; // can be normal when doing nothing and when formula then formula insertion is happening
+  static MODE = "normal";
 
   static CURSOR_IS_SET = false;
 
@@ -33,10 +33,10 @@ export class Config {
   static ADJUSTED_y1 = -1;
 
   static SELECTED_CELL_RANGE = {
-    startRow: -1,
-    endRow: -1,
-    startCol: -1,
-    endCol: -1,
+    startRow: 0,
+    endRow: 0,
+    startCol: 0,
+    endCol: -0,
   };
 
   static IS_SELECTING = false;
@@ -61,6 +61,13 @@ export class Config {
   static HEADER_SELECTION_END_COL = -1;
   static SELECTED_COL_RANGE = null; // {startCol, endCol}
   static SELECTED_ROW_RANGE = null; // {startRow, endRow}
+
+
+  // input part
+  static CURRENT_INPUT=null;
+  static INPUT_FINALIZED=false;
+
+  static DEFAULT_FONT_SIZE=14;
 
   
   static getColumnWidthSum(startCol, endCol) {

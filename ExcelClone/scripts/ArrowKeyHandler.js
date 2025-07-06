@@ -3,8 +3,11 @@ import { PrefixArrayManager } from "./PrefixArrayManager.js";
 
 export class ArrowKeyHandler {
   static scrollIntoViewIfNeeded() {
-    const selRow = Config.SELECTED_CELL_RANGE.startRow;
-    const selCol = Config.SELECTED_CELL_RANGE.startCol;
+     const { startRow, endRow, startCol, endCol } = Config.SELECTED_CELL_RANGE;
+
+  // Scroll to the farthest selected cell (bottom-right of the range)
+  const selRow = Math.max(startRow, endRow);
+  const selCol = Math.max(startCol, endCol);
 
     const canvasContainer = document.getElementById("canvasContainer");
     const scrollLeft = canvasContainer.scrollLeft;
@@ -12,26 +15,16 @@ export class ArrowKeyHandler {
     const visibleWidth = canvasContainer.clientWidth;
     const visibleHeight = canvasContainer.clientHeight;
 
-    // let x = Config.ROW_HEADER_WIDTH;
-    // for (let c = 0; c < selCol; c++) x += Config.COL_WIDTHS[c];
-    // const cellWidth = Config.COL_WIDTHS[selCol];
+
 
     let x = PrefixArrayManager.getColXPosition(selCol);
-    // for (let c = 0; c < selCol; c++) x += Config.COL_WIDTHS[c];
     const cellWidth = Config.COL_WIDTHS[selCol] || Config.COL_WIDTH;
-
-    // let y = Config.COL_HEADER_HEIGHT;
-    // for (let r = 0; r < selRow; r++) y += Config.ROW_HEIGHTS[r];
-    // const cellHeight = Config.ROW_HEIGHTS[selRow];
-
     let y = PrefixArrayManager.getRowYPosition(selRow);
-    // for (let r = 0; r < selRow; r++) y += Config.ROW_HEIGHTS[r];
     const cellHeight = Config.ROW_HEIGHTS[selRow] || Config.ROW_HEIGHT;
 
     let newScrollLeft = scrollLeft;
     let newScrollTop = scrollTop;
 
-    // Horizontal scroll logic
     if (x + cellWidth > scrollLeft + visibleWidth) {
       newScrollLeft = x + cellWidth - visibleWidth;
     } else if (x < scrollLeft) {
@@ -53,6 +46,26 @@ export class ArrowKeyHandler {
     });
   }
 
+  static ifCellRangeCanShift(key) {
+  const { endRow, endCol } = Config.SELECTED_CELL_RANGE;
+
+  if (key === "ArrowUp") {
+    return endRow > 0;
+  } 
+  else if (key === "ArrowDown") {
+    return endRow < Config.TOTAL_ROWS - 1;
+  } 
+  else if (key === "ArrowLeft") {
+    return endCol > 0;
+  } 
+  else if (key === "ArrowRight") {
+    return endCol < Config.TOTAL_COLUMNS - 1;
+  }
+
+  return false; // if the key isn't an arrow key
+}
+
+
   static ifCellCanShift(key) {
     const { startRow, startCol } = Config.SELECTED_CELL_RANGE;
 
@@ -67,6 +80,8 @@ export class ArrowKeyHandler {
     } else if (key == "ArrowDown" || key == "Enter") {
       return startRow < Config.TOTAL_ROWS - 1;
     }
+
+    return false;
   }
 
   static shiftSelectedCell(key) {
@@ -107,5 +122,49 @@ export class ArrowKeyHandler {
       }
       return false;
     }
+  }
+
+  static handleShiftAndArrowKeyOperations(key){
+    if (key == "ArrowLeft") {
+      Config.SELECTED_CELL_RANGE.endCol -= 1;
+    } else if (key == "ArrowRight" || key == "Tab") {
+      Config.SELECTED_CELL_RANGE.endCol += 1;
+    } else if (key == "ArrowUp") {
+      Config.SELECTED_CELL_RANGE.endRow -= 1;
+    } else if (key == "ArrowDown") {
+      Config.SELECTED_CELL_RANGE.endRow += 1;
+    }
+    this.scrollIntoViewIfNeeded();
+
+  }
+
+  static handleTabEnterKeyOperations(key,shiftKey=false){
+    if(shiftKey){
+      if (key == "Tab" && this.ifCellCanShift("ArrowLeft")) {
+        this.shiftSelectedCell("ArrowLeft");
+        this.scrollIntoViewIfNeeded();
+        return true;
+      }
+      else if (key == "Enter" && this.ifCellCanShift("ArrowUp")) {
+        this.shiftSelectedCell("ArrowUp");
+        this.scrollIntoViewIfNeeded();
+        return true;
+      }
+    }
+    else{
+      if (key == "Tab" && this.ifCellCanShift(key)) {
+        this.shiftSelectedCell(key);
+        this.scrollIntoViewIfNeeded();
+        return true;
+      }
+      if (key == "Enter" && this.ifCellCanShift(key)) {
+        this.shiftSelectedCell(key);
+        this.scrollIntoViewIfNeeded();
+        return true;
+      }
+
+    }
+
+    return false;
   }
 }

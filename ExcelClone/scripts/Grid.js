@@ -69,13 +69,6 @@ export class Grid {
     this.render();
   }
 
-  // getColumnXPosition(columnIndex) {
-  //   let x = Config.ROW_HEADER_WIDTH;
-  //   for (let i = 0; i < columnIndex; i++) {
-  //     x += Config.COL_WIDTHS[i] ||Config.COL_WIDTH;
-  //   }
-  //   return x;
-  // }
 
   getVisibleRowCols() {
     const scrollLeft = this.canvasContainer.scrollLeft;
@@ -173,10 +166,7 @@ export class Grid {
     // Begin your drawing operations
     this.context.beginPath();
 
-    // ... rest of your drawing code here ...
 
-    // Make sure to restore context state after drawing
-    // this.context.restore();
 
     Draw.drawRowsCols(
       startRow,
@@ -187,6 +177,10 @@ export class Grid {
       this.context
     );
 
+    Draw.updateInputPosition(this.canvas,scrollLeft,scrollTop);
+
+    Draw.renderVisibleCells(startRow,endRow,startCol,endCol, this.context,scrollLeft,scrollTop);
+
     Draw.drawSelectedCellBorder(
       this.context,
       startRow,
@@ -196,6 +190,8 @@ export class Grid {
       scrollLeft,
       scrollTop
     );
+
+        
 
     Draw.drawColumnHeader(
       startRow,
@@ -247,6 +243,11 @@ export class Grid {
 
     Draw.drawHighlighedColumnHeader(this.context, startCol, endCol, scrollLeft);
     Draw.drawHighlighedRowHeader(this.context, startRow, endRow, scrollTop);
+
+
+
     Draw.drawCornerBox(this.context);
+
+
   }
 }

@@ -18,6 +18,8 @@ export class MouseHoverHandler {
       let currentX = Config.ROW_HEADER_WIDTH;
       Config.HOVERED_COL=-1;
 
+      if(Config.CURRENT_INPUT!=null)return;
+
       for (let i = startCol; i < endCol; i++) {
         currentX += Config.COL_WIDTHS[i] || Config.COL_WIDTH;
         if (Math.abs(x - currentX) <= Config.CURSOR_CHANGE_THRESHOLD) {
@@ -30,6 +32,7 @@ export class MouseHoverHandler {
       canvas.style.cursor = "w-resize";
       let currentY = Config.COL_HEADER_HEIGHT;
       Config.HOVERED_ROW = -1;
+      if(Config.CURRENT_INPUT!=null)return;
       for (let i = startRow; i < endRow; i++) {
         currentY += Config.ROW_HEIGHTS[i] || Config.ROW_HEIGHT;
         if (Math.abs(currentY - y) <= Config.CURSOR_CHANGE_THRESHOLD) {

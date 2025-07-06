@@ -1,6 +1,7 @@
 import { Config } from "./Config.js";
 import { Utils } from "./Utils.js";
 import { PrefixArrayManager } from "./PrefixArrayManager.js";
+import { CellDataManager } from "./CellDataManager.js";
 
 export class Draw {
   constructor() {}
@@ -611,188 +612,6 @@ export class Draw {
     context.restore();
   }
 
-  // static drawHighlighedColumnHeader(context, startCol, endCol, scrollLeft) {
-  //   if (
-  //     Config.SELECTED_COL_HEADER === -1 ||
-  //     Config.SELECTED_COL_HEADER - 1 < startCol ||
-  //     Config.SELECTED_COL_HEADER - 1 > endCol
-  //   )
-  //     return;
-
-  //   let colWidth =
-  //     Config.COL_WIDTHS[Config.SELECTED_COL_HEADER - 1] || Config.COL_WIDTH;
-  //   console.log("selected col is " + Config.SELECTED_COL_HEADER);
-
-  //   // Recalculate adjusted X position based on current scroll
-  //   let x1Pos = Utils.getXPosition(
-  //     Config.SELECTED_COL_HEADER - 1
-  //   );
-  //   let adjustedX1 = x1Pos - scrollLeft;
-
-  //   context.fillStyle = "#187c44"; // Dark green background
-  //   context.fillRect(adjustedX1, 0, colWidth, Config.COL_HEADER_HEIGHT);
-
-  //   // Draw column label with white text
-  //   context.fillStyle = "white";
-  //   context.font = "bold 18px Arial";
-  //   context.textAlign = "center";
-  //   context.textBaseline = "middle";
-
-  //   const columnLabel = Utils.numberToColheader(Config.SELECTED_COL_HEADER - 1);
-  //   context.fillText(
-  //     columnLabel,
-  //     adjustedX1 + colWidth / 2,
-  //     Config.COL_HEADER_HEIGHT / 2 + 2
-  //   );
-
-  //   // Draw border around the header
-  //   context.strokeStyle = "#187c44";
-  //   context.lineWidth = 2;
-  //   context.strokeRect(adjustedX1, 0, colWidth, Config.COL_HEADER_HEIGHT);
-  // }
-
-  // static drawHighlighedRowHeader(context, startRow, endRow, scrollTop) {
-  //   if (
-  //     Config.SELECTED_ROW_HEADER === -1 ||
-  //     Config.SELECTED_ROW_HEADER - 1 < startRow ||
-  //     Config.SELECTED_ROW_HEADER - 1 > endRow
-  //   )
-  //     return;
-
-  //   let rowHeight =
-  //     Config.ROW_HEIGHTS[Config.SELECTED_ROW_HEADER - 1] || Config.ROW_HEIGHT;
-  //   console.log("selected row is " + Config.SELECTED_ROW_HEADER);
-
-  //   // Recalculate adjusted Y position based on current scroll
-  //   let y1Pos = Utils.getYPosition(
-  //     Config.SELECTED_ROW_HEADER - 1
-  //   );
-  //   let adjustedY1 = y1Pos - scrollTop;
-
-  //   context.fillStyle = "#187c44"; // Dark green background
-  //   context.fillRect(0, adjustedY1, Config.ROW_HEADER_WIDTH, rowHeight);
-
-  //   // Draw row label with white text - right aligned
-  //   context.fillStyle = "white";
-  //   context.font = "bold 18px Arial";
-  //   context.textAlign = "left"; // Change to left for manual positioning
-  //   context.textBaseline = "middle";
-
-  //   const rowLabel = Config.SELECTED_ROW_HEADER.toString();
-  //   const measuredWidth = context.measureText(rowLabel).width;
-  //   const paddingX = 8; // Right padding from the edge
-  //   const textX = Config.ROW_HEADER_WIDTH - measuredWidth - paddingX;
-
-  //   context.fillText(rowLabel, textX, adjustedY1 + rowHeight / 2);
-
-  //   // Draw border around the header
-  //   context.strokeStyle = "#187c44";
-  //   context.lineWidth = 2;
-  //   context.strokeRect(0, adjustedY1, Config.ROW_HEADER_WIDTH, rowHeight);
-  // }
-
-
-//   static drawHighlighedColumnHeader(context, startCol, endCol, scrollLeft) {
-//   if (Config.SELECTED_COL_HEADER === -1) return;
-
-//   // If we're in header selection mode, draw the range
-//   if (Config.IS_SELECTING_HEADER && Config.HEADER_SELECTION_TYPE === 'column') {
-//     const minCol = Math.min(Config.HEADER_SELECTION_START_COL, Config.HEADER_SELECTION_END_COL);
-//     const maxCol = Math.max(Config.HEADER_SELECTION_START_COL, Config.HEADER_SELECTION_END_COL);
-    
-//     // Draw all columns in the selection range
-//     for (let col = Math.max(minCol, startCol); col <= Math.min(maxCol, endCol); col++) {
-//       this.drawSingleColumnHeader(context, col, scrollLeft);
-//     }
-//   } else {
-//     // Draw single column selection (original behavior)
-//     const selectedCol = Config.SELECTED_COL_HEADER - 1;
-//     if (selectedCol >= startCol && selectedCol <= endCol) {
-//       this.drawSingleColumnHeader(context, selectedCol, scrollLeft);
-//     }
-//   }
-// }
-
-// static drawSingleColumnHeader(context, col, scrollLeft) {
-//   let colWidth = Config.COL_WIDTHS[col] || Config.COL_WIDTH;
-  
-//   // Recalculate adjusted X position based on current scroll
-//   let x1Pos = Utils.getXPosition(col);
-//   let adjustedX1 = x1Pos - scrollLeft;
-
-//   context.fillStyle = "#187c44"; // Dark green background
-//   context.fillRect(adjustedX1, 0, colWidth, Config.COL_HEADER_HEIGHT);
-
-//   // Draw column label with white text
-//   context.fillStyle = "white";
-//   context.font = "bold 18px Arial";
-//   context.textAlign = "center";
-//   context.textBaseline = "middle";
-
-//   const columnLabel = Utils.numberToColheader(col);
-//   context.fillText(
-//     columnLabel,
-//     adjustedX1 + colWidth / 2,
-//     Config.COL_HEADER_HEIGHT / 2 + 2
-//   );
-
-//   // Draw border around the header
-//   context.strokeStyle = "#187c44";
-//   context.lineWidth = 2;
-//   context.strokeRect(adjustedX1, 0, colWidth, Config.COL_HEADER_HEIGHT);
-// }
-
-// static drawHighlighedRowHeader(context, startRow, endRow, scrollTop) {
-//   if (Config.SELECTED_ROW_HEADER === -1) return;
-
-//   // If we're in header selection mode, draw the range
-//   if (Config.IS_SELECTING_HEADER && Config.HEADER_SELECTION_TYPE === 'row') {
-//     const minRow = Math.min(Config.HEADER_SELECTION_START_ROW, Config.HEADER_SELECTION_END_ROW);
-//     const maxRow = Math.max(Config.HEADER_SELECTION_START_ROW, Config.HEADER_SELECTION_END_ROW);
-    
-//     // Draw all rows in the selection range
-//     for (let row = Math.max(minRow, startRow); row <= Math.min(maxRow, endRow); row++) {
-//       this.drawSingleRowHeader(context, row, scrollTop);
-//     }
-//   } else {
-//     // Draw single row selection (original behavior)
-//     const selectedRow = Config.SELECTED_ROW_HEADER - 1;
-//     if (selectedRow >= startRow && selectedRow <= endRow) {
-//       this.drawSingleRowHeader(context, selectedRow, scrollTop);
-//     }
-//   }
-// }
-
-// static drawSingleRowHeader(context, row, scrollTop) {
-//   let rowHeight = Config.ROW_HEIGHTS[row] || Config.ROW_HEIGHT;
-  
-//   // Recalculate adjusted Y position based on current scroll
-//   let y1Pos = Utils.getYPosition(row);
-//   let adjustedY1 = y1Pos - scrollTop;
-
-//   context.fillStyle = "#187c44"; // Dark green background
-//   context.fillRect(0, adjustedY1, Config.ROW_HEADER_WIDTH, rowHeight);
-
-//   // Draw row label with white text - right aligned
-//   context.fillStyle = "white";
-//   context.font = "bold 18px Arial";
-//   context.textAlign = "left"; // Change to left for manual positioning
-//   context.textBaseline = "middle";
-
-//   const rowLabel = (row + 1).toString();
-//   const measuredWidth = context.measureText(rowLabel).width;
-//   const paddingX = 8; // Right padding from the edge
-//   const textX = Config.ROW_HEADER_WIDTH - measuredWidth - paddingX;
-
-//   context.fillText(rowLabel, textX, adjustedY1 + rowHeight / 2);
-
-//   // Draw border around the header
-//   context.strokeStyle = "#187c44";
-//   context.lineWidth = 2;
-//   context.strokeRect(0, adjustedY1, Config.ROW_HEADER_WIDTH, rowHeight);
-// }
-
-
 
 static drawHighlighedColumnHeader(context, startCol, endCol, scrollLeft) {
   if (Config.SELECTED_COL_HEADER === -1) return;
@@ -909,4 +728,239 @@ static drawSingleRowHeader(context, row, scrollTop) {
   context.lineWidth = 2;
   context.strokeRect(0, adjustedY1, Config.ROW_HEADER_WIDTH, rowHeight);
 }
+
+
+static updateInputPosition(canvas,scrollLeft,scrollTop) {
+  const input = document.querySelector('.cellInput');
+  if (!input || input.style.display === 'none') return;
+
+      const row = Config.SELECTED_CELL_RANGE.startRow;
+      const col = Config.SELECTED_CELL_RANGE.startCol;
+  
+  if (row === -1 || col === -1) return;
+  
+  // Get current canvas position
+  const canvasRect = canvas.getBoundingClientRect();
+  
+  // Calculate new position accounting for scroll
+  const cellX =  PrefixArrayManager.getColXPosition(col) - scrollLeft;
+  const cellY = PrefixArrayManager.getRowYPosition(row) -scrollTop+(Config.ROW_HEIGHTS[row]||Config.ROW_HEIGHT-Config.ROW_HEIGHT);
+
+
+  const cellWidth = Config.COL_WIDTHS[col]||Config.COL_WIDTH;
+  const cellHeight = Config.ROW_HEIGHT;
+
+
+  input.style.left = cellX + 'px';
+  input.style.top = cellY + 'px';
+  input.style.width = cellWidth + 'px';
+  input.style.height = cellHeight + 'px';
+
+  
+}
+
+// static updateInputPosition(canvas,scrollLeft,scrollTop) {
+//   const input = document.querySelector('.cellInput');
+//   if (!input || input.style.display === 'none') return;
+  
+//       const row = Config.SELECTED_CELL_RANGE.startRow;
+//       const col = Config.SELECTED_CELL_RANGE.startCol;
+  
+//   if (row === -1 || col === -1) return;
+  
+//   const canvasRect = canvas.getBoundingClientRect();
+  
+//   // Calculate new position accounting for scroll
+//   const cellX = canvasRect.left + PrefixArrayManager.getColXPosition(col) - scrollLeft;
+//   const cellY = canvasRect.top + PrefixArrayManager.getRowYPosition(row) - scrollTop;
+  
+//   // Check if cell is in header regions
+//   const isInRowHeader = cellX < (canvasRect.left + Config.ROW_HEADER_WIDTH);
+//   const isInColHeader = cellY < (canvasRect.top + Config.COL_HEADER_HEIGHT);
+  
+//   // Hide if in header regions, show if in main grid area
+//   if (isInRowHeader || isInColHeader) {
+//     input.style.display = 'none';
+//   } else {
+//     input.style.display = 'block';
+//     input.style.left = cellX + 'px';
+//     input.style.top = cellY + 'px';
+//   }
+// }
+
+  // static renderVisibleCells(startRow, endRow, startCol, endCol) {
+
+  //     let firstRow = startRow;
+  //     let lastRow = endRow;
+
+
+  //     while (firstRow <= lastRow) {
+  //         const firstRowData = CellDataManager.CellData.get(firstRow);
+  //         const lastRowData = CellDataManager.CellData.get(lastRow);
+
+
+
+  //         // Skip if row data is missing
+  //         if (!firstRowData || !lastRowData) {
+  //           console.log(firstRowData,lastRow)
+  //             firstRow++;
+  //             lastRow--;
+
+  //             continue;
+  //         }
+  //         console.log("came in cell func");
+  //         for (let i = startCol; i <= endCol; i++) {
+  //             const cell1 = firstRowData.get(i);
+  //             const cell2 = lastRowData.get(i);
+
+  //             const value1 = cell1?.value;
+  //             const value2 = cell2?.value;
+                        
+  //             console.log(value1,value2);
+
+  //             if (value1 !== undefined) {
+  //                 console.log(`${firstRow}-${i} : ${value1}`);
+  //             }
+  //             // Prevent duplicate logging when firstRow === lastRow
+  //             if (firstRow !== lastRow && value2 !== undefined) {
+  //                 console.log(`${lastRow}-${i} : ${value2}`);
+  //             }
+  //         }
+
+  //         firstRow++;
+  //         lastRow--;
+  //     }
+  // }
+
+// static renderCell(ctx, row, col, value, startRow, startCol, scrollLeft, scrollTop) {
+//     const x =  PrefixArrayManager.getColXPosition(col) - scrollLeft;
+//     const y = PrefixArrayManager.getRowYPosition(row) -scrollTop;
+//     const colWidth=Config.COL_WIDTHS[col]||Config.COL_WIDTH;
+//     const colHeight= Config.ROW_HEIGHTS[row]||Config.ROW_HEIGHT;
+
+//     ctx.fillStyle = '#000';
+//     ctx.textBaseline = 'middle';
+
+//     const isNumber = typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value)));
+
+//     if (isNumber) {
+//         ctx.textAlign = 'right';
+//         ctx.fillText(String(value), x +colWidth  - 5, y + colHeight-10);
+//     } else {
+//         ctx.textAlign = 'left';
+//         ctx.fillText(String(value), x + 5, y + colHeight-10); 
+//     }
+// }
+
+static renderCell(ctx, row, col, value, startRow, startCol, scrollLeft, scrollTop) {
+    const x = PrefixArrayManager.getColXPosition(col) - scrollLeft;
+    const y = PrefixArrayManager.getRowYPosition(row) - scrollTop;
+    const colWidth = Config.COL_WIDTHS[col] || Config.COL_WIDTH;
+    const colHeight = Config.ROW_HEIGHTS[row] || Config.ROW_HEIGHT;
+
+    ctx.fillStyle = '#000';
+    ctx.textBaseline = 'middle';
+
+    const strValue = String(value);
+    const isNumber = typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value)));
+
+    // Trim the text based on available width (no ellipses)
+    let visibleText = '';
+    let currentText = '';
+    for (let i = 0; i < strValue.length; i++) {
+        currentText += strValue[i];
+        const width = ctx.measureText(currentText).width;
+        if (width <= colWidth - 10) { // 10px total padding
+            visibleText = currentText;
+        } else {
+            break;
+        }
+    }
+
+    if (isNumber) {
+        ctx.textAlign = 'right';
+        ctx.fillText(visibleText, x + colWidth - 5, y + colHeight - 10); // padding right
+    } else {
+        ctx.textAlign = 'left';
+        ctx.fillText(visibleText, x + 5, y + colHeight - 10); // padding left
+    }
+}
+
+
+
+ static renderVisibleCells(startRow, endRow, startCol, endCol, ctx,scrollLeft,scrollTop){
+  // if(Config.RESIZING_COL!=-1)return;
+    let firstRow = startRow;
+    let lastRow = endRow;
+    let delay=50;
+    
+    ctx.font = `${Config.DEFAULT_FONT_SIZE}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // const step = () => {
+    //     if (firstRow > lastRow) return; // Done
+
+    //     const firstRowData = CellDataManager.CellData.get(firstRow);
+    //     const lastRowData = CellDataManager.CellData.get(lastRow);
+
+    //     for (let i = startCol; i <= endCol; i++) {
+    //         // Render firstRow
+    //         if (firstRowData && firstRowData.has(i)) {
+    //             const cell1 = firstRowData.get(i);
+    //             const value1 = cell1?.value;
+    //             if (value1 !== undefined) {
+    //                 this.renderCell(ctx, firstRow, i, value1, startRow, startCol, scrollLeft, scrollTop);
+    //             }
+    //         }
+
+    //         // Render lastRow (if different)
+    //         if (firstRow !== lastRow && lastRowData && lastRowData.has(i)) {
+    //             const cell2 = lastRowData.get(i);
+    //             const value2 = cell2?.value;
+    //             if (value2 !== undefined) {
+    //                 this.renderCell(ctx, lastRow, i, value2, startRow, startCol, scrollLeft, scrollTop);
+    //             }
+    //         }
+    //     }
+
+    //     firstRow++;
+    //     lastRow--;
+
+    //     // Delay before rendering the next pair of rows
+    //     setTimeout(step, delay);
+    // };
+
+    // step(); // Start the loop
+
+    while (firstRow <= lastRow) {
+        const firstRowData = CellDataManager.CellData.get(firstRow);
+        const lastRowData = CellDataManager.CellData.get(lastRow);
+
+        for (let i = startCol; i <= endCol; i++) {
+            // Process firstRowData
+            if (firstRowData && firstRowData.has(i)) {
+                const cell1 = firstRowData.get(i);
+                const value1 = cell1?.value;
+                if (value1 !== undefined) {
+                    this.renderCell(ctx, firstRow, i, value1, startRow, startCol,  scrollLeft, scrollTop);
+                }
+            }
+
+            // Process lastRowData, only if it's a different row
+            if (firstRow !== lastRow && lastRowData && lastRowData.has(i)) {
+                const cell2 = lastRowData.get(i);
+                const value2 = cell2?.value;
+                if (value2 !== undefined) {
+                    this.renderCell(ctx, lastRow, i, value2, startRow, startCol,  scrollLeft, scrollTop);
+                }
+            }
+        }
+
+        firstRow++;
+        lastRow--;
+    }
+}
+
+
 }

@@ -32,3 +32,20 @@
   background-color: transparent;
   cursor: cell;
 }
+
+
+
+.cellInput {
+  position: fixed;
+  z-index: 1000;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #111;
+  border-radius: 0;
+  box-sizing: border-box;
+  outline: none;
+  border: none; /* ✅ Add this */
+  box-shadow: none; /* ✅ Optional, for some browsers */
+  background: transparent; /* Optional, if you want no background */
+  display: none;
+}

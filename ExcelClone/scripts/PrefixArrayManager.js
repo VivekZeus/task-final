@@ -40,13 +40,12 @@ export class PrefixArrayManager {
   }
 
   static getColXPosition(columnIndex) {
-    // this.createColPrefixArray(columnIndex);
-    return this.colPrefixArray[columnIndex]; // change here when map integrated
+
+    return this.colPrefixArray[columnIndex];
   }
 
   static getRowYPosition(rowIndex) {
-    // this.createColPrefixArray(rowIndex);
-    return this.rowPrefixArray[rowIndex]; // change here when map integrated
+    return this.rowPrefixArray[rowIndex];
   }
 
   static updateColumnWidth(colIndex) {

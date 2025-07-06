@@ -6,9 +6,11 @@ import { PrefixArrayManager } from "./PrefixArrayManager.js";
 import { Draw } from "./Draw.js";
 import { ColumnResizingManager } from "./ColumnResizingManager.js";
 import { RowResizingManager } from "./RowResizingManager.js";
-import { Utils } from "./Utils.js";
 import { CellSelectionManager } from "./CellSelectionManager.js";
 import { HeaderSelectionManager } from "./HeaderSelectionManager.js";
+import { ColHeaderSelector } from "./ColHeaderSelector.js";
+import { RowHeaderSelector } from "./RowHeaderSelector.js";
+import { CellDataManager } from "./CellDataManager.js";
 
 const canvasContainer = document.getElementById("canvasContainer");
 const canvas = document.getElementById("excelCanvas");
@@ -39,6 +41,43 @@ const grid = new Grid(
 
 grid.render();
 
+function loadJSONData(jsonArray) {
+    const cellData = new Map();
+
+    if (!Array.isArray(jsonArray) || jsonArray.length === 0) {
+        console.warn("Empty or invalid JSON");
+        return;
+    }
+
+    // Get column headers from first row keys
+    const headers = Object.keys(jsonArray[0]);
+    const headerRow = new Map();
+    headers.forEach((key, colIdx) => {
+        headerRow.set(colIdx, { value: key });
+    });
+    cellData.set(0, headerRow); // header row at row 0
+
+    // Fill data rows
+    jsonArray.forEach((rowObj, rowIndex) => {
+        const rowMap = new Map();
+        headers.forEach((key, colIdx) => {
+            rowMap.set(colIdx, { value: rowObj[key] ?? "" });
+        });
+        cellData.set(rowIndex + 1, rowMap);
+    });
+
+    // Assign to your manager
+    CellDataManager.CellData = cellData;
+}
+
+fetch("scripts/data.json")
+  .then(res => res.json())
+  .then(data => {
+  loadJSONData(data);
+  grid.render();
+  });
+
+
 canvasContainer.addEventListener("scroll", (e) => {
   grid.render();
 });
@@ -49,48 +88,54 @@ window.addEventListener("resize", () => {
 
 window.addEventListener("keydown", (event) => {
   let key = event.key;
+
+ const input = document.querySelector('.cellInput');
+  if (input && window.getComputedStyle(input).display !== 'none') {
+    return;
+  }
   event.preventDefault();
-  if (event.shiftKey && otherKeySet.has(key)) {
-    console.log(("came here"));
-    
-    if (key == "Tab" && ArrowKeyHandler.ifCellCanShift("ArrowLeft")) {
-      ArrowKeyHandler.shiftSelectedCell("ArrowLeft");
-      grid.render();
-    }
-    if (key == "Enter" && ArrowKeyHandler.ifCellCanShift("ArrowUp")) {
-      ArrowKeyHandler.shiftSelectedCell("ArrowUp");
-      grid.render();
-    }
+
+  if(otherKeySet.has(key)){
+    if(ArrowKeyHandler.handleTabEnterKeyOperations(key,event.shiftKey)) grid.render();
+  }
+  else if (ColHeaderSelector.handleKeyboardSelection(event)) {
+    grid.render();
   }
 
-  if (otherKeySet.has(key)) {
-    if (key == "Tab" && ArrowKeyHandler.ifCellCanShift(key)) {
-      ArrowKeyHandler.shiftSelectedCell(key);
-      grid.render();
-    }
-    if (key == "Enter" && ArrowKeyHandler.ifCellCanShift(key)) {
-      ArrowKeyHandler.shiftSelectedCell(key);
-      grid.render();
-    }
+  else if (RowHeaderSelector.handleKeyboardSelection(event)) {
+    grid.render();
   }
 
-  if (keySet.has(key)) {
-    // event.preventDefault();
+  else if(event.shiftKey && keySet.has(key) && ArrowKeyHandler.ifCellRangeCanShift(key)){
+    ArrowKeyHandler.handleShiftAndArrowKeyOperations(key);
+    grid.render()
+  }
+
+  else if (keySet.has(key)) {
     if (ArrowKeyHandler.handleArrowKeyOperations(key)) grid.render();
+  }
+
+  else if (
+    (/^[a-zA-Z0-9]$/.test(key) ||                
+    /^[~`!@#$%^&*()_\-+={}[\]|\\:;"'<>,.?/]$/.test(key)) && 
+    Config.SELECTED_CELL_RANGE != null
+  ) {
+    CellDataManager.showCellInputAtPosition(key,input,canvasContainer);
+    grid.render();
   }
 });
 
 canvas.addEventListener("mousedown", (e) => {
-  // Handle column resizing - this should have highest priority
+ 
   if (Config.HOVERED_COL !== -1) {
     ColumnResizingManager.handleOnMouseDown(e);
-    return; // Important: Return early to prevent column selection
+    return; 
   }
 
-  // Handle row resizing
+ 
   if (Config.HOVERED_ROW !== -1) {
     RowResizingManager.handleOnMouseDown(e);
-    return; // Important: Return early to prevent row selection
+    return; 
   }
 
   const { x, y } = getXY(e);
@@ -112,6 +157,7 @@ canvas.addEventListener("mousedown", (e) => {
       x,
       y
     );
+
     grid.render(); // Render after selection
     return;
   }
@@ -137,7 +183,6 @@ canvas.addEventListener("mousedown", (e) => {
 
 window.addEventListener("mousemove", (event) => {
   if (Config.RESIZING_COL !== -1) {
-    console.log("resizing col", Config.RESIZING_COL);
     ColumnResizingManager.handleOnMouseMouse(event, grid);
     return; // Return early to prevent other mouse move handling
   }
@@ -214,6 +259,7 @@ window.addEventListener("mousemove", (event) => {
     );
     grid.render();
   }
+  
 });
 
 window.addEventListener("mouseup", (e) => {
@@ -230,9 +276,48 @@ window.addEventListener("mouseup", (e) => {
   if (Config.IS_SELECTING == true) Config.IS_SELECTING = false;
 
   if (Config.IS_SELECTING_HEADER == true) {
+    
     HeaderSelectionManager.handleOnMouseUp();
     Config.IS_SELECTING_HEADER = false;
   }
 
   grid.render();
 });
+
+canvas.addEventListener("dblclick",()=>{
+
+  CellDataManager.showCellInputAtPosition("",document.querySelector('.cellInput'),canvasContainer);
+});
+
+document.querySelector('.cellInput').addEventListener('input', function(event) {
+  Config.CURRENT_INPUT = event.target.value;
+});
+
+document.querySelector('.cellInput').addEventListener('keydown', function(event) {
+  if (event.key === 'Enter' || event.key === 'Tab') {
+    Config.INPUT_FINALIZED = true; 
+    CellDataManager.saveInputToCell(context);
+    this.style.display = 'none';
+    event.preventDefault();
+    grid.render();
+  }
+
+  if (event.key === 'Escape') {
+    Config.CURRENT_INPUT = null;
+    this.style.display = 'none';
+    Config.INPUT_FINALIZED = true;
+    event.preventDefault();
+    // grid.render();
+  }
+});
+
+document.querySelector('.cellInput').addEventListener('blur', function() {
+  if (!Config.INPUT_FINALIZED) {
+    CellDataManager.saveInputToCell(context);
+  }
+  this.style.display = 'none';
+  Config.INPUT_FINALIZED = false; 
+  Config.CURRENT_INPUT=null;
+  grid.render();
+});
+
