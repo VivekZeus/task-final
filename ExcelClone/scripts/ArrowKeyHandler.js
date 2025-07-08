@@ -5,7 +5,6 @@ export class ArrowKeyHandler {
   static scrollIntoViewIfNeeded() {
      const { startRow, endRow, startCol, endCol } = Config.SELECTED_CELL_RANGE;
 
-  // Scroll to the farthest selected cell (bottom-right of the range)
   const selRow = Math.max(startRow, endRow);
   const selCol = Math.max(startCol, endCol);
 

@@ -3,6 +3,7 @@ import { Config } from "./Config.js";
 import { Utils } from "./Utils.js";
 
 export class CellSelectionManager {
+  
   static handleMouseDown(startCol, endCol, startRow, endRow, x, y) {
     let selCol = Utils.getSelectedCol(startCol, endCol, x);
     let selRow = Utils.getSelectedRow(startRow, endRow, y);

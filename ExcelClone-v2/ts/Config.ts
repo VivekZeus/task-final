@@ -2,8 +2,8 @@ export class Config {
   static TOTAL_ROWS = 1000;
   static TOTAL_COLUMNS = 1000;
 
-  static COL_WIDTH = 100;
-  static ROW_HEIGHT = 30;
+  static DEFAULT_COL_WIDTH = 100;
+  static DEFAULT_ROW_HEIGHT = 30;
 
   static COL_HEADER_HEIGHT = 40;
   static ROW_HEADER_WIDTH = 70;
@@ -74,7 +74,5 @@ export class Config {
   static INPUT_FINALIZED=false;
 
   static DEFAULT_FONT_SIZE=14;
-
-  
 
 }

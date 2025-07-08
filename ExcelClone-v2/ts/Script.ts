@@ -1,47 +1,44 @@
+// import { Grid } from "./Grid.js";
+// import { Config } from "./Config.js";
+// import { MouseHoverHandler } from "./MouseHoverHandler.js";
+// import { ArrowKeyHandler } from "./ArrowKeyHandler.js";
+// import { PrefixArrayManager } from "./PrefixArrayManager.js";
+// import { Draw } from "./Draw.js";
+// import { ColumnResizingManager } from "./ColumnResizingManager.js";
+// import { RowResizingManager } from "./RowResizingManager.js";
+// import { CellSelectionManager } from "./CellSelectionManager.js";
+// import { HeaderSelectionManager } from "./HeaderSelectionManager.js";
+// import { ColHeaderSelector } from "./ColHeaderSelector.js";
+// import { RowHeaderSelector } from "./RowHeaderSelector.js";
+// import { CellDataManager } from "./CellDataManager.js";
+
+// import { Config } from "./Config.js";
 import { Grid } from "./Grid.js";
-import { Config } from "./Config.js";
-import { MouseHoverHandler } from "./MouseHoverHandler.js";
-import { ArrowKeyHandler } from "./ArrowKeyHandler.js";
-import { PrefixArrayManager } from "./PrefixArrayManager.js";
-import { Draw } from "./Draw.js";
-import { ColumnResizingManager } from "./ColumnResizingManager.js";
-import { RowResizingManager } from "./RowResizingManager.js";
-import { CellSelectionManager } from "./CellSelectionManager.js";
-import { HeaderSelectionManager } from "./HeaderSelectionManager.js";
-import { ColHeaderSelector } from "./ColHeaderSelector.js";
-import { RowHeaderSelector } from "./RowHeaderSelector.js";
-import { CellDataManager } from "./CellDataManager.js";
 
-const canvasContainer = document.getElementById("canvasContainer");
-const canvas = document.getElementById("excelCanvas");
-const context = canvas.getContext("2d");
+const canvasContainer = document.getElementById("canvasContainer") as HTMLDivElement;
+const canvas = document.getElementById("excelCanvas") as HTMLCanvasElement;
+const context = canvas.getContext("2d")as CanvasRenderingContext2D;
 
-const keySet = new Set(["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"]);
-const otherKeySet = new Set(["Enter", "Tab"]);
+const keySet:Set<string> = new Set(["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"]);
+const otherKeySet:Set<string> = new Set(["Enter", "Tab"]);
 
-function getXY(event) {
+function getXY(event:MouseEvent) {
   const rect = canvas.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
   return { x, y };
 }
 
-PrefixArrayManager.createColPrefixArray(Config.TOTAL_COLUMNS);
-PrefixArrayManager.createRowPrefixArray(Config.TOTAL_ROWS);
 
 const grid = new Grid(
   canvasContainer,
   canvas,
   context,
-  Config.TOTAL_ROWS,
-  Config.TOTAL_COLUMNS,
-  Config.COL_WIDTH,
-  Config.ROW_HEIGHT
 );
 
 grid.render();
 
-function loadJSONData(jsonArray) {
+function loadJSONData(jsonArray:any) {
   const cellData = new Map();
 
   if (!Array.isArray(jsonArray) || jsonArray.length === 0) {
@@ -66,8 +63,7 @@ function loadJSONData(jsonArray) {
     cellData.set(rowIndex + 1, rowMap);
   });
 
-  // Assign to your manager
-  CellDataManager.CellData = cellData;
+  grid.cellDataManager.cellData = cellData;
 }
 
 fetch("scripts/data.json")
@@ -88,58 +84,58 @@ window.addEventListener("resize", () => {
 window.addEventListener("keydown", (event) => {
   let key = event.key;
 
-  const input = document.querySelector(".cellInput");
+  const input = document.querySelector(".cellInput") as HTMLInputElement;
   if (input && window.getComputedStyle(input).display !== "none") {
     return;
   }
   event.preventDefault();
 
   if (otherKeySet.has(key)) {
-    if (ArrowKeyHandler.handleTabEnterKeyOperations(key, event.shiftKey))
+    if (grid.arrowKeyHandler.handleTabEnterKeyOperations(key, event.shiftKey))
       grid.render();
-  } else if (ColHeaderSelector.handleKeyboardSelection(event)) {
+  } else if (grid.colHeaderSelector.handleKeyboardSelection(event)) {
     grid.render();
-  } else if (RowHeaderSelector.handleKeyboardSelection(event)) {
+  } else if (grid.rowHeaderSelector.handleKeyboardSelection(event)) {
     grid.render();
   } else if (
     event.shiftKey &&
     keySet.has(key) &&
-    ArrowKeyHandler.ifCellRangeCanShift(key)
+    grid.arrowKeyHandler.ifCellRangeCanShift(key)
   ) {
-    ArrowKeyHandler.handleShiftAndArrowKeyOperations(key);
+    grid.arrowKeyHandler.handleShiftAndArrowKeyOperations(key);
     grid.render();
   } else if (keySet.has(key)) {
-    if (ArrowKeyHandler.handleArrowKeyOperations(key)) grid.render();
+    if (grid.arrowKeyHandler.handleArrowKeyOperations(key)) grid.render();
   } else if (
     (/^[a-zA-Z0-9]$/.test(key) ||
       /^[~`!@#$%^&*()_\-+={}[\]|\\:;"'<>,.?/]$/.test(key)) &&
-    Config.SELECTED_CELL_RANGE != null
+    grid.SELECTED_CELL_RANGE != null
   ) {
-    if (!input || !Config.SELECTED_CELL_RANGE) return;
+    if (!input || !grid.SELECTED_CELL_RANGE) return;
 
-    const row = Config.SELECTED_CELL_RANGE.startRow;
-    const col = Config.SELECTED_CELL_RANGE.startCol;
-    if (CellDataManager.CellData.has(row)) {
-      const rowData = CellDataManager.CellData.get(row);
-      if (rowData!=null && rowData.has(col)) {
+    const row = grid.SELECTED_CELL_RANGE.startRow;
+    const col = grid.SELECTED_CELL_RANGE.startCol;
+    if (grid.cellDataManager.cellData.has(row)) {
+      const rowData = grid.cellDataManager.cellData.get(row);
+      if (rowData != null && rowData.has(col)) {
         const cell = rowData.get(col);
         if (cell.value !== "") {
           rowData.delete(col); // remove the cell
           if (rowData.size === 0) {
-            CellDataManager.CellData.delete(row);
+            grid.cellDataManager.cellData.delete(row);
           }
           grid.render();
         }
       }
     }
 
-    CellDataManager.showCellInputAtPosition(key, input, canvasContainer);
+    grid.cellDataManager.showCellInputAtPosition(key, input);
     grid.render();
   }
 });
 
 canvas.addEventListener("mousedown", (e) => {
-  if (Config.HOVERED_COL !== -1) {
+  if (grid.HOVERED_COL !== -1) {
     ColumnResizingManager.handleOnMouseDown(e);
     return;
   }
@@ -181,7 +177,7 @@ canvas.addEventListener("mousedown", (e) => {
     Config.SELECTED_COL_RANGE = null;
     Config.SELECTED_ROW_RANGE = null;
 
-    if (!Config.INPUT_FINALIZED && Config.CURRENT_INPUT!=null ){
+    if (!Config.INPUT_FINALIZED && Config.CURRENT_INPUT != null) {
       CellDataManager.saveInputToCell(context);
     }
     CellSelectionManager.handleMouseDown(
@@ -297,31 +293,7 @@ window.addEventListener("mouseup", (e) => {
   grid.render();
 });
 
-// canvas.addEventListener("dblclick", () => {
-//   const input = document.querySelector(".cellInput");
-//   if (!input || !Config.SELECTED_CELL_RANGE) return;
 
-//     const row = Config.SELECTED_CELL_RANGE.startRow;
-//     const col = Config.SELECTED_CELL_RANGE.startCol;
-//     if (CellDataManager.CellData.has(row)) {
-//       const rowData = CellDataManager.CellData.get(row);
-//       if (rowData!=null && rowData.has(col)) {
-//         const cell = rowData.get(col);
-//         if (cell.value !== "") {
-//           rowData.delete(col); // remove the cell
-//           if (rowData.size === 0) {
-//             CellDataManager.CellData.delete(row);
-//           }
-//           grid.render();
-//         }
-//       }
-//     }
-//   CellDataManager.showCellInputAtPosition(
-//     "",
-//     document.querySelector(".cellInput"),
-//     canvasContainer
-//   );
-// });
 canvas.addEventListener("dblclick", () => {
   const input = document.querySelector(".cellInput");
   if (!input || !Config.SELECTED_CELL_RANGE) return;
@@ -336,8 +308,8 @@ canvas.addEventListener("dblclick", () => {
     if (rowData && rowData.has(col)) {
       const cell = rowData.get(col);
       if (cell.value !== "") {
-        cellValue = cell.value;          // 1. get the value
-        rowData.delete(col);             // 2. clear the cell
+        cellValue = cell.value; // 1. get the value
+        rowData.delete(col); // 2. clear the cell
         if (rowData.size === 0) {
           CellDataManager.CellData.delete(row);
         }
@@ -346,16 +318,11 @@ canvas.addEventListener("dblclick", () => {
   }
 
   // 3. Show the input with old value
-  CellDataManager.showCellInputAtPosition(
-    cellValue,
-    input,
-    canvasContainer
-  );
+  CellDataManager.showCellInputAtPosition(cellValue, input, canvasContainer);
 
   // 4. Re-render the grid
   grid.render();
 });
-
 
 document
   .querySelector(".cellInput")

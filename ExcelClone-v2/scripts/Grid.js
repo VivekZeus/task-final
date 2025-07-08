@@ -1,26 +1,78 @@
 import { Config } from "./Config.js";
-import { Draw } from "./Draw.js";
+// import { Draw } from "./Draw.js";
 import { PrefixArrayManager } from "./PrefixArrayManager.js";
 
 export class Grid {
-  constructor(
-    canvasContainer,
-    canvas,
-    context,
-    totalRows,
-    totalColumns,
-    cellWidth,
-    cellHeight
-  ) {
+  constructor(canvasContainer, canvas, context) {
     this.canvasContainer = canvasContainer;
     this.canvas = canvas;
     this.context = context;
-    this.totalRows = totalRows;
-    this.totalColumns = totalColumns;
-    this.cellWidth = cellWidth;
-    this.cellHeight = cellHeight;
-    this.rows = [];
-    this.cols = [];
+
+    this.TOTAL_ROWS = Config.TOTAL_ROWS;
+    this.TOTAL_COLUMNS = Config.TOTAL_COLUMNS;
+
+    this.COL_HEADER_HEIGHT = Config.COL_HEADER_HEIGHT;
+    this.ROW_HEADER_WIDTH = Config.ROW_HEADER_WIDTH;
+
+    this.DEFAULT_COL_WIDTH = Config.DEFAULT_COL_WIDTH;
+    this.DEFAULT_ROW_HEIGHT = Config.DEFAULT_ROW_HEIGHT;
+    this.DEFAULT_FONT_SIZE = Config.DEFAULT_FONT_SIZE;
+    this.CURRENT_INPUT = null;
+    this.INPUT_FINALIZED = false;
+
+    this.ROW_HEIGHTS = new Map();
+    this.COL_WIDTHS = new Map();
+
+    this.TEXT_PADDING_X = 5;
+    this.TEXT_PADDING_Y = 5;
+
+    this.CURSOR_CHANGE_THRESHOLD = 3;
+    this.MODE = "normal";
+    this.CURSOR_IS_SET = false;
+
+    this.SELECTED_COL_HEADER = -1;
+    this.ADJUSTED_x1 = -1;
+    this.IS_COL_HEADER_SELECTED = false;
+
+    this.SELECTED_ROW_HEADER = -1;
+    this.ADJUSTED_y1 = -1;
+
+    this.SELECTED_CELL_RANGE = {
+      startRow: 0,
+      endRow: 0,
+      startCol: 0,
+      endCol: -0,
+    };
+
+    // selecting the range or not while moveing mouse from down to up
+    this.IS_SELECTING = false;
+
+    // col resiing part
+
+    this.HOVERED_COL = -1;
+    this.RESIZING_COL = -1;
+    this.INITIAL_X = 0;
+    this.RESIZING_COL_OLD_WIDTH = -1;
+
+    // row resizing part
+    this.INITIAL_Y = 0;
+    this.HOVERED_ROW = -1;
+    this.RESIZING_ROW = -1;
+    this.RESIZING_ROW_OLD_HEIGHT = -1;
+
+    // header selection part and col range part
+
+    this.IS_SELECTING_HEADER = false;
+    this.HEADER_SELECTION_TYPE = null;
+    this.HEADER_SELECTION_START_ROW = -1;
+    this.HEADER_SELECTION_END_ROW = -1;
+    this.HEADER_SELECTION_START_COL = -1;
+    this.HEADER_SELECTION_END_COL = -1;
+    this.SELECTED_COL_RANGE = null;
+    this.SELECTED_ROW_RANGE = null;
+
+    this.prefixArrayManager = new PrefixArrayManager(this);
+
     this._init();
   }
 
@@ -44,8 +96,10 @@ export class Grid {
 
     // Set Grid Size on Wrapper Div
     const wrapper = document.getElementById("canvasWrapper");
-    wrapper.style.width = `${this.totalColumns * this.cellWidth}px`;
-    wrapper.style.height = `${this.totalRows * this.cellHeight}px`;
+    wrapper.style.width = `${this.TOTAL_COLUMNS * this.DEFAULT_COL_WIDTH}px`;
+    wrapper.style.height = `${
+      this.DEFAULT_ROW_HEIGHT * this.DEFAULT_ROW_HEIGHT
+    }px`;
   }
 
   resizeCanvas() {
@@ -78,7 +132,7 @@ export class Grid {
     // Find startCol using binary search
     let startCol = 0;
     let left = 0,
-      right = this.totalColumns - 1;
+      right = this.TOTAL_COLUMNS - 1;
     const targetX = scrollLeft + Config.ROW_HEADER_WIDTH;
 
     while (left <= right) {
@@ -96,19 +150,19 @@ export class Grid {
 
     // Find endCol
     let endCol = startCol;
-    for (let i = startCol; i < this.totalColumns; i++) {
+    for (let i = startCol; i < this.TOTAL_COLUMNS; i++) {
       const colX = PrefixArrayManager.getColXPosition(i);
       if (colX - scrollLeft > viewportWidth) {
         break;
       }
       endCol = i;
     }
-    endCol = Math.min(this.totalColumns - 1, endCol + 1);
+    endCol = Math.min(this.TOTAL_COLUMNS - 1, endCol + 1);
 
     // Find startRow using binary search (similar to columns)
     let startRow = 0;
     let rowLeft = 0,
-      rowRight = this.totalRows - 1;
+      rowRight = this.DEFAULT_ROW_HEIGHT - 1;
     const targetY = scrollTop + Config.COL_HEADER_HEIGHT;
 
     while (rowLeft <= rowRight) {
@@ -126,14 +180,14 @@ export class Grid {
 
     // Find endRow
     let endRow = startRow;
-    for (let i = startRow; i < this.totalRows; i++) {
+    for (let i = startRow; i < this.DEFAULT_ROW_HEIGHT; i++) {
       const rowY = PrefixArrayManager.getRowYPosition(i);
       if (rowY - scrollTop > viewportHeight) {
         break;
       }
       endRow = i;
     }
-    endRow = Math.min(this.totalRows - 1, endRow + 1);
+    endRow = Math.min(this.DEFAULT_ROW_HEIGHT - 1, endRow + 1);
 
     return { startRow, endRow, startCol, endCol, scrollLeft, scrollTop };
   }
@@ -182,17 +236,15 @@ export class Grid {
       scrollTop
     );
 
-
-      Draw.drawVisibleText(
-        startRow,
-        endRow,
-        startCol,
-        endCol,
-        this.context,
-        scrollLeft,
-        scrollTop
-      );
-
+    Draw.drawVisibleText(
+      startRow,
+      endRow,
+      startCol,
+      endCol,
+      this.context,
+      scrollLeft,
+      scrollTop
+    );
 
     Draw.drawColumnHeader(
       startRow,

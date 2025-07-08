@@ -180,7 +180,8 @@ export class Draw {
       selStartRow !== -1 &&
       selStartCol !== -1
     ) {
-      const pos = PrefixArrayManager.getCellPosition(selStartRow, selStartCol);
+      const pos = Utils.getPosition(selStartRow, selStartCol); 
+      // const pos = PrefixArrayManager.getCellPosition(selStartRow, selStartCol); 
       const x = pos.x - scrollLeft;
       const y = pos.y - scrollTop;
       const width = Config.COL_WIDTHS[selStartCol] || Config.COL_WIDTH;
@@ -674,17 +675,17 @@ static drawSingleColumnHeader(context, col, scrollLeft) {
 static drawHighlighedRowHeader(context, startRow, endRow, scrollTop) {
   if (Config.SELECTED_ROW_HEADER === -1) return;
 
-  // If we're in header selection mode, draw the range
+
   if (Config.IS_SELECTING_HEADER && Config.HEADER_SELECTION_TYPE === 'row') {
     const minRow = Math.min(Config.HEADER_SELECTION_START_ROW, Config.HEADER_SELECTION_END_ROW);
     const maxRow = Math.max(Config.HEADER_SELECTION_START_ROW, Config.HEADER_SELECTION_END_ROW);
     
-    // Draw all rows in the selection range
+
     for (let row = Math.max(minRow, startRow); row <= Math.min(maxRow, endRow); row++) {
       this.drawSingleRowHeader(context, row, scrollTop);
     }
   } else if (Config.SELECTED_ROW_RANGE) {
-    // Draw persistent selection range after mouse up
+
     const minRow = Config.SELECTED_ROW_RANGE.startRow;
     const maxRow = Config.SELECTED_ROW_RANGE.endRow;
     
@@ -692,7 +693,7 @@ static drawHighlighedRowHeader(context, startRow, endRow, scrollTop) {
       this.drawSingleRowHeader(context, row, scrollTop);
     }
   } else {
-    // Draw single row selection (original behavior)
+
     const selectedRow = Config.SELECTED_ROW_HEADER - 1;
     if (selectedRow >= startRow && selectedRow <= endRow) {
       this.drawSingleRowHeader(context, selectedRow, scrollTop);
@@ -703,27 +704,27 @@ static drawHighlighedRowHeader(context, startRow, endRow, scrollTop) {
 static drawSingleRowHeader(context, row, scrollTop) {
   let rowHeight = Config.ROW_HEIGHTS[row] || Config.ROW_HEIGHT;
   
-  // Recalculate adjusted Y position based on current scroll
+
   let y1Pos = Utils.getYPosition(row);
   let adjustedY1 = y1Pos - scrollTop;
 
-  context.fillStyle = "#187c44"; // Dark green background
+  context.fillStyle = "#187c44"; 
   context.fillRect(0, adjustedY1, Config.ROW_HEADER_WIDTH, rowHeight);
 
-  // Draw row label with white text - right aligned
+
   context.fillStyle = "white";
   context.font = "bold 18px Arial";
-  context.textAlign = "left"; // Change to left for manual positioning
+  context.textAlign = "left";
   context.textBaseline = "middle";
 
   const rowLabel = (row + 1).toString();
   const measuredWidth = context.measureText(rowLabel).width;
-  const paddingX = 8; // Right padding from the edge
+  const paddingX = 8; 
   const textX = Config.ROW_HEADER_WIDTH - measuredWidth - paddingX;
 
   context.fillText(rowLabel, textX, adjustedY1 + rowHeight / 2);
 
-  // Draw border around the header
+
   context.strokeStyle = "#187c44";
   context.lineWidth = 2;
   context.strokeRect(0, adjustedY1, Config.ROW_HEADER_WIDTH, rowHeight);
@@ -739,10 +740,10 @@ static updateInputPosition(canvas,scrollLeft,scrollTop) {
   
   if (row === -1 || col === -1) return;
   
-  // Get current canvas position
+
   const canvasRect = canvas.getBoundingClientRect();
   
-  // Calculate new position accounting for scroll
+
   const cellX =  PrefixArrayManager.getColXPosition(col) - scrollLeft;
   const cellY = PrefixArrayManager.getRowYPosition(row) -scrollTop+(Config.ROW_HEIGHTS[row]||Config.ROW_HEIGHT-Config.ROW_HEIGHT);
 
@@ -759,104 +760,15 @@ static updateInputPosition(canvas,scrollLeft,scrollTop) {
   
 }
 
-// static updateInputPosition(canvas,scrollLeft,scrollTop) {
-//   const input = document.querySelector('.cellInput');
-//   if (!input || input.style.display === 'none') return;
-  
-//       const row = Config.SELECTED_CELL_RANGE.startRow;
-//       const col = Config.SELECTED_CELL_RANGE.startCol;
-  
-//   if (row === -1 || col === -1) return;
-  
-//   const canvasRect = canvas.getBoundingClientRect();
-  
-//   // Calculate new position accounting for scroll
-//   const cellX = canvasRect.left + PrefixArrayManager.getColXPosition(col) - scrollLeft;
-//   const cellY = canvasRect.top + PrefixArrayManager.getRowYPosition(row) - scrollTop;
-  
-//   // Check if cell is in header regions
-//   const isInRowHeader = cellX < (canvasRect.left + Config.ROW_HEADER_WIDTH);
-//   const isInColHeader = cellY < (canvasRect.top + Config.COL_HEADER_HEIGHT);
-  
-//   // Hide if in header regions, show if in main grid area
-//   if (isInRowHeader || isInColHeader) {
-//     input.style.display = 'none';
-//   } else {
-//     input.style.display = 'block';
-//     input.style.left = cellX + 'px';
-//     input.style.top = cellY + 'px';
-//   }
-// }
 
-  // static renderVisibleCells(startRow, endRow, startCol, endCol) {
-
-  //     let firstRow = startRow;
-  //     let lastRow = endRow;
-
-
-  //     while (firstRow <= lastRow) {
-  //         const firstRowData = CellDataManager.CellData.get(firstRow);
-  //         const lastRowData = CellDataManager.CellData.get(lastRow);
-
-
-
-  //         // Skip if row data is missing
-  //         if (!firstRowData || !lastRowData) {
-  //           console.log(firstRowData,lastRow)
-  //             firstRow++;
-  //             lastRow--;
-
-  //             continue;
-  //         }
-  //         console.log("came in cell func");
-  //         for (let i = startCol; i <= endCol; i++) {
-  //             const cell1 = firstRowData.get(i);
-  //             const cell2 = lastRowData.get(i);
-
-  //             const value1 = cell1?.value;
-  //             const value2 = cell2?.value;
-                        
-  //             console.log(value1,value2);
-
-  //             if (value1 !== undefined) {
-  //                 console.log(`${firstRow}-${i} : ${value1}`);
-  //             }
-  //             // Prevent duplicate logging when firstRow === lastRow
-  //             if (firstRow !== lastRow && value2 !== undefined) {
-  //                 console.log(`${lastRow}-${i} : ${value2}`);
-  //             }
-  //         }
-
-  //         firstRow++;
-  //         lastRow--;
-  //     }
-  // }
-
-// static renderCell(ctx, row, col, value, startRow, startCol, scrollLeft, scrollTop) {
-//     const x =  PrefixArrayManager.getColXPosition(col) - scrollLeft;
-//     const y = PrefixArrayManager.getRowYPosition(row) -scrollTop;
-//     const colWidth=Config.COL_WIDTHS[col]||Config.COL_WIDTH;
-//     const colHeight= Config.ROW_HEIGHTS[row]||Config.ROW_HEIGHT;
-
-//     ctx.fillStyle = '#000';
-//     ctx.textBaseline = 'middle';
-
-//     const isNumber = typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value)));
-
-//     if (isNumber) {
-//         ctx.textAlign = 'right';
-//         ctx.fillText(String(value), x +colWidth  - 5, y + colHeight-10);
-//     } else {
-//         ctx.textAlign = 'left';
-//         ctx.fillText(String(value), x + 5, y + colHeight-10); 
-//     }
-// }
 
 static renderCell(ctx, row, col, value, startRow, startCol, scrollLeft, scrollTop) {
     const x = PrefixArrayManager.getColXPosition(col) - scrollLeft;
     const y = PrefixArrayManager.getRowYPosition(row) - scrollTop;
-    const colWidth = Config.COL_WIDTHS[col] || Config.COL_WIDTH;
-    const colHeight = Config.ROW_HEIGHTS[row] || Config.ROW_HEIGHT;
+
+    const colWidth = Config.RESIZING_COL==col?Config.RESIZING_COL_OLD_WIDTH :(Config.COL_WIDTHS[col] || Config.COL_WIDTH);
+    const colHeight = Config.RESIZING_ROW==row?Config.RESIZING_ROW_OLD_HEIGHT :(Config.ROW_HEIGHTS[row] || Config.ROW_HEIGHT);
+
 
     ctx.fillStyle = '#000';
     ctx.textBaseline = 'middle';
@@ -864,13 +776,13 @@ static renderCell(ctx, row, col, value, startRow, startCol, scrollLeft, scrollTo
     const strValue = String(value);
     const isNumber = typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value)));
 
-    // Trim the text based on available width (no ellipses)
+
     let visibleText = '';
     let currentText = '';
     for (let i = 0; i < strValue.length; i++) {
         currentText += strValue[i];
         const width = ctx.measureText(currentText).width;
-        if (width <= colWidth - 10) { // 10px total padding
+        if (width <= colWidth - 10) { 
             visibleText = currentText;
         } else {
             break;
@@ -879,17 +791,17 @@ static renderCell(ctx, row, col, value, startRow, startCol, scrollLeft, scrollTo
 
     if (isNumber) {
         ctx.textAlign = 'right';
-        ctx.fillText(visibleText, x + colWidth - 5, y + colHeight - 10); // padding right
+        ctx.fillText(visibleText, x + colWidth - 5, y + colHeight - 10);
     } else {
         ctx.textAlign = 'left';
-        ctx.fillText(visibleText, x + 5, y + colHeight - 10); // padding left
+        ctx.fillText(visibleText, x + 5, y + colHeight - 10);
     }
 }
 
 
 
- static renderVisibleCells(startRow, endRow, startCol, endCol, ctx,scrollLeft,scrollTop){
-  // if(Config.RESIZING_COL!=-1)return;
+ static drawVisibleText(startRow, endRow, startCol, endCol, ctx,scrollLeft,scrollTop){
+
     let firstRow = startRow;
     let lastRow = endRow;
     let delay=50;
@@ -897,7 +809,6 @@ static renderCell(ctx, row, col, value, startRow, startCol, scrollLeft, scrollTo
     ctx.font = `${Config.DEFAULT_FONT_SIZE}px Arial`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-
     // const step = () => {
     //     if (firstRow > lastRow) return; // Done
 
@@ -933,6 +844,7 @@ static renderCell(ctx, row, col, value, startRow, startCol, scrollLeft, scrollTo
 
     // step(); // Start the loop
 
+
     while (firstRow <= lastRow) {
         const firstRowData = CellDataManager.CellData.get(firstRow);
         const lastRowData = CellDataManager.CellData.get(lastRow);
@@ -964,3 +876,39 @@ static renderCell(ctx, row, col, value, startRow, startCol, scrollLeft, scrollTo
 
 
 }
+
+
+    // const step = () => {
+    //     if (firstRow > lastRow) return; // Done
+
+    //     const firstRowData = CellDataManager.CellData.get(firstRow);
+    //     const lastRowData = CellDataManager.CellData.get(lastRow);
+
+    //     for (let i = startCol; i <= endCol; i++) {
+    //         // Render firstRow
+    //         if (firstRowData && firstRowData.has(i)) {
+    //             const cell1 = firstRowData.get(i);
+    //             const value1 = cell1?.value;
+    //             if (value1 !== undefined) {
+    //                 this.renderCell(ctx, firstRow, i, value1, startRow, startCol, scrollLeft, scrollTop);
+    //             }
+    //         }
+
+    //         // Render lastRow (if different)
+    //         if (firstRow !== lastRow && lastRowData && lastRowData.has(i)) {
+    //             const cell2 = lastRowData.get(i);
+    //             const value2 = cell2?.value;
+    //             if (value2 !== undefined) {
+    //                 this.renderCell(ctx, lastRow, i, value2, startRow, startCol, scrollLeft, scrollTop);
+    //             }
+    //         }
+    //     }
+
+    //     firstRow++;
+    //     lastRow--;
+
+    //     // Delay before rendering the next pair of rows
+    //     setTimeout(step, delay);
+    // };
+
+    // step(); // Start the loop
