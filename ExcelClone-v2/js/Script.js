@@ -1,28 +1,48 @@
-// import { Grid } from "./Grid.js";
-// import { Config } from "./Config.js";
-// import { MouseHoverHandler } from "./MouseHoverHandler.js";
-// import { ArrowKeyHandler } from "./ArrowKeyHandler.js";
-// import { PrefixArrayManager } from "./PrefixArrayManager.js";
-// import { Draw } from "./Draw.js";
-// import { ColumnResizingManager } from "./ColumnResizingManager.js";
-// import { RowResizingManager } from "./RowResizingManager.js";
-// import { CellSelectionManager } from "./CellSelectionManager.js";
-// import { HeaderSelectionManager } from "./HeaderSelectionManager.js";
-// import { ColHeaderSelector } from "./ColHeaderSelector.js";
-// import { RowHeaderSelector } from "./RowHeaderSelector.js";
-// import { CellDataManager } from "./CellDataManager.js";
-// import { Config } from "./Config.js";
 import { Grid } from "./Grid.js";
 const canvasContainer = document.getElementById("canvasContainer");
 const canvas = document.getElementById("excelCanvas");
 const context = canvas.getContext("2d");
-const keySet = new Set(["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"]);
+const keySet = new Set([
+    "ArrowRight",
+    "ArrowLeft",
+    "ArrowDown",
+    "ArrowUp",
+]);
 const otherKeySet = new Set(["Enter", "Tab"]);
 function getXY(event) {
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
     return { x, y };
+}
+let autoScrollDir = null;
+let autoScrollFrameId = null;
+function startAutoScroll(direction) {
+    autoScrollDir = direction;
+    if (autoScrollFrameId !== null)
+        return;
+    function step() {
+        if (!autoScrollDir)
+            return;
+        if (autoScrollDir === "down")
+            grid.canvasContainer.scrollTop += 10;
+        else if (autoScrollDir === "up")
+            grid.canvasContainer.scrollTop -= 10;
+        else if (autoScrollDir === "right")
+            grid.canvasContainer.scrollLeft += 10;
+        else if (autoScrollDir === "left")
+            grid.canvasContainer.scrollLeft -= 10;
+        // Continue loop
+        autoScrollFrameId = requestAnimationFrame(step);
+    }
+    step();
+}
+function stopAutoScroll() {
+    autoScrollDir = null;
+    if (autoScrollFrameId !== null) {
+        cancelAnimationFrame(autoScrollFrameId);
+        autoScrollFrameId = null;
+    }
 }
 const grid = new Grid(canvasContainer, canvas, context);
 grid.render();
@@ -50,7 +70,7 @@ function loadJSONData(jsonArray) {
     });
     grid.cellDataManager.cellData = cellData;
 }
-fetch("scripts/data.json")
+fetch("data.json")
     .then((res) => res.json())
     .then((data) => {
     loadJSONData(data);
@@ -83,6 +103,7 @@ window.addEventListener("keydown", (event) => {
         keySet.has(key) &&
         grid.arrowKeyHandler.ifCellRangeCanShift(key)) {
         grid.arrowKeyHandler.handleShiftAndArrowKeyOperations(key);
+        grid.statisticsManager.updateStatistics();
         grid.render();
     }
     else if (keySet.has(key)) {
@@ -115,43 +136,43 @@ window.addEventListener("keydown", (event) => {
 });
 canvas.addEventListener("mousedown", (e) => {
     if (grid.HOVERED_COL !== -1) {
-        ColumnResizingManager.handleOnMouseDown(e);
+        grid.columnResizingManager.handleOnMouseDown(e);
         return;
     }
-    if (Config.HOVERED_ROW !== -1) {
-        RowResizingManager.handleOnMouseDown(e);
+    if (grid.HOVERED_ROW !== -1) {
+        grid.rowResizingManager.handleOnMouseDown(e);
         return;
     }
     const { x, y } = getXY(e);
     const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } = grid.getVisibleRowCols();
     // Handle header clicks (column/row selection)
-    if ((y < Config.COL_HEADER_HEIGHT && x > Config.ROW_HEADER_WIDTH) ||
-        (y > Config.COL_HEADER_HEIGHT && x < Config.ROW_HEADER_WIDTH)) {
-        HeaderSelectionManager.handleOnMouseDown(startCol, startRow, endCol, endRow, scrollLeft, scrollTop, x, y);
+    if ((y < grid.COL_HEADER_HEIGHT && x > grid.ROW_HEADER_WIDTH) ||
+        (y > grid.COL_HEADER_HEIGHT && x < grid.ROW_HEADER_WIDTH)) {
+        grid.headerSelectionManager.handleOnMouseDown(startCol, startRow, endCol, endRow, scrollLeft, scrollTop, x, y);
         grid.render(); // Render after selection
         return;
     }
     // Handle cell selection
-    if (Config.IS_SELECTING == false) {
+    if (grid.IS_SELECTING == false) {
         // Clear header selections when selecting cells
-        Config.SELECTED_COL_HEADER = -1;
-        Config.SELECTED_ROW_HEADER = -1;
-        Config.SELECTED_COL_RANGE = null;
-        Config.SELECTED_ROW_RANGE = null;
-        if (!Config.INPUT_FINALIZED && Config.CURRENT_INPUT != null) {
-            CellDataManager.saveInputToCell(context);
+        grid.SELECTED_COL_HEADER = -1;
+        grid.SELECTED_ROW_HEADER = -1;
+        grid.SELECTED_COL_RANGE = null;
+        grid.SELECTED_ROW_RANGE = null;
+        if (!grid.INPUT_FINALIZED && grid.CURRENT_INPUT != null) {
+            grid.cellDataManager.saveInputToCell();
         }
-        CellSelectionManager.handleMouseDown(startCol, endCol, startRow, endRow, x, y);
+        grid.cellSelectionManager.handleMouseDown(startCol, endCol, startRow, endRow, x, y);
     }
     grid.render();
 });
 window.addEventListener("mousemove", (event) => {
-    if (Config.RESIZING_COL !== -1) {
-        ColumnResizingManager.handleOnMouseMouse(event, grid);
+    if (grid.RESIZING_COL !== -1) {
+        grid.columnResizingManager.handleOnMouseMouse(event);
         return; // Return early to prevent other mouse move handling
     }
-    if (Config.RESIZING_ROW !== -1) {
-        RowResizingManager.handleOnMouseMouse(event, grid);
+    if (grid.RESIZING_ROW !== -1) {
+        grid.rowResizingManager.handleOnMouseMouse(event);
         return; // Return early to prevent other mouse move handling
     }
     canvas.style.cursor = "cell";
@@ -159,104 +180,123 @@ window.addEventListener("mousemove", (event) => {
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
     const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } = grid.getVisibleRowCols();
-    const prevHoveredCol = Config.HOVERED_COL;
-    const prevHoveredRow = Config.HOVERED_ROW;
-    MouseHoverHandler.changeCursorStyleBasedOnPos(canvas, x, y, startCol, endCol, startRow, endRow, context, scrollLeft);
+    const prevHoveredCol = grid.HOVERED_COL;
+    const prevHoveredRow = grid.HOVERED_ROW;
+    grid.mouseHoverHandler.changeCursorStyleBasedOnPos(x, y, startCol, endCol, startRow, endRow);
     // Check if either hovered column or row changed
-    if (prevHoveredCol !== Config.HOVERED_COL ||
-        prevHoveredRow !== Config.HOVERED_ROW) {
+    if (prevHoveredCol !== grid.HOVERED_COL ||
+        prevHoveredRow !== grid.HOVERED_ROW) {
         grid.render();
         // for drawing column indicator
-        if (Config.HOVERED_COL !== -1) {
-            Draw.drawResizeIndicator(context, Config.HOVERED_COL, scrollLeft);
+        if (grid.HOVERED_COL !== -1) {
+            grid.draw.drawResizeIndicator(grid.HOVERED_COL, scrollLeft);
         }
         // for drawing row indicator
-        if (Config.HOVERED_ROW !== -1) {
-            Draw.drawRowResizeIndicator(context, Config.HOVERED_ROW, scrollTop);
+        if (grid.HOVERED_ROW !== -1) {
+            grid.draw.drawRowResizeIndicator(grid.HOVERED_ROW, scrollTop);
         }
     }
     // while dragging header
-    if (Config.IS_SELECTING_HEADER) {
-        HeaderSelectionManager.handleOnMouseMove(startCol, startRow, endCol, endRow, scrollLeft, scrollTop, x, y);
+    if (grid.IS_SELECTING_HEADER) {
+        grid.headerSelectionManager.handleOnMouseMove(startCol, startRow, endCol, endRow, scrollLeft, scrollTop, x, y);
         grid.render();
         return;
     }
-    if (Config.IS_SELECTING) {
-        CellSelectionManager.handleMouseMove(startCol, endCol, startRow, endRow, x, y);
+    if (grid.IS_SELECTING) {
+        grid.cellSelectionManager.handleMouseMove(startCol, endCol, startRow, endRow, x, y);
+        const margin = 30; // px from edge
+        const { left, top, right, bottom } = canvas.getBoundingClientRect();
+        if (event.clientY > bottom - margin) {
+            startAutoScroll("down");
+        }
+        else if (event.clientY < top + margin) {
+            startAutoScroll("up");
+        }
+        else if (event.clientX > right - margin) {
+            startAutoScroll("right");
+        }
+        else if (event.clientX < left + margin) {
+            startAutoScroll("left");
+        }
+        else {
+            stopAutoScroll();
+        }
         grid.render();
     }
 });
 window.addEventListener("mouseup", (e) => {
-    if (Config.RESIZING_COL !== -1) {
-        ColumnResizingManager.handleOnMouseUp(e, grid, canvas);
+    if (grid.RESIZING_COL !== -1) {
+        grid.columnResizingManager.handleOnMouseUp(e);
         return;
     }
-    if (Config.RESIZING_ROW !== -1) {
-        RowResizingManager.handleOnMouseUp(e, grid);
+    if (grid.RESIZING_ROW !== -1) {
+        grid.rowResizingManager.handleOnMouseUp(e);
         return;
     }
-    if (Config.IS_SELECTING == true)
-        Config.IS_SELECTING = false;
-    if (Config.IS_SELECTING_HEADER == true) {
-        HeaderSelectionManager.handleOnMouseUp();
-        Config.IS_SELECTING_HEADER = false;
+    if (grid.IS_SELECTING == true) {
+        grid.IS_SELECTING = false;
+        grid.statisticsManager.updateStatistics();
+        stopAutoScroll();
+    }
+    if (grid.IS_SELECTING_HEADER == true) {
+        grid.headerSelectionManager.handleOnMouseUp();
+        grid.IS_SELECTING_HEADER = false;
     }
     grid.render();
 });
 canvas.addEventListener("dblclick", () => {
     const input = document.querySelector(".cellInput");
-    if (!input || !Config.SELECTED_CELL_RANGE)
+    if (!input || !grid.SELECTED_CELL_RANGE)
         return;
-    const row = Config.SELECTED_CELL_RANGE.startRow;
-    const col = Config.SELECTED_CELL_RANGE.startCol;
+    const row = grid.SELECTED_CELL_RANGE.startRow;
+    const col = grid.SELECTED_CELL_RANGE.startCol;
     let cellValue = "";
-    if (CellDataManager.CellData.has(row)) {
-        const rowData = CellDataManager.CellData.get(row);
+    if (grid.cellDataManager.cellData.has(row)) {
+        const rowData = grid.cellDataManager.cellData.get(row);
         if (rowData && rowData.has(col)) {
             const cell = rowData.get(col);
             if (cell.value !== "") {
                 cellValue = cell.value; // 1. get the value
                 rowData.delete(col); // 2. clear the cell
                 if (rowData.size === 0) {
-                    CellDataManager.CellData.delete(row);
+                    grid.cellDataManager.cellData.delete(row);
                 }
             }
         }
     }
     // 3. Show the input with old value
-    CellDataManager.showCellInputAtPosition(cellValue, input, canvasContainer);
+    grid.cellDataManager.showCellInputAtPosition(cellValue, input);
     // 4. Re-render the grid
     grid.render();
 });
-document
-    .querySelector(".cellInput")
-    .addEventListener("input", function (event) {
-    Config.CURRENT_INPUT = event.target.value;
-});
-document
-    .querySelector(".cellInput")
-    .addEventListener("keydown", function (event) {
-    if (event.key === "Enter" || event.key === "Tab") {
-        Config.INPUT_FINALIZED = true;
-        CellDataManager.saveInputToCell(context);
+const inputElement = document.querySelector(".cellInput");
+if (inputElement) {
+    inputElement.addEventListener("input", (event) => {
+        const target = event.target;
+        grid.CURRENT_INPUT = target.value;
+    });
+    inputElement.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === "Tab") {
+            grid.INPUT_FINALIZED = true;
+            grid.cellDataManager.saveInputToCell();
+            this.style.display = "none";
+            event.preventDefault();
+            grid.render();
+        }
+        if (event.key === "Escape") {
+            grid.CURRENT_INPUT = null;
+            this.style.display = "none";
+            grid.INPUT_FINALIZED = true;
+            event.preventDefault();
+        }
+    });
+    inputElement.addEventListener("blur", function () {
+        if (!grid.INPUT_FINALIZED) {
+            grid.cellDataManager.saveInputToCell();
+        }
         this.style.display = "none";
-        event.preventDefault();
+        grid.INPUT_FINALIZED = false;
+        grid.CURRENT_INPUT = null;
         grid.render();
-    }
-    if (event.key === "Escape") {
-        Config.CURRENT_INPUT = null;
-        this.style.display = "none";
-        Config.INPUT_FINALIZED = true;
-        event.preventDefault();
-        // grid.render();
-    }
-});
-document.querySelector(".cellInput").addEventListener("blur", function () {
-    if (!Config.INPUT_FINALIZED) {
-        CellDataManager.saveInputToCell(context);
-    }
-    this.style.display = "none";
-    Config.INPUT_FINALIZED = false;
-    Config.CURRENT_INPUT = null;
-    grid.render();
-});
+    });
+}

@@ -9,15 +9,17 @@ import { ColHeaderSelector } from "./ColHeaderSelector.js";
 import { RowHeaderSelector } from "./RowHeaderSelector.js";
 import { CellSelectionManager } from "./CellSelectionManager.js";
 import { ArrowKeyHandler } from "./ArrowKeyHandler.js";
+import { HeaderSelectionManager } from "./HeaderSelectionManager.js";
+import { StatisticsManager } from "./StatisticsManager.js";
 export class Grid {
     constructor(canvasContainer, canvas, context) {
-        this.TOTAL_ROWS = Config.TOTAL_ROWS;
-        this.TOTAL_COLUMNS = Config.TOTAL_COLUMNS;
-        this.COL_HEADER_HEIGHT = Config.COL_HEADER_HEIGHT;
-        this.ROW_HEADER_WIDTH = Config.ROW_HEADER_WIDTH;
-        this.DEFAULT_COL_WIDTH = Config.DEFAULT_COL_WIDTH;
-        this.DEFAULT_ROW_HEIGHT = Config.DEFAULT_ROW_HEIGHT;
-        this.DEFAULT_FONT_SIZE = Config.DEFAULT_FONT_SIZE;
+        this.TOTAL_ROWS = structuredClone(Config.TOTAL_ROWS);
+        this.TOTAL_COLUMNS = structuredClone(Config.TOTAL_COLUMNS);
+        this.COL_HEADER_HEIGHT = structuredClone(Config.COL_HEADER_HEIGHT);
+        this.ROW_HEADER_WIDTH = structuredClone(Config.ROW_HEADER_WIDTH);
+        this.DEFAULT_COL_WIDTH = structuredClone(Config.DEFAULT_COL_WIDTH);
+        this.DEFAULT_ROW_HEIGHT = structuredClone(Config.DEFAULT_ROW_HEIGHT);
+        this.DEFAULT_FONT_SIZE = structuredClone(Config.DEFAULT_FONT_SIZE);
         this.CURRENT_INPUT = null;
         this.INPUT_FINALIZED = false;
         this.ROW_HEIGHTS = new Map();
@@ -33,6 +35,12 @@ export class Grid {
         this.SELECTED_ROW_HEADER = -1;
         this.ADJUSTED_y1 = -1;
         this.SELECTED_CELL_RANGE = {
+            startRow: 0,
+            endRow: 0,
+            startCol: 0,
+            endCol: 0,
+        };
+        this.SELECTED_CELL_RANGE_STAT = {
             startRow: 0,
             endRow: 0,
             startCol: 0,
@@ -75,6 +83,8 @@ export class Grid {
         this.rowHeaderSelector = new RowHeaderSelector(this);
         this.cellSelectionManager = new CellSelectionManager(this);
         this.arrowKeyHandler = new ArrowKeyHandler(this);
+        this.headerSelectionManager = new HeaderSelectionManager(this);
+        this.statisticsManager = new StatisticsManager(this);
         this._init();
     }
     getSelectedCol(startCol, endCol, x) {
@@ -231,24 +241,16 @@ export class Grid {
         this.context.translate(-scrollLeft, -scrollTop);
         this.context.beginPath();
         this.draw.drawRowsCols(startRow, startCol, endRow, endCol);
-        // Draw.updateInputPosition(this.canvas, scrollLeft, scrollTop);
+        this.cellSelectionManager.updateCellSelectionInfo();
         this.draw.drawSelectedCellBorder(startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
-        // this.draw.drawVisibleText(
-        //   startRow,
-        //   endRow,
-        //   startCol,
-        //   endCol,
-        //   this.context,
-        //   scrollLeft,
-        //   scrollTop
-        // );
+        this.draw.drawVisibleText(startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
         this.draw.drawColumnHeader(endCol);
         this.draw.drawRowHeader(endRow);
         this.draw.drawSelectedCellCorrepondingRowCol(startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
         this.draw.insertRowHeaderText(startRow, endRow, scrollTop);
         this.draw.insertColHeaderText(startCol, endCol, scrollLeft);
-        // this.draw.drawHighlighedColumnHeader(this.context, startCol, endCol, scrollLeft);
-        // this.draw.drawHighlighedRowHeader(this.context, startRow, endRow, scrollTop);
+        this.draw.drawHighlighedColumnHeader(startCol, endCol, scrollLeft);
+        this.draw.drawHighlighedRowHeader(startRow, endRow, scrollTop);
         this.draw.drawCornerBox();
     }
 }

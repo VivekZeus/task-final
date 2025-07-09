@@ -4,17 +4,23 @@
   padding: 0;
 }
 
+body, html {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+
+
 .canvas-container {
-  width: 100vw;
-  height: 100vh;
+  flex: 1; /* take remaining space */
   overflow: scroll;
   position: relative;
 }
 
+
 .canvas-wrapper {
   position: relative;
-
-  /* will be set in JS */
   width: 50000px;
   height: 2500000px;
 }
@@ -35,17 +41,6 @@
 
 
 
-.cellInput {
-  position: fixed;
-  z-index: 1000;
-  font-size: 14px;
-  font-family: Arial, Helvetica, sans-serif;
-  color: #111;
-  border-radius: 0;
-  box-sizing: border-box;
-  outline: none;
-  border: none; /* ✅ Add this */
-  box-shadow: none; /* ✅ Optional, for some browsers */
-  background: transparent; /* Optional, if you want no background */
-  display: none;
-}
+
+
+

@@ -135,6 +135,23 @@ export class ArrowKeyHandler {
     } else if (key == "ArrowDown") {
       this.grid.SELECTED_CELL_RANGE.endRow += 1;
     }
+
+    const selStartRow = this.grid.SELECTED_CELL_RANGE.startRow;
+    const selStartCol = this.grid.SELECTED_CELL_RANGE.startCol;
+    const selEndCol = this.grid.SELECTED_CELL_RANGE.endCol;
+    const selEndRow = this.grid.SELECTED_CELL_RANGE.endRow;
+    const minRow = Math.min(selStartRow, selEndRow);
+    const maxRow = Math.max(selStartRow, selEndRow);
+    const minCol = Math.min(selStartCol, selEndCol);
+    const maxCol = Math.max(selStartCol, selEndCol);
+
+    this.grid.SELECTED_CELL_RANGE_STAT = {
+      startRow: minRow,
+      endRow: maxRow,
+      startCol: minCol,
+      endCol: maxCol,
+    };
+
     this.scrollIntoViewIfNeeded();
   }
 

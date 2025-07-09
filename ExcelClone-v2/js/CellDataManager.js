@@ -12,11 +12,16 @@ export class CellDataManager {
         const scrollLeft = this.grid.canvasContainer.scrollLeft;
         const scrollTop = this.grid.canvasContainer.scrollTop;
         const cellX = this.grid.prefixArrayManager.getColXPosition(col) - scrollLeft;
-        const cellY = this.grid.prefixArrayManager.getRowYPosition(row) - scrollTop + (((_a = this.grid.ROW_HEIGHTS.get(row)) !== null && _a !== void 0 ? _a : this.grid.DEFAULT_ROW_HEIGHT) - this.grid.DEFAULT_ROW_HEIGHT);
+        const cellY = this.grid.prefixArrayManager.getRowYPosition(row) -
+            scrollTop +
+            (((_a = this.grid.ROW_HEIGHTS.get(row)) !== null && _a !== void 0 ? _a : this.grid.DEFAULT_ROW_HEIGHT) -
+                this.grid.DEFAULT_ROW_HEIGHT);
         const cellWidth = (_b = this.grid.COL_WIDTHS.get(col)) !== null && _b !== void 0 ? _b : this.grid.DEFAULT_COL_WIDTH;
         const cellHeight = this.grid.DEFAULT_ROW_HEIGHT;
+        // 🔥 Here's the fix: offset canvas-container's position
+        const canvasOffsetTop = this.grid.canvasContainer.getBoundingClientRect().top;
         input.style.left = cellX + "px";
-        input.style.top = cellY + "px";
+        input.style.top = cellY + canvasOffsetTop + "px"; // ⬅️ apply correction
         input.style.width = cellWidth + "px";
         input.style.height = cellHeight + "px";
         input.style.display = "block";
@@ -29,7 +34,7 @@ export class CellDataManager {
         }
         else {
             const len = input.value.length;
-            input.setSelectionRange(len, len); // place cursor at end
+            input.setSelectionRange(len, len);
         }
     }
     saveInputToCell() {

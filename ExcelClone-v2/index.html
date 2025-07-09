@@ -5,15 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Excel</title>
 
-    <link href="styles/styles.css" rel="stylesheet" />
+    <link href="scss/styles.css" rel="stylesheet" />
     <script src="js/Script.js" type="module" defer></script>
   </head>
   <body>
+    <div class="actionContainer">
+      <!-- <div class="actions">
+        <div class="insertDataContainer">
+          <div class="jsonInputWrapper">
+            <input type="file" id="jsonInput" accept=".json" hidden />
+            <label for="jsonInput" class="jsonInputLabel">
+              Select JSON File
+            </label>
+          </div>
+          <div class="csvInputWrapper">
+            <input type="file" id="csvInput" accept=".csv" hidden />
+            <label for="csvInput" class="csvInputLabel">
+              Select CSV File
+            </label>
+          </div>
+        </div>
+        <div class="textFormattingContainer">txt formta</div>
+        <div class="rowColOperationContainer">row col op</div>
+      </div> -->
+      <div class="info">
+        <div id="cellInfo">hello</div>
+        <input type="text" id="formulaInput" />
+      </div>
+    </div>
+
     <div class="canvas-container" id="canvasContainer">
       <div class="canvas-wrapper" id="canvasWrapper">
         <canvas id="excelCanvas" class="excel-canvas"></canvas>
       </div>
     </div>
-    <input type="text" class="cellInput">
+    <input type="text" class="cellInput" />
+
+    <div class="workBookStats">
+      <div class="text">WorkBook Statistics</div>
+      <div class="statistics">
+        <div class="statValue" id="count">Count:</div>
+        <div class="statValue" id="sum">Sum:</div>
+        <div class="statValue" id="avg">Average:</div>
+        <div class="statValue" id="min">Min:</div>
+        <div class="statValue" id="max">Max:</div>
+        <div class="statValue" id="sd">SD:</div>
+        <div class="statValue" id="var">Var:</div>
+      </div>
+    </div>
   </body>
 </html>

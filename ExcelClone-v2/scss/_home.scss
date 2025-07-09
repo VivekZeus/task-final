@@ -1,0 +1,98 @@
+@import "variables";
+
+.actionContainer {
+  background-color: white;
+  // background-color: #1a7c48;
+  width: 100%;
+  height: 10vh;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 5px;
+
+  .info {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+
+    #cellInfo {
+      border: 2px solid rgb(215, 198, 198);
+      font-size: 20px;
+      padding: 2px;
+      color: black;
+      font-family: $fontFamily;
+    }
+    #formulaInput {
+      flex-grow: 1;
+      min-width: 0;
+    }
+  }
+
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .insertDataContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      .jsonInputWrapper {
+        display: flex;
+        align-items: center;
+
+        .jsonInputLabel {
+          display: flex;
+          align-items: center;
+          background: linear-gradient(to bottom, #f9f9f9, #e3e3e3);
+          border: 1px solid #999;
+          border-radius: 3px;
+          padding: 5px 5px;
+          font-weight: 700;
+          font-size: 10pt;
+          cursor: pointer;
+          gap: 8px;
+          transition: border-color 0.2s;
+
+          &:hover {
+            border-color: rgb(119, 113, 113);
+          }
+
+          &:active {
+            background: linear-gradient(to bottom, #e3e3e3, #f9f9f9);
+          }
+        }
+      }
+
+      .csvInputWrapper {
+        display: flex;
+        align-items: center;
+
+        .csvInputLabel {
+          display: flex;
+          align-items: center;
+          background: linear-gradient(to bottom, #f9f9f9, #e3e3e3);
+          border: 1px solid #999;
+          border-radius: 3px;
+          padding: 5px 5px;
+          font-weight: 700;
+          font-size: 10pt;
+          cursor: pointer;
+          gap: 8px;
+          transition: border-color 0.2s;
+
+          &:hover {
+            border-color: black;
+          }
+
+          &:active {
+            background: linear-gradient(to bottom, #e3e3e3, #f9f9f9);
+          }
+        }
+      }
+    }
+  }
+}

@@ -9,6 +9,8 @@ import { ColHeaderSelector } from "./ColHeaderSelector.js";
 import { RowHeaderSelector } from "./RowHeaderSelector.js";
 import { CellSelectionManager } from "./CellSelectionManager.js";
 import { ArrowKeyHandler } from "./ArrowKeyHandler.js";
+import { HeaderSelectionManager } from "./HeaderSelectionManager.js";
+import { StatisticsManager } from "./StatisticsManager.js";
 
 export class Grid {
   canvasContainer: HTMLDivElement;
@@ -20,21 +22,24 @@ export class Grid {
   cellDataManager: CellDataManager;
   columnResizingManager: ColumnResizingManager;
   rowResizingManager: RowResizingManager;
-  colHeaderSelector:ColHeaderSelector;
-  rowHeaderSelector:RowHeaderSelector;
-  cellSelectionManager:CellSelectionManager;
-  arrowKeyHandler:ArrowKeyHandler;
+  colHeaderSelector: ColHeaderSelector;
+  rowHeaderSelector: RowHeaderSelector;
+  cellSelectionManager: CellSelectionManager;
+  arrowKeyHandler: ArrowKeyHandler;
+  headerSelectionManager: HeaderSelectionManager;
+  statisticsManager: StatisticsManager;
 
-  TOTAL_ROWS = Config.TOTAL_ROWS;
-  TOTAL_COLUMNS = Config.TOTAL_COLUMNS;
+  TOTAL_ROWS = structuredClone(Config.TOTAL_ROWS);
+  TOTAL_COLUMNS = structuredClone(Config.TOTAL_COLUMNS);
 
-  COL_HEADER_HEIGHT = Config.COL_HEADER_HEIGHT;
-  ROW_HEADER_WIDTH = Config.ROW_HEADER_WIDTH;
+  COL_HEADER_HEIGHT = structuredClone(Config.COL_HEADER_HEIGHT);
+  ROW_HEADER_WIDTH = structuredClone(Config.ROW_HEADER_WIDTH);
 
-  DEFAULT_COL_WIDTH = Config.DEFAULT_COL_WIDTH;
-  DEFAULT_ROW_HEIGHT = Config.DEFAULT_ROW_HEIGHT;
-  DEFAULT_FONT_SIZE = Config.DEFAULT_FONT_SIZE;
-  CURRENT_INPUT = null;
+  DEFAULT_COL_WIDTH = structuredClone(Config.DEFAULT_COL_WIDTH);
+  DEFAULT_ROW_HEIGHT = structuredClone(Config.DEFAULT_ROW_HEIGHT);
+  DEFAULT_FONT_SIZE = structuredClone(Config.DEFAULT_FONT_SIZE);
+
+  CURRENT_INPUT: string | null = null;
   INPUT_FINALIZED = false;
 
   ROW_HEIGHTS: Map<number, number> = new Map();
@@ -60,6 +65,13 @@ export class Grid {
     startCol: 0,
     endCol: 0,
   };
+
+  SELECTED_CELL_RANGE_STAT = {
+    startRow: 0,
+    endRow: 0,
+    startCol: 0,
+    endCol: 0,
+  };
   SELECTED_CELL = {
     row: 0,
     col: 0,
@@ -80,7 +92,7 @@ export class Grid {
   RESIZING_ROW_OLD_HEIGHT = -1;
 
   IS_SELECTING_HEADER = false;
-  HEADER_SELECTION_TYPE:string | null = null;
+  HEADER_SELECTION_TYPE: string | null = null;
   HEADER_SELECTION_START_ROW = -1;
   HEADER_SELECTION_END_ROW = -1;
   HEADER_SELECTION_START_COL = -1;
@@ -111,8 +123,10 @@ export class Grid {
     this.columnResizingManager = new ColumnResizingManager(this);
     this.colHeaderSelector = new ColHeaderSelector(this);
     this.rowHeaderSelector = new RowHeaderSelector(this);
-    this.cellSelectionManager=new CellSelectionManager(this);
-    this.arrowKeyHandler=new ArrowKeyHandler(this);
+    this.cellSelectionManager = new CellSelectionManager(this);
+    this.arrowKeyHandler = new ArrowKeyHandler(this);
+    this.headerSelectionManager = new HeaderSelectionManager(this);
+    this.statisticsManager = new StatisticsManager(this);
     this._init();
   }
 
@@ -312,7 +326,7 @@ export class Grid {
 
     this.draw.drawRowsCols(startRow, startCol, endRow, endCol);
 
-    // Draw.updateInputPosition(this.canvas, scrollLeft, scrollTop);
+    this.cellSelectionManager.updateCellSelectionInfo();
 
     this.draw.drawSelectedCellBorder(
       startRow,
@@ -323,15 +337,14 @@ export class Grid {
       scrollTop
     );
 
-    // this.draw.drawVisibleText(
-    //   startRow,
-    //   endRow,
-    //   startCol,
-    //   endCol,
-    //   this.context,
-    //   scrollLeft,
-    //   scrollTop
-    // );
+    this.draw.drawVisibleText(
+      startRow,
+      endRow,
+      startCol,
+      endCol,
+      scrollLeft,
+      scrollTop
+    );
 
     this.draw.drawColumnHeader(endCol);
 
@@ -348,8 +361,8 @@ export class Grid {
     this.draw.insertRowHeaderText(startRow, endRow, scrollTop);
     this.draw.insertColHeaderText(startCol, endCol, scrollLeft);
 
-    // this.draw.drawHighlighedColumnHeader(this.context, startCol, endCol, scrollLeft);
-    // this.draw.drawHighlighedRowHeader(this.context, startRow, endRow, scrollTop);
+    this.draw.drawHighlighedColumnHeader(startCol, endCol, scrollLeft);
+    this.draw.drawHighlighedRowHeader(startRow, endRow, scrollTop);
 
     this.draw.drawCornerBox();
   }

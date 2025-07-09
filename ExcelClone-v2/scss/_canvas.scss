@@ -1,0 +1,20 @@
+.canvas-container {
+  flex: 1;
+  overflow: scroll;
+  position: relative;
+  .canvas-wrapper {
+    position: relative;
+    width: 50000px;
+    height: 2500000px;
+    .excel-canvas {
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 10;
+      background-color: transparent;
+      cursor: cell;
+    }
+  }
+}

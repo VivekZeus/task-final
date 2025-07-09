@@ -1,0 +1,29 @@
+
+@import "variables";
+.workBookStats {
+
+  width: 100%;
+  flex-shrink: 0;
+  font-size: 15px;
+  color: grey; 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline:10px;
+  padding-block: 5px;
+  font-family:$fontFamily;
+  font-weight: 500;
+  // font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  cursor: default;
+
+
+
+  .statistics{
+    align-items: center;
+    justify-content: space-around;
+    gap: 5px;
+    display: none;
+
+  }
+}
+

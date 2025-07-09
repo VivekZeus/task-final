@@ -1,5 +1,5 @@
 export class Config {
-  static TOTAL_ROWS = 1000;
+  static TOTAL_ROWS = 10000;
   static TOTAL_COLUMNS = 1000;
 
   static DEFAULT_COL_WIDTH = 100;

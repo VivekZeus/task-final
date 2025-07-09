@@ -1,4 +1,5 @@
 import { Grid } from "./Grid.js";
+import { Utils } from "./Utils.js";
 
 export class CellSelectionManager {
   grid: Grid;
@@ -42,5 +43,15 @@ export class CellSelectionManager {
       this.grid.SELECTED_CELL_RANGE.endRow = selRow;
       this.grid.SELECTED_CELL_RANGE.endCol = selCol;
     }
+  }
+
+  updateCellSelectionInfo(){
+    const {startCol,startRow}=this.grid.SELECTED_CELL_RANGE;
+    let char=Utils.numberToColheader(startCol);
+    const cellElement=document.getElementById("cellInfo")  as HTMLDivElement;
+    if(cellElement){
+      cellElement.innerHTML=`${char}${startRow+1}`;
+    }
+
   }
 }

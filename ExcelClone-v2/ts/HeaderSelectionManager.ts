@@ -52,6 +52,7 @@ export class HeaderSelectionManager {
     } else if (this.grid.HEADER_SELECTION_TYPE === "row") {
       this.grid.rowHeaderSelector.handleOnMouseUp();
     }
+    this.grid.statisticsManager.updateStatistics();
     this.grid.HEADER_SELECTION_TYPE = null;
   }
 }

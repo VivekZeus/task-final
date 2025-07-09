@@ -1,6 +1,6 @@
 export class Config {
 }
-Config.TOTAL_ROWS = 1000;
+Config.TOTAL_ROWS = 10000;
 Config.TOTAL_COLUMNS = 1000;
 Config.DEFAULT_COL_WIDTH = 100;
 Config.DEFAULT_ROW_HEIGHT = 30;
