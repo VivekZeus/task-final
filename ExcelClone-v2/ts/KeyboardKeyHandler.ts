@@ -1,9 +1,13 @@
 import { Grid } from "./Grid.js";
+import { CellDataRemovalStrategy } from "./startegy/CellDataRemovalStrategy.js";
 
-export class ArrowKeyHandler {
+export class KeyboardKeyHandler {
   grid: Grid;
+  private cellDataRemovalStrategy: CellDataRemovalStrategy;
+
   constructor(gridObj: Grid) {
     this.grid = gridObj;
+    this.cellDataRemovalStrategy = new CellDataRemovalStrategy(gridObj);
   }
 
   scrollIntoViewIfNeeded() {
@@ -180,5 +184,24 @@ export class ArrowKeyHandler {
     }
 
     return false;
+  }
+
+  handleBackspaceKeyOperation(input: HTMLInputElement) {
+    this.cellDataRemovalStrategy.fullRemoval();
+    this.grid.cellDataManager.showCellInputAtPosition("", input);
+  }
+
+  handleDeleteKeyOperation() {
+    this.cellDataRemovalStrategy.fullRemoval();
+  }
+
+  handleCharacterKeyOperation(key: string, input: HTMLInputElement) {
+    this.cellDataRemovalStrategy.fullRemoval();
+    this.grid.cellDataManager.showCellInputAtPosition(key, input);
+  }
+
+  handleDoubleClick(input: HTMLInputElement) {
+    const cellValue = this.cellDataRemovalStrategy.nonRemoval();
+    this.grid.cellDataManager.showCellInputAtPosition(cellValue, input);
   }
 }

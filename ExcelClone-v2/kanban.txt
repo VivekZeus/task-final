@@ -23,4 +23,6 @@ Completed
 -> if cell is selected but not in visible range then also col and row should be highlighted so break the highlighting logic
 
 In progress
+->backspace and delete on cells
+-> optimize drawing funcs for better functionality
 

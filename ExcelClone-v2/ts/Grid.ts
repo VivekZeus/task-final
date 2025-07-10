@@ -1,16 +1,20 @@
 import { Config } from "./Config.js";
 import { Draw } from "./Draw.js";
 import { PrefixArrayManager } from "./PrefixArrayManager.js";
-import { MouseHoverHandler } from "./MouseHoverHandler.js";
+import { MouseHoverManager } from "./MouseHoverManager.js";
 import { CellDataManager } from "./CellDataManager.js";
-import { ColumnResizingManager } from "./ColumnResizingManager.js";
+import { ColumnResizingManager } from "./manager/ColumnResizingManager.js";
 import { RowResizingManager } from "./RowResizingManager.js";
 import { ColHeaderSelector } from "./ColHeaderSelector.js";
 import { RowHeaderSelector } from "./RowHeaderSelector.js";
 import { CellSelectionManager } from "./CellSelectionManager.js";
-import { ArrowKeyHandler } from "./ArrowKeyHandler.js";
 import { HeaderSelectionManager } from "./HeaderSelectionManager.js";
-import { StatisticsManager } from "./StatisticsManager.js";
+import { StatisticsManager } from "./statistics/StatisticsManager.js";
+import { AutoScrollManager } from "./AutoScrollManager.js";
+import { KeyDownEventOrchestrator } from "./orchestrator/KeyDownEventOrchestrator.js";
+import { DoubleClickEventOrchestrator } from "./orchestrator/DoubleClickEventOrchestrator.js";
+import { CellInputOrchestrator } from "./orchestrator/CellInputOrchestrator.js";
+import { PointerOrchestrator } from "./orchestrator/PointerOrchestrator.js";
 
 export class Grid {
   canvasContainer: HTMLDivElement;
@@ -18,16 +22,20 @@ export class Grid {
   context: CanvasRenderingContext2D;
 
   draw: Draw;
-  mouseHoverHandler: MouseHoverHandler;
+  mouseHoverManager: MouseHoverManager;
   cellDataManager: CellDataManager;
   columnResizingManager: ColumnResizingManager;
   rowResizingManager: RowResizingManager;
   colHeaderSelector: ColHeaderSelector;
   rowHeaderSelector: RowHeaderSelector;
   cellSelectionManager: CellSelectionManager;
-  arrowKeyHandler: ArrowKeyHandler;
+  keyDownEventOrchestrator: KeyDownEventOrchestrator;
   headerSelectionManager: HeaderSelectionManager;
   statisticsManager: StatisticsManager;
+  autoScrollManager: AutoScrollManager;
+  doubleClickEventOrchestrator: DoubleClickEventOrchestrator;
+  cellInputOrchestrator:CellInputOrchestrator;
+  pointerOrchestrator:PointerOrchestrator;
 
   TOTAL_ROWS = structuredClone(Config.TOTAL_ROWS);
   TOTAL_COLUMNS = structuredClone(Config.TOTAL_COLUMNS);
@@ -105,6 +113,9 @@ export class Grid {
   viewWidth: number;
   viewHeight: number;
 
+  autoScrollDir: string | null = null;
+  autoScrollFrameId: number | null = null;
+
   constructor(
     canvasContainer: HTMLDivElement,
     canvas: HTMLCanvasElement,
@@ -117,17 +128,25 @@ export class Grid {
     this.viewHeight = this.canvasContainer.clientHeight;
 
     this.draw = new Draw(this);
-    this.mouseHoverHandler = new MouseHoverHandler(this);
+    this.mouseHoverManager = new MouseHoverManager(this);
     this.cellDataManager = new CellDataManager(this);
     this.rowResizingManager = new RowResizingManager(this);
     this.columnResizingManager = new ColumnResizingManager(this);
     this.colHeaderSelector = new ColHeaderSelector(this);
     this.rowHeaderSelector = new RowHeaderSelector(this);
     this.cellSelectionManager = new CellSelectionManager(this);
-    this.arrowKeyHandler = new ArrowKeyHandler(this);
+    this.keyDownEventOrchestrator = new KeyDownEventOrchestrator(this);
     this.headerSelectionManager = new HeaderSelectionManager(this);
     this.statisticsManager = new StatisticsManager(this);
-    this._init();
+    this.autoScrollManager = new AutoScrollManager(this);
+    this.doubleClickEventOrchestrator = new DoubleClickEventOrchestrator(
+      this,
+      this.keyDownEventOrchestrator.getKeyboardKeyHandler()
+    );
+    this.cellInputOrchestrator=new CellInputOrchestrator(this);
+    this.pointerOrchestrator=new PointerOrchestrator(this);
+    this.init();
+    this.inializeManagers();
   }
 
   getSelectedCol(startCol: number, endCol: number, x: number) {
@@ -187,7 +206,7 @@ export class Grid {
     return y;
   }
 
-  _init() {
+  private init() {
     this.prefixArrayManager.createColPrefixArray(this.TOTAL_COLUMNS);
     this.prefixArrayManager.createRowPrefixArray(this.TOTAL_ROWS);
 
@@ -207,6 +226,10 @@ export class Grid {
     const wrapper = document.getElementById("canvasWrapper") as HTMLDivElement;
     wrapper.style.width = `${this.TOTAL_COLUMNS * this.DEFAULT_COL_WIDTH}px`;
     wrapper.style.height = `${this.TOTAL_ROWS * this.DEFAULT_ROW_HEIGHT}px`;
+  }
+
+  private inializeManagers(){
+    this.pointerOrchestrator.registerManager(this.columnResizingManager);
   }
 
   resizeCanvas() {

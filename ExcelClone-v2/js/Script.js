@@ -2,47 +2,11 @@ import { Grid } from "./Grid.js";
 const canvasContainer = document.getElementById("canvasContainer");
 const canvas = document.getElementById("excelCanvas");
 const context = canvas.getContext("2d");
-const keySet = new Set([
-    "ArrowRight",
-    "ArrowLeft",
-    "ArrowDown",
-    "ArrowUp",
-]);
-const otherKeySet = new Set(["Enter", "Tab"]);
 function getXY(event) {
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
     return { x, y };
-}
-let autoScrollDir = null;
-let autoScrollFrameId = null;
-function startAutoScroll(direction) {
-    autoScrollDir = direction;
-    if (autoScrollFrameId !== null)
-        return;
-    function step() {
-        if (!autoScrollDir)
-            return;
-        if (autoScrollDir === "down")
-            grid.canvasContainer.scrollTop += 10;
-        else if (autoScrollDir === "up")
-            grid.canvasContainer.scrollTop -= 10;
-        else if (autoScrollDir === "right")
-            grid.canvasContainer.scrollLeft += 10;
-        else if (autoScrollDir === "left")
-            grid.canvasContainer.scrollLeft -= 10;
-        // Continue loop
-        autoScrollFrameId = requestAnimationFrame(step);
-    }
-    step();
-}
-function stopAutoScroll() {
-    autoScrollDir = null;
-    if (autoScrollFrameId !== null) {
-        cancelAnimationFrame(autoScrollFrameId);
-        autoScrollFrameId = null;
-    }
 }
 const grid = new Grid(canvasContainer, canvas, context);
 grid.render();
@@ -82,98 +46,65 @@ canvasContainer.addEventListener("scroll", (e) => {
 window.addEventListener("resize", () => {
     grid.resizeCanvas();
 });
-window.addEventListener("keydown", (event) => {
-    let key = event.key;
-    const input = document.querySelector(".cellInput");
-    if (input && window.getComputedStyle(input).display !== "none") {
-        return;
-    }
-    event.preventDefault();
-    if (otherKeySet.has(key)) {
-        if (grid.arrowKeyHandler.handleTabEnterKeyOperations(key, event.shiftKey))
-            grid.render();
-    }
-    else if (grid.colHeaderSelector.handleKeyboardSelection(event)) {
-        grid.render();
-    }
-    else if (grid.rowHeaderSelector.handleKeyboardSelection(event)) {
-        grid.render();
-    }
-    else if (event.shiftKey &&
-        keySet.has(key) &&
-        grid.arrowKeyHandler.ifCellRangeCanShift(key)) {
-        grid.arrowKeyHandler.handleShiftAndArrowKeyOperations(key);
-        grid.statisticsManager.updateStatistics();
-        grid.render();
-    }
-    else if (keySet.has(key)) {
-        if (grid.arrowKeyHandler.handleArrowKeyOperations(key))
-            grid.render();
-    }
-    else if ((/^[a-zA-Z0-9]$/.test(key) ||
-        /^[~`!@#$%^&*()_\-+={}[\]|\\:;"'<>,.?/]$/.test(key)) &&
-        grid.SELECTED_CELL_RANGE != null) {
-        if (!input || !grid.SELECTED_CELL_RANGE)
-            return;
-        const row = grid.SELECTED_CELL_RANGE.startRow;
-        const col = grid.SELECTED_CELL_RANGE.startCol;
-        if (grid.cellDataManager.cellData.has(row)) {
-            const rowData = grid.cellDataManager.cellData.get(row);
-            if (rowData != null && rowData.has(col)) {
-                const cell = rowData.get(col);
-                if (cell.value !== "") {
-                    rowData.delete(col); // remove the cell
-                    if (rowData.size === 0) {
-                        grid.cellDataManager.cellData.delete(row);
-                    }
-                    grid.render();
-                }
-            }
-        }
-        grid.cellDataManager.showCellInputAtPosition(key, input);
-        grid.render();
-    }
-});
-canvas.addEventListener("mousedown", (e) => {
-    if (grid.HOVERED_COL !== -1) {
-        grid.columnResizingManager.handleOnMouseDown(e);
-        return;
-    }
-    if (grid.HOVERED_ROW !== -1) {
-        grid.rowResizingManager.handleOnMouseDown(e);
-        return;
-    }
-    const { x, y } = getXY(e);
-    const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } = grid.getVisibleRowCols();
-    // Handle header clicks (column/row selection)
-    if ((y < grid.COL_HEADER_HEIGHT && x > grid.ROW_HEADER_WIDTH) ||
-        (y > grid.COL_HEADER_HEIGHT && x < grid.ROW_HEADER_WIDTH)) {
-        grid.headerSelectionManager.handleOnMouseDown(startCol, startRow, endCol, endRow, scrollLeft, scrollTop, x, y);
-        grid.render(); // Render after selection
-        return;
-    }
-    // Handle cell selection
-    if (grid.IS_SELECTING == false) {
-        // Clear header selections when selecting cells
-        grid.SELECTED_COL_HEADER = -1;
-        grid.SELECTED_ROW_HEADER = -1;
-        grid.SELECTED_COL_RANGE = null;
-        grid.SELECTED_ROW_RANGE = null;
-        if (!grid.INPUT_FINALIZED && grid.CURRENT_INPUT != null) {
-            grid.cellDataManager.saveInputToCell();
-        }
-        grid.cellSelectionManager.handleMouseDown(startCol, endCol, startRow, endRow, x, y);
-    }
-    grid.render();
-});
+// canvas.addEventListener("mousedown", (e) => {
+//   if (grid.HOVERED_COL !== -1) {
+//     grid.columnResizingManager.handleOnMouseDown(e);
+//     return;
+//   }
+//   if (grid.HOVERED_ROW !== -1) {
+//     grid.rowResizingManager.handleOnMouseDown(e);
+//     return;
+//   }
+//   const { x, y } = getXY(e);
+//   const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
+//     grid.getVisibleRowCols();
+//   // Handle header clicks (column/row selection)
+//   if (
+//     (y < grid.COL_HEADER_HEIGHT && x > grid.ROW_HEADER_WIDTH) ||
+//     (y > grid.COL_HEADER_HEIGHT && x < grid.ROW_HEADER_WIDTH)
+//   ) {
+//     grid.headerSelectionManager.handleOnMouseDown(
+//       startCol,
+//       startRow,
+//       endCol,
+//       endRow,
+//       scrollLeft,
+//       scrollTop,
+//       x,
+//       y
+//     );
+//     grid.render(); // Render after selection
+//     return;
+//   }
+//   // Handle cell selection
+//   if (grid.IS_SELECTING == false) {
+//     // Clear header selections when selecting cells
+//     grid.SELECTED_COL_HEADER = -1;
+//     grid.SELECTED_ROW_HEADER = -1;
+//     grid.SELECTED_COL_RANGE = null;
+//     grid.SELECTED_ROW_RANGE = null;
+//     if (!grid.INPUT_FINALIZED && grid.CURRENT_INPUT != null) {
+//       grid.cellDataManager.saveInputToCell();
+//     }
+//     grid.cellSelectionManager.handleMouseDown(
+//       startCol,
+//       endCol,
+//       startRow,
+//       endRow,
+//       x,
+//       y
+//     );
+//   }
+//   grid.render();
+// });
 window.addEventListener("mousemove", (event) => {
     if (grid.RESIZING_COL !== -1) {
         grid.columnResizingManager.handleOnMouseMouse(event);
-        return; // Return early to prevent other mouse move handling
+        return;
     }
     if (grid.RESIZING_ROW !== -1) {
         grid.rowResizingManager.handleOnMouseMouse(event);
-        return; // Return early to prevent other mouse move handling
+        return;
     }
     canvas.style.cursor = "cell";
     const rect = canvas.getBoundingClientRect();
@@ -198,105 +129,34 @@ window.addEventListener("mousemove", (event) => {
     }
     // while dragging header
     if (grid.IS_SELECTING_HEADER) {
-        grid.headerSelectionManager.handleOnMouseMove(startCol, startRow, endCol, endRow, scrollLeft, scrollTop, x, y);
+        grid.headerSelectionManager.handleOnMouseMove(startCol, startRow, endCol, endRow, scrollLeft, scrollTop, x, y, event);
         grid.render();
         return;
     }
     if (grid.IS_SELECTING) {
         grid.cellSelectionManager.handleMouseMove(startCol, endCol, startRow, endRow, x, y);
-        const margin = 30; // px from edge
-        const { left, top, right, bottom } = canvas.getBoundingClientRect();
-        if (event.clientY > bottom - margin) {
-            startAutoScroll("down");
-        }
-        else if (event.clientY < top + margin) {
-            startAutoScroll("up");
-        }
-        else if (event.clientX > right - margin) {
-            startAutoScroll("right");
-        }
-        else if (event.clientX < left + margin) {
-            startAutoScroll("left");
-        }
-        else {
-            stopAutoScroll();
-        }
+        grid.autoScrollManager.checkAutoScroll(event);
         grid.render();
     }
 });
-window.addEventListener("mouseup", (e) => {
-    if (grid.RESIZING_COL !== -1) {
-        grid.columnResizingManager.handleOnMouseUp(e);
-        return;
-    }
-    if (grid.RESIZING_ROW !== -1) {
-        grid.rowResizingManager.handleOnMouseUp(e);
-        return;
-    }
-    if (grid.IS_SELECTING == true) {
-        grid.IS_SELECTING = false;
-        grid.statisticsManager.updateStatistics();
-        stopAutoScroll();
-    }
-    if (grid.IS_SELECTING_HEADER == true) {
-        grid.headerSelectionManager.handleOnMouseUp();
-        grid.IS_SELECTING_HEADER = false;
-    }
-    grid.render();
-});
-canvas.addEventListener("dblclick", () => {
-    const input = document.querySelector(".cellInput");
-    if (!input || !grid.SELECTED_CELL_RANGE)
-        return;
-    const row = grid.SELECTED_CELL_RANGE.startRow;
-    const col = grid.SELECTED_CELL_RANGE.startCol;
-    let cellValue = "";
-    if (grid.cellDataManager.cellData.has(row)) {
-        const rowData = grid.cellDataManager.cellData.get(row);
-        if (rowData && rowData.has(col)) {
-            const cell = rowData.get(col);
-            if (cell.value !== "") {
-                cellValue = cell.value; // 1. get the value
-                rowData.delete(col); // 2. clear the cell
-                if (rowData.size === 0) {
-                    grid.cellDataManager.cellData.delete(row);
-                }
-            }
-        }
-    }
-    // 3. Show the input with old value
-    grid.cellDataManager.showCellInputAtPosition(cellValue, input);
-    // 4. Re-render the grid
-    grid.render();
-});
-const inputElement = document.querySelector(".cellInput");
-if (inputElement) {
-    inputElement.addEventListener("input", (event) => {
-        const target = event.target;
-        grid.CURRENT_INPUT = target.value;
-    });
-    inputElement.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" || event.key === "Tab") {
-            grid.INPUT_FINALIZED = true;
-            grid.cellDataManager.saveInputToCell();
-            this.style.display = "none";
-            event.preventDefault();
-            grid.render();
-        }
-        if (event.key === "Escape") {
-            grid.CURRENT_INPUT = null;
-            this.style.display = "none";
-            grid.INPUT_FINALIZED = true;
-            event.preventDefault();
-        }
-    });
-    inputElement.addEventListener("blur", function () {
-        if (!grid.INPUT_FINALIZED) {
-            grid.cellDataManager.saveInputToCell();
-        }
-        this.style.display = "none";
-        grid.INPUT_FINALIZED = false;
-        grid.CURRENT_INPUT = null;
-        grid.render();
-    });
-}
+// window.addEventListener("mouseup", (e) => {
+//   if (grid.RESIZING_COL !== -1) {
+//     grid.columnResizingManager.handleOnMouseUp(e);
+//     return;
+//   }
+//   if (grid.RESIZING_ROW !== -1) {
+//     grid.rowResizingManager.handleOnMouseUp(e);
+//     return;
+//   }
+//   if (grid.IS_SELECTING == true) {
+//     grid.IS_SELECTING = false;
+//     grid.autoScrollManager.stopAutoScroll();
+//     grid.statisticsManager.updateStatistics();
+//   }
+//   if (grid.IS_SELECTING_HEADER == true) {
+//     grid.headerSelectionManager.handleOnMouseUp();
+//     grid.autoScrollManager.stopAutoScroll();
+//     grid.IS_SELECTING_HEADER = false;
+//   }
+//   grid.render();
+// });

@@ -13,12 +13,14 @@ export class HeaderSelectionManager {
             this.grid.HEADER_SELECTION_TYPE = "row";
         }
     }
-    handleOnMouseMove(startCol, startRow, endCol, endRow, scrollLeft, scrollTop, x, y) {
+    handleOnMouseMove(startCol, startRow, endCol, endRow, scrollLeft, scrollTop, x, y, event) {
         if (this.grid.HEADER_SELECTION_TYPE === "column") {
             this.grid.colHeaderSelector.handleOnMouseMove(startCol, endCol, x, scrollLeft);
+            this.grid.autoScrollManager.checkAutoScroll(event);
         }
         else if (this.grid.HEADER_SELECTION_TYPE === "row") {
             this.grid.rowHeaderSelector.handleOnMouseMove(startRow, endRow, y, scrollTop);
+            this.grid.autoScrollManager.checkAutoScroll(event);
         }
     }
     handleOnMouseUp() {

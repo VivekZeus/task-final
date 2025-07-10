@@ -73,4 +73,6 @@ export class CellDataManager {
     // if(!(Config.COL_WIDTHS[col] && Config.COL_WIDTHS[col]>textLength))Config.COL_WIDTHS[col]=textLength;
     // console.log(CellDataManager.CellData);
   }
+
+  
 }
