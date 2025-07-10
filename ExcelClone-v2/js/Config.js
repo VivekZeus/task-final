@@ -13,10 +13,6 @@ Config.TEXT_PADDING_Y = 5;
 Config.CURSOR_CHANGE_THRESHOLD = 3;
 Config.MODE = "normal";
 Config.CURSOR_IS_SET = false;
-Config.SELECTED_CELL = {
-    row: -1,
-    col: -1,
-};
 Config.SELECTED_COL_HEADER = -1;
 Config.ADJUSTED_x1 = -1;
 Config.IS_COL_HEADER_SELECTED = false;
@@ -47,8 +43,6 @@ Config.HEADER_SELECTION_START_ROW = -1;
 Config.HEADER_SELECTION_END_ROW = -1;
 Config.HEADER_SELECTION_START_COL = -1;
 Config.HEADER_SELECTION_END_COL = -1;
-Config.SELECTED_COL_RANGE = null;
-Config.SELECTED_ROW_RANGE = null;
 // input part
 Config.CURRENT_INPUT = null;
 Config.INPUT_FINALIZED = false;

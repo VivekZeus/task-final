@@ -1,6 +1,7 @@
-export const Utils= {
+import { Grid } from "./Grid.js";
 
-   numberToColheader(num:number) {
+export const Utils = {
+  numberToColheader(num: number) {
     let colHeader = "";
     num++;
     while (num > 0) {
@@ -9,6 +10,14 @@ export const Utils= {
       num = Math.floor((num - 1) / 26);
     }
     return colHeader;
-  }
-  
-}
+  },
+
+  updateCellSelectionInfo(grid: Grid) {
+    const { startCol, startRow } = grid.SELECTED_CELL_RANGE;
+    let char = Utils.numberToColheader(startCol);
+    const cellElement = document.getElementById("cellInfo") as HTMLDivElement;
+    if (cellElement) {
+      cellElement.innerHTML = `${char}${startRow + 1}`;
+    }
+  },
+};

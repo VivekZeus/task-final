@@ -1,5 +1,6 @@
 import { Grid } from "../Grid.js";
 import { PointerEventManager } from "../manager/PointerEventManager.js";
+import { MouseHoverManager } from "../manager/MouseHoverManager.js";
 
 export class PointerOrchestrator {
   private grid: Grid;
@@ -32,33 +33,80 @@ export class PointerOrchestrator {
 
   private pointerDown(e: PointerEvent) {
     const { x, y } = this.getXY(e);
+    const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
+      this.grid.getVisibleRowCols();
     this.grid.canvas.style.cursor = "cell";
 
     for (const manager of this.managers) {
-      console.log(manager.test(x, y, e));
-      if (manager.test(x, y, e)) {
+      if (manager.test(x, y, e) && !(manager instanceof MouseHoverManager)) {
         this.currentManager = manager;
-        manager.onPointerDown(x, y, e);
+        manager.onPointerDown(
+          x,
+          y,
+          e,
+          startRow,
+          endRow,
+          startCol,
+          endCol,
+          scrollLeft,
+          scrollTop
+        );
         break;
       }
     }
   }
 
   private pointerMove(e: PointerEvent) {
+    const { x, y } = this.getXY(e);
     if (this.currentManager) {
-      const { x, y } = this.getXY(e);
-      this.currentManager.onPointerMove(x, y, e);
-    }
-    else{
-      
+      const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
+        this.grid.getVisibleRowCols();
+      this.currentManager.onPointerMove(
+        x,
+        y,
+        e,
+        startRow,
+        endRow,
+        startCol,
+        endCol,
+        scrollLeft,
+        scrollTop
+      );
+    } else {
+      const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
+        this.grid.getVisibleRowCols();
+      this.managers[0].onPointerMove(
+        x,
+        y,
+        e,
+        startRow,
+        endRow,
+        startCol,
+        endCol,
+        scrollLeft,
+        scrollTop
+      );
     }
   }
 
   private pointerUp(e: PointerEvent) {
     if (this.currentManager) {
       const { x, y } = this.getXY(e);
-      this.currentManager.onPointerUp(x, y, e);
+      const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } =
+        this.grid.getVisibleRowCols();
+      this.currentManager.onPointerUp(
+        x,
+        y,
+        e,
+        startRow,
+        endRow,
+        startCol,
+        endCol,
+        scrollLeft,
+        scrollTop
+      );
       this.currentManager = null;
+      this.grid.render();
     }
   }
 }

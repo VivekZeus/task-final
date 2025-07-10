@@ -20,10 +20,6 @@ export class Config {
 
   static CURSOR_IS_SET = false;
 
-  static SELECTED_CELL = {
-    row: -1,
-    col: -1,
-  };
 
   static SELECTED_COL_HEADER = -1;
   static ADJUSTED_x1 = -1;
@@ -65,8 +61,7 @@ export class Config {
   static HEADER_SELECTION_END_ROW = -1;
   static HEADER_SELECTION_START_COL = -1;
   static HEADER_SELECTION_END_COL = -1;
-  static SELECTED_COL_RANGE = null; 
-  static SELECTED_ROW_RANGE = null; 
+
 
 
   // input part

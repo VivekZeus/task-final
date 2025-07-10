@@ -204,4 +204,122 @@ export class KeyboardKeyHandler {
     const cellValue = this.cellDataRemovalStrategy.nonRemoval();
     this.grid.cellDataManager.showCellInputAtPosition(cellValue, input);
   }
+
+  handleColKeyboardRangeSelection(event: KeyboardEvent) {
+    if (
+      this.grid.HEADER_SELECTION_START_COL === -1 ||
+      this.grid.HEADER_SELECTION_END_COL === -1
+    ) {
+      return false;
+    }
+
+    if (
+      event.shiftKey &&
+      (event.key === "ArrowLeft" || event.key === "ArrowRight")
+    ) {
+      let currentCol: number | undefined = 0;
+
+      if (event.key === "ArrowRight") {
+        currentCol = this.grid.HEADER_SELECTION_END_COL + 1;
+      } else if (event.key === "ArrowLeft") {
+        currentCol = this.grid.HEADER_SELECTION_END_COL - 1;
+      }
+
+      // Clamp the column to valid range (same as mouse move)
+      currentCol = Math.max(
+        0,
+        Math.min(currentCol, this.grid.TOTAL_COLUMNS - 1)
+      );
+
+      this.grid.HEADER_SELECTION_END_COL = currentCol;
+
+      // Update the selection range (same as mouse move)
+      let minCol = Math.min(
+        this.grid.HEADER_SELECTION_START_COL,
+        this.grid.HEADER_SELECTION_END_COL
+      );
+      let maxCol = Math.max(
+        this.grid.HEADER_SELECTION_START_COL,
+        this.grid.HEADER_SELECTION_END_COL
+      );
+
+      this.grid.SELECTED_CELL_RANGE = {
+        startRow: 0,
+        endRow: this.grid.TOTAL_ROWS - 1,
+        startCol: minCol,
+        endCol: maxCol,
+      };
+
+      // Update visual indicators (same as mouse move)
+      this.grid.SELECTED_COL_HEADER = this.grid.HEADER_SELECTION_START_COL + 1; // Keep original selection visible
+
+      // Finalize the selection (same as mouse up)
+      this.grid.SELECTED_COL_RANGE = {
+        startCol: minCol,
+        endCol: maxCol,
+      };
+
+      return true; // Selection was handled
+    }
+
+    return false; // Key event not handled
+  }
+
+  handleRowKeyboardRangeSelection(event: KeyboardEvent) {
+    // Check if we have a valid row selection started
+    if (
+      this.grid.HEADER_SELECTION_START_ROW === -1 ||
+      this.grid.HEADER_SELECTION_END_ROW === -1
+    ) {
+      return false; // No selection to extend
+    }
+
+    if (
+      event.shiftKey &&
+      (event.key === "ArrowUp" || event.key === "ArrowDown")
+    ) {
+      let currentRow = 0;
+
+      if (event.key === "ArrowDown") {
+        currentRow = this.grid.HEADER_SELECTION_END_ROW + 1;
+      } else if (event.key === "ArrowUp") {
+        currentRow = this.grid.HEADER_SELECTION_END_ROW - 1;
+      }
+
+      // Clamp the row to valid range (same as mouse move)
+      currentRow = Math.max(0, Math.min(currentRow, this.grid.TOTAL_ROWS - 1));
+
+      this.grid.HEADER_SELECTION_END_ROW = currentRow;
+
+      // Update the selection range (same as mouse move)
+      let minRow = Math.min(
+        this.grid.HEADER_SELECTION_START_ROW,
+        this.grid.HEADER_SELECTION_END_ROW
+      );
+      let maxRow = Math.max(
+        this.grid.HEADER_SELECTION_START_ROW,
+        this.grid.HEADER_SELECTION_END_ROW
+      );
+
+      this.grid.SELECTED_CELL_RANGE = {
+        startRow: minRow,
+        endRow: maxRow,
+        startCol: 0,
+        endCol: this.grid.TOTAL_COLUMNS - 1,
+      };
+
+      // Update visual indicators (same as mouse move)
+      this.grid.SELECTED_ROW_HEADER = this.grid.HEADER_SELECTION_START_ROW + 1; // Keep original selection visible
+
+      // Finalize the selection (same as mouse up)
+      this.grid.SELECTED_ROW_RANGE = {
+        startRow: minRow,
+        endRow: maxRow,
+      };
+
+      return true; // Selection was handled
+    }
+
+    return false; // Key event not handled
+  }
 }

@@ -23,10 +23,10 @@ export class KeyDownEventOrchestrator {
         if (this.otherKeySet.has(key)) {
             shouldRender = this.keyboardKeyHandler.handleTabEnterKeyOperations(key, event.shiftKey);
         }
-        else if (this.grid.colHeaderSelector.handleKeyboardSelection(event)) {
+        else if (this.keyboardKeyHandler.handleColKeyboardRangeSelection(event)) {
             shouldRender = true;
         }
-        else if (this.grid.rowHeaderSelector.handleKeyboardSelection(event)) {
+        else if (this.keyboardKeyHandler.handleRowKeyboardRangeSelection(event)) {
             shouldRender = true;
         }
         else if (event.shiftKey && this.keySet.has(key)) {

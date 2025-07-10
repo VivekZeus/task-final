@@ -1,20 +1,19 @@
 import { Config } from "./Config.js";
 import { Draw } from "./Draw.js";
-import { PrefixArrayManager } from "./PrefixArrayManager.js";
-import { MouseHoverManager } from "./MouseHoverManager.js";
-import { CellDataManager } from "./CellDataManager.js";
+import { PrefixArrayManager } from "./otherManager/PrefixArrayManager.js";
+import { MouseHoverManager } from "./manager/MouseHoverManager.js";
+import { CellDataManager } from "./otherManager/CellDataManager.js";
 import { ColumnResizingManager } from "./manager/ColumnResizingManager.js";
-import { RowResizingManager } from "./RowResizingManager.js";
-import { ColHeaderSelector } from "./ColHeaderSelector.js";
-import { RowHeaderSelector } from "./RowHeaderSelector.js";
-import { CellSelectionManager } from "./CellSelectionManager.js";
-import { HeaderSelectionManager } from "./HeaderSelectionManager.js";
+import { RowResizingManager } from "./manager/RowResizingManager.js";
+import { CellSelectionManager } from "./manager/CellSelectionManager.js";
+import { HeaderSelectionManager } from "./manager/HeaderSelectionManager.js";
 import { StatisticsManager } from "./statistics/StatisticsManager.js";
-import { AutoScrollManager } from "./AutoScrollManager.js";
+import { AutoScrollManager } from "./otherManager/AutoScrollManager.js";
 import { KeyDownEventOrchestrator } from "./orchestrator/KeyDownEventOrchestrator.js";
 import { DoubleClickEventOrchestrator } from "./orchestrator/DoubleClickEventOrchestrator.js";
 import { CellInputOrchestrator } from "./orchestrator/CellInputOrchestrator.js";
 import { PointerOrchestrator } from "./orchestrator/PointerOrchestrator.js";
+import { Utils } from "./Utils.js";
 
 export class Grid {
   canvasContainer: HTMLDivElement;
@@ -22,20 +21,13 @@ export class Grid {
   context: CanvasRenderingContext2D;
 
   draw: Draw;
-  mouseHoverManager: MouseHoverManager;
   cellDataManager: CellDataManager;
-  columnResizingManager: ColumnResizingManager;
-  rowResizingManager: RowResizingManager;
-  colHeaderSelector: ColHeaderSelector;
-  rowHeaderSelector: RowHeaderSelector;
-  cellSelectionManager: CellSelectionManager;
   keyDownEventOrchestrator: KeyDownEventOrchestrator;
-  headerSelectionManager: HeaderSelectionManager;
   statisticsManager: StatisticsManager;
   autoScrollManager: AutoScrollManager;
   doubleClickEventOrchestrator: DoubleClickEventOrchestrator;
-  cellInputOrchestrator:CellInputOrchestrator;
-  pointerOrchestrator:PointerOrchestrator;
+  cellInputOrchestrator: CellInputOrchestrator;
+  pointerOrchestrator: PointerOrchestrator;
 
   TOTAL_ROWS = structuredClone(Config.TOTAL_ROWS);
   TOTAL_COLUMNS = structuredClone(Config.TOTAL_COLUMNS);
@@ -80,10 +72,6 @@ export class Grid {
     startCol: 0,
     endCol: 0,
   };
-  SELECTED_CELL = {
-    row: 0,
-    col: 0,
-  };
 
   SELECTION_BEFORE_RESIZE: { [key: string]: any } | null = {};
 
@@ -108,7 +96,7 @@ export class Grid {
   SELECTED_COL_RANGE: { [key: string]: any } | null = null;
   SELECTED_ROW_RANGE: { [key: string]: any } | null = null;
 
-  prefixArrayManager = new PrefixArrayManager(this);
+  prefixArrayManager: PrefixArrayManager;
 
   viewWidth: number;
   viewHeight: number;
@@ -128,23 +116,19 @@ export class Grid {
     this.viewHeight = this.canvasContainer.clientHeight;
 
     this.draw = new Draw(this);
-    this.mouseHoverManager = new MouseHoverManager(this);
+
+    this.prefixArrayManager = new PrefixArrayManager(this);
     this.cellDataManager = new CellDataManager(this);
-    this.rowResizingManager = new RowResizingManager(this);
-    this.columnResizingManager = new ColumnResizingManager(this);
-    this.colHeaderSelector = new ColHeaderSelector(this);
-    this.rowHeaderSelector = new RowHeaderSelector(this);
-    this.cellSelectionManager = new CellSelectionManager(this);
+
     this.keyDownEventOrchestrator = new KeyDownEventOrchestrator(this);
-    this.headerSelectionManager = new HeaderSelectionManager(this);
     this.statisticsManager = new StatisticsManager(this);
     this.autoScrollManager = new AutoScrollManager(this);
     this.doubleClickEventOrchestrator = new DoubleClickEventOrchestrator(
       this,
       this.keyDownEventOrchestrator.getKeyboardKeyHandler()
     );
-    this.cellInputOrchestrator=new CellInputOrchestrator(this);
-    this.pointerOrchestrator=new PointerOrchestrator(this);
+    this.cellInputOrchestrator = new CellInputOrchestrator(this);
+    this.pointerOrchestrator = new PointerOrchestrator(this);
     this.init();
     this.inializeManagers();
   }
@@ -228,8 +212,12 @@ export class Grid {
     wrapper.style.height = `${this.TOTAL_ROWS * this.DEFAULT_ROW_HEIGHT}px`;
   }
 
-  private inializeManagers(){
-    this.pointerOrchestrator.registerManager(this.columnResizingManager);
+  private inializeManagers() {
+    this.pointerOrchestrator.registerManager(new MouseHoverManager(this));
+    this.pointerOrchestrator.registerManager(new ColumnResizingManager(this));
+    this.pointerOrchestrator.registerManager(new RowResizingManager(this));
+    this.pointerOrchestrator.registerManager(new HeaderSelectionManager(this));
+    this.pointerOrchestrator.registerManager(new CellSelectionManager(this));
   }
 
   resizeCanvas() {
@@ -349,7 +337,7 @@ export class Grid {
 
     this.draw.drawRowsCols(startRow, startCol, endRow, endCol);
 
-    this.cellSelectionManager.updateCellSelectionInfo();
+    Utils.updateCellSelectionInfo(this);
 
     this.draw.drawSelectedCellBorder(
       startRow,

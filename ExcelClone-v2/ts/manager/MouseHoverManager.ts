@@ -1,5 +1,5 @@
-import { Grid } from "./Grid";
-import { PointerEventManager } from "./manager/PointerEventManager";
+import { Grid } from "../Grid";
+import { PointerEventManager } from "./PointerEventManager";
 
 export class MouseHoverManager implements PointerEventManager {
   grid: Grid;
@@ -9,7 +9,7 @@ export class MouseHoverManager implements PointerEventManager {
   }
 
   test(x: number, y: number, e: PointerEvent): boolean {
-    return (this.grid.RESIZING_COL == -1 || this.grid.RESIZING_ROW == -1);
+    return this.grid.RESIZING_COL == -1 || this.grid.RESIZING_ROW == -1;
   }
 
   onPointerDown(x: number, y: number, e: MouseEvent): void {}
@@ -21,9 +21,29 @@ export class MouseHoverManager implements PointerEventManager {
     startCol: number,
     endCol: number,
     startRow: number,
-    endRow: number
+    endRow: number,
+    scrollLeft:number,
+    scrollTop:number
   ): void {
+    const prevHoveredCol = this.grid.HOVERED_COL;
+    const prevHoveredRow = this.grid.HOVERED_ROW;
     this.changeCursorStyleBasedOnPos(x, y, startCol, endCol, startRow, endRow);
+    if (
+      prevHoveredCol !== this.grid.HOVERED_COL ||
+      prevHoveredRow !== this.grid.HOVERED_ROW
+    ) {
+      this.grid.render();
+
+      // for drawing column indicator
+      if (this.grid.HOVERED_COL !== -1) {
+        this.grid.draw.drawResizeIndicator(this.grid.HOVERED_COL, scrollLeft);
+      }
+
+      // for drawing row indicator
+      if (this.grid.HOVERED_ROW !== -1) {
+        this.grid.draw.drawRowResizeIndicator(this.grid.HOVERED_ROW, scrollTop);
+      }
+    }
   }
 
   onPointerUp(x: number, y: number, e: MouseEvent): void {}
@@ -36,6 +56,7 @@ export class MouseHoverManager implements PointerEventManager {
     startRow: number,
     endRow: number
   ) {
+    this.grid.canvas.style.cursor = "cell";
     if (y < this.grid.COL_HEADER_HEIGHT && x > this.grid.ROW_HEADER_WIDTH) {
       this.grid.canvas.style.cursor = "s-resize";
       let currentX = this.grid.ROW_HEADER_WIDTH;

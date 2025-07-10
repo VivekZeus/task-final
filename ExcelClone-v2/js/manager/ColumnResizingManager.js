@@ -3,11 +3,12 @@ export class ColumnResizingManager {
         this.grid = gridObj;
     }
     test(x, y, event) {
-        console.log("in the test of col resize manager " + this.grid.HOVERED_COL);
         return this.grid.HOVERED_COL !== -1;
     }
     onPointerDown(x, y, event) {
         var _a;
+        console.log("came");
+        this.grid.canvas.style.cursor = "col-resize";
         this.grid.RESIZING_COL = this.grid.HOVERED_COL;
         this.grid.INITIAL_X = event.clientX;
         this.grid.RESIZING_COL_OLD_WIDTH =
@@ -25,6 +26,7 @@ export class ColumnResizingManager {
         var _a;
         if (this.grid.RESIZING_COL === -1)
             return;
+        this.grid.canvas.style.cursor = "col-resize";
         const dx = event.clientX - this.grid.INITIAL_X;
         let newWidth = ((_a = this.grid.COL_WIDTHS.get(this.grid.RESIZING_COL)) !== null && _a !== void 0 ? _a : this.grid.DEFAULT_COL_WIDTH) + dx;
         if (newWidth < 10)
@@ -46,6 +48,7 @@ export class ColumnResizingManager {
         if (this.grid.RESIZING_COL === -1)
             return; // Safety check
         this.grid.prefixArrayManager.updateColumnWidth(this.grid.RESIZING_COL);
+        // this.grid.canvas.style.cursor = "cell";
         if (this.grid.SELECTION_BEFORE_RESIZE) {
             this.grid.SELECTED_COL_HEADER =
                 this.grid.SELECTION_BEFORE_RESIZE.selectedColHeader;

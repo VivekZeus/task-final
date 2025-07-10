@@ -1,20 +1,19 @@
 import { Config } from "./Config.js";
 import { Draw } from "./Draw.js";
-import { PrefixArrayManager } from "./PrefixArrayManager.js";
-import { MouseHoverManager } from "./MouseHoverManager.js";
-import { CellDataManager } from "./CellDataManager.js";
+import { PrefixArrayManager } from "./otherManager/PrefixArrayManager.js";
+import { MouseHoverManager } from "./manager/MouseHoverManager.js";
+import { CellDataManager } from "./otherManager/CellDataManager.js";
 import { ColumnResizingManager } from "./manager/ColumnResizingManager.js";
-import { RowResizingManager } from "./RowResizingManager.js";
-import { ColHeaderSelector } from "./ColHeaderSelector.js";
-import { RowHeaderSelector } from "./RowHeaderSelector.js";
-import { CellSelectionManager } from "./CellSelectionManager.js";
-import { HeaderSelectionManager } from "./HeaderSelectionManager.js";
+import { RowResizingManager } from "./manager/RowResizingManager.js";
+import { CellSelectionManager } from "./manager/CellSelectionManager.js";
+import { HeaderSelectionManager } from "./manager/HeaderSelectionManager.js";
 import { StatisticsManager } from "./statistics/StatisticsManager.js";
-import { AutoScrollManager } from "./AutoScrollManager.js";
+import { AutoScrollManager } from "./otherManager/AutoScrollManager.js";
 import { KeyDownEventOrchestrator } from "./orchestrator/KeyDownEventOrchestrator.js";
 import { DoubleClickEventOrchestrator } from "./orchestrator/DoubleClickEventOrchestrator.js";
 import { CellInputOrchestrator } from "./orchestrator/CellInputOrchestrator.js";
 import { PointerOrchestrator } from "./orchestrator/PointerOrchestrator.js";
+import { Utils } from "./Utils.js";
 export class Grid {
     constructor(canvasContainer, canvas, context) {
         this.TOTAL_ROWS = structuredClone(Config.TOTAL_ROWS);
@@ -50,10 +49,6 @@ export class Grid {
             startCol: 0,
             endCol: 0,
         };
-        this.SELECTED_CELL = {
-            row: 0,
-            col: 0,
-        };
         this.SELECTION_BEFORE_RESIZE = {};
         this.IS_SELECTING = false;
         this.HOVERED_COL = -1;
@@ -72,7 +67,6 @@ export class Grid {
         this.HEADER_SELECTION_END_COL = -1;
         this.SELECTED_COL_RANGE = null;
         this.SELECTED_ROW_RANGE = null;
-        this.prefixArrayManager = new PrefixArrayManager(this);
         this.autoScrollDir = null;
         this.autoScrollFrameId = null;
         this.canvasContainer = canvasContainer;
@@ -81,15 +75,9 @@ export class Grid {
         this.viewWidth = this.canvasContainer.clientWidth;
         this.viewHeight = this.canvasContainer.clientHeight;
         this.draw = new Draw(this);
-        this.mouseHoverManager = new MouseHoverManager(this);
+        this.prefixArrayManager = new PrefixArrayManager(this);
         this.cellDataManager = new CellDataManager(this);
-        this.rowResizingManager = new RowResizingManager(this);
-        this.columnResizingManager = new ColumnResizingManager(this);
-        this.colHeaderSelector = new ColHeaderSelector(this);
-        this.rowHeaderSelector = new RowHeaderSelector(this);
-        this.cellSelectionManager = new CellSelectionManager(this);
         this.keyDownEventOrchestrator = new KeyDownEventOrchestrator(this);
-        this.headerSelectionManager = new HeaderSelectionManager(this);
         this.statisticsManager = new StatisticsManager(this);
         this.autoScrollManager = new AutoScrollManager(this);
         this.doubleClickEventOrchestrator = new DoubleClickEventOrchestrator(this, this.keyDownEventOrchestrator.getKeyboardKeyHandler());
@@ -167,7 +155,11 @@ export class Grid {
         wrapper.style.height = `${this.TOTAL_ROWS * this.DEFAULT_ROW_HEIGHT}px`;
     }
     inializeManagers() {
-        this.pointerOrchestrator.registerManager(this.columnResizingManager);
+        this.pointerOrchestrator.registerManager(new MouseHoverManager(this));
+        this.pointerOrchestrator.registerManager(new ColumnResizingManager(this));
+        this.pointerOrchestrator.registerManager(new RowResizingManager(this));
+        this.pointerOrchestrator.registerManager(new HeaderSelectionManager(this));
+        this.pointerOrchestrator.registerManager(new CellSelectionManager(this));
     }
     resizeCanvas() {
         const dpr = window.devicePixelRatio || 1;
@@ -255,7 +247,7 @@ export class Grid {
         this.context.translate(-scrollLeft, -scrollTop);
         this.context.beginPath();
         this.draw.drawRowsCols(startRow, startCol, endRow, endCol);
-        this.cellSelectionManager.updateCellSelectionInfo();
+        Utils.updateCellSelectionInfo(this);
         this.draw.drawSelectedCellBorder(startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
         this.draw.drawVisibleText(startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
         this.draw.drawColumnHeader(endCol);

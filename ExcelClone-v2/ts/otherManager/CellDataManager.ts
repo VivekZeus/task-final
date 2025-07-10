@@ -1,4 +1,4 @@
-import { Grid } from "./Grid";
+import { Grid } from "../Grid";
 
 export class CellDataManager {
   cellData: Map<number, any> = new Map();

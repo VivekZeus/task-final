@@ -1,3 +1,4 @@
+import { MouseHoverManager } from "../manager/MouseHoverManager.js";
 export class PointerOrchestrator {
     constructor(grid) {
         this.managers = [];
@@ -23,29 +24,34 @@ export class PointerOrchestrator {
     }
     pointerDown(e) {
         const { x, y } = this.getXY(e);
+        const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } = this.grid.getVisibleRowCols();
         this.grid.canvas.style.cursor = "cell";
         for (const manager of this.managers) {
-            console.log(manager.test(x, y, e));
-            if (manager.test(x, y, e)) {
+            if (manager.test(x, y, e) && !(manager instanceof MouseHoverManager)) {
                 this.currentManager = manager;
-                manager.onPointerDown(x, y, e);
+                manager.onPointerDown(x, y, e, startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
                 break;
             }
         }
     }
     pointerMove(e) {
+        const { x, y } = this.getXY(e);
         if (this.currentManager) {
-            const { x, y } = this.getXY(e);
-            this.currentManager.onPointerMove(x, y, e);
+            const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } = this.grid.getVisibleRowCols();
+            this.currentManager.onPointerMove(x, y, e, startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
         }
         else {
+            const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } = this.grid.getVisibleRowCols();
+            this.managers[0].onPointerMove(x, y, e, startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
         }
     }
     pointerUp(e) {
         if (this.currentManager) {
             const { x, y } = this.getXY(e);
-            this.currentManager.onPointerUp(x, y, e);
+            const { startRow, endRow, startCol, endCol, scrollLeft, scrollTop } = this.grid.getVisibleRowCols();
+            this.currentManager.onPointerUp(x, y, e, startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
             this.currentManager = null;
+            this.grid.render();
         }
     }
 }

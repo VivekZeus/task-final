@@ -36,11 +36,13 @@ export class KeyDownEventOrchestrator {
         key,
         event.shiftKey
       );
-    } else if (this.grid.colHeaderSelector.handleKeyboardSelection(event)) {
+    } else if (this.keyboardKeyHandler.handleColKeyboardRangeSelection(event)) {
       shouldRender = true;
-    } else if (this.grid.rowHeaderSelector.handleKeyboardSelection(event)) {
+    } 
+    else if (this.keyboardKeyHandler.handleRowKeyboardRangeSelection(event)) {
       shouldRender = true;
-    } else if (event.shiftKey && this.keySet.has(key)) {
+    }
+     else if (event.shiftKey && this.keySet.has(key)) {
       if (this.keyboardKeyHandler.ifCellRangeCanShift(key)) {
         this.keyboardKeyHandler.handleShiftAndArrowKeyOperations(key);
         this.grid.statisticsManager.updateStatistics();

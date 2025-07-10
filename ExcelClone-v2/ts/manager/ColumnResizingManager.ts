@@ -9,11 +9,12 @@ export class ColumnResizingManager implements PointerEventManager {
   }
 
   test(x: number, y: number, event: PointerEvent): boolean {
-    console.log("in the test of col resize manager "+this.grid.HOVERED_COL)
     return this.grid.HOVERED_COL !== -1;
   }
 
   onPointerDown(x: number, y: number, event: PointerEvent): void {
+    console.log("came");
+    this.grid.canvas.style.cursor = "col-resize";
     this.grid.RESIZING_COL = this.grid.HOVERED_COL;
     this.grid.INITIAL_X = event.clientX;
     this.grid.RESIZING_COL_OLD_WIDTH =
@@ -35,6 +36,7 @@ export class ColumnResizingManager implements PointerEventManager {
   onPointerMove(x: number, y: number, event: PointerEvent): void {
     if (this.grid.RESIZING_COL === -1) return;
 
+    this.grid.canvas.style.cursor = "col-resize";
     const dx = event.clientX - this.grid.INITIAL_X;
     let newWidth =
       (this.grid.COL_WIDTHS.get(this.grid.RESIZING_COL) ??
@@ -43,7 +45,6 @@ export class ColumnResizingManager implements PointerEventManager {
 
     this.grid.COL_WIDTHS.set(this.grid.RESIZING_COL, newWidth);
     this.grid.INITIAL_X = event.clientX;
-
 
     this.grid.render();
 
@@ -72,6 +73,7 @@ export class ColumnResizingManager implements PointerEventManager {
   onPointerUp(x: number, y: number, event: PointerEvent): void {
     if (this.grid.RESIZING_COL === -1) return; // Safety check
     this.grid.prefixArrayManager.updateColumnWidth(this.grid.RESIZING_COL);
+    // this.grid.canvas.style.cursor = "cell";
 
     if (this.grid.SELECTION_BEFORE_RESIZE) {
       this.grid.SELECTED_COL_HEADER =
@@ -91,5 +93,4 @@ export class ColumnResizingManager implements PointerEventManager {
     event.preventDefault();
     event.stopPropagation();
   }
-
 }

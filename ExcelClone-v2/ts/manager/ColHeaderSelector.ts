@@ -1,4 +1,4 @@
-import { Grid } from "./Grid";
+import { Grid } from "../Grid";
 
 
 export class ColHeaderSelector {
@@ -66,50 +66,50 @@ export class ColHeaderSelector {
     this.grid.SELECTED_COL_HEADER = this.grid.HEADER_SELECTION_START_COL + 1;
   }
 
-   handleKeyboardSelection(event:KeyboardEvent) {
-    if (this.grid.HEADER_SELECTION_START_COL === -1 || this.grid.HEADER_SELECTION_END_COL === -1) {
-      return false; 
-    }
+  //  handleKeyboardSelection(event:KeyboardEvent) {
+  //   if (this.grid.HEADER_SELECTION_START_COL === -1 || this.grid.HEADER_SELECTION_END_COL === -1) {
+  //     return false; 
+  //   }
 
-    if (event.shiftKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
-      let currentCol:number| undefined=0;
+  //   if (event.shiftKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+  //     let currentCol:number| undefined=0;
       
-      if (event.key === 'ArrowRight') {
-        currentCol = this.grid.HEADER_SELECTION_END_COL + 1;
-      } else if (event.key === 'ArrowLeft') {
-        currentCol = this.grid.HEADER_SELECTION_END_COL - 1;
-      }
+  //     if (event.key === 'ArrowRight') {
+  //       currentCol = this.grid.HEADER_SELECTION_END_COL + 1;
+  //     } else if (event.key === 'ArrowLeft') {
+  //       currentCol = this.grid.HEADER_SELECTION_END_COL - 1;
+  //     }
       
-      // Clamp the column to valid range (same as mouse move)
-      currentCol = Math.max(0, Math.min(currentCol, this.grid.TOTAL_COLUMNS - 1));
+  //     // Clamp the column to valid range (same as mouse move)
+  //     currentCol = Math.max(0, Math.min(currentCol, this.grid.TOTAL_COLUMNS - 1));
       
-      this.grid.HEADER_SELECTION_END_COL = currentCol;
+  //     this.grid.HEADER_SELECTION_END_COL = currentCol;
       
-      // Update the selection range (same as mouse move)
-      let minCol = Math.min(this.grid.HEADER_SELECTION_START_COL, this.grid.HEADER_SELECTION_END_COL);
-      let maxCol = Math.max(this.grid.HEADER_SELECTION_START_COL, this.grid.HEADER_SELECTION_END_COL);
+  //     // Update the selection range (same as mouse move)
+  //     let minCol = Math.min(this.grid.HEADER_SELECTION_START_COL, this.grid.HEADER_SELECTION_END_COL);
+  //     let maxCol = Math.max(this.grid.HEADER_SELECTION_START_COL, this.grid.HEADER_SELECTION_END_COL);
       
-      this.grid.SELECTED_CELL_RANGE = {
-        startRow: 0,
-        endRow: this.grid.TOTAL_ROWS - 1,
-        startCol: minCol,
-        endCol: maxCol,
-      };
+  //     this.grid.SELECTED_CELL_RANGE = {
+  //       startRow: 0,
+  //       endRow: this.grid.TOTAL_ROWS - 1,
+  //       startCol: minCol,
+  //       endCol: maxCol,
+  //     };
       
-      // Update visual indicators (same as mouse move)
-      this.grid.SELECTED_COL_HEADER = this.grid.HEADER_SELECTION_START_COL + 1; // Keep original selection visible
+  //     // Update visual indicators (same as mouse move)
+  //     this.grid.SELECTED_COL_HEADER = this.grid.HEADER_SELECTION_START_COL + 1; // Keep original selection visible
       
-      // Finalize the selection (same as mouse up)
-      this.grid.SELECTED_COL_RANGE = {
-        startCol: minCol,
-        endCol: maxCol
-      };
+  //     // Finalize the selection (same as mouse up)
+  //     this.grid.SELECTED_COL_RANGE = {
+  //       startCol: minCol,
+  //       endCol: maxCol
+  //     };
       
-      return true; // Selection was handled
-    }
+  //     return true; // Selection was handled
+  //   }
     
-    return false; // Key event not handled
-  }
+  //   return false; // Key event not handled
+  // }
 }
 
 

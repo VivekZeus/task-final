@@ -1,5 +1,5 @@
-import { Config } from "./Config.js";
-import { Grid } from "./Grid.js";
+
+import { Grid } from "../Grid.js";
 
 export class PrefixArrayManager {
 

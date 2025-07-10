@@ -3,115 +3,184 @@ export class Draw {
     constructor(gridObj) {
         this.grid = gridObj;
     }
+    // drawSelectedCellCorrepondingRowCol(
+    //   startRow: number,
+    //   endRow: number,
+    //   startCol: number,
+    //   endCol: number,
+    //   scrollLeft: number,
+    //   scrollTop: number
+    // ) {
+    //   if (this.grid.SELECTED_CELL_RANGE == null) return;
+    //   const selStartRow = this.grid.SELECTED_CELL_RANGE.startRow;
+    //   const selStartCol = this.grid.SELECTED_CELL_RANGE.startCol;
+    //   const selEndRow = this.grid.SELECTED_CELL_RANGE.endRow;
+    //   const selEndCol = this.grid.SELECTED_CELL_RANGE.endCol;
+    //   // Also check for single cell selection for backwards compatibility
+    //   const singleSelRow = this.grid.SELECTED_CELL_RANGE.startRow;
+    //   const singleSelCol = this.grid.SELECTED_CELL_RANGE.endRow;
+    //   // Determine if we have a range selection or single cell selection
+    //   const hasRangeSelection =
+    //     selStartRow !== -1 &&
+    //     selStartCol !== -1 &&
+    //     selEndRow !== -1 &&
+    //     selEndCol !== -1;
+    //   const hasSingleSelection = singleSelRow !== -1 && singleSelCol !== -1;
+    //   if (!hasRangeSelection && !hasSingleSelection) return;
+    //   if (this.grid.RESIZING_COL !== -1) return;
+    //   const highlightColor = "rgba(173, 235, 193, 0.6)";
+    //   const borderColor = "#187c44";
+    //   this.grid.context.save();
+    //   if (hasRangeSelection) {
+    //     // Handle range selection
+    //     const minRow = Math.min(selStartRow, selEndRow);
+    //     const maxRow = Math.max(selStartRow, selEndRow);
+    //     const minCol = Math.min(selStartCol, selEndCol);
+    //     const maxCol = Math.max(selStartCol, selEndCol);
+    //     // === Column Headers Highlight === (for all columns in range)
+    //     for (let col = minCol; col <= maxCol; col++) {
+    //       if (col >= startCol && col <= endCol) {
+    //         const colPos = this.grid.prefixArrayManager.getCellPosition(0, col);
+    //         const colX = colPos.x - scrollLeft;
+    //         const colWidth =
+    //           this.grid.COL_WIDTHS.get(col) ?? this.grid.DEFAULT_COL_WIDTH;
+    //         const colHeight = this.grid.COL_HEADER_HEIGHT;
+    //         // Fill
+    //         this.grid.context.fillStyle = highlightColor;
+    //         this.grid.context.fillRect(colX, 0, colWidth, colHeight);
+    //         // Border bottom
+    //         this.grid.context.strokeStyle = borderColor;
+    //         this.grid.context.lineWidth = 2;
+    //         this.grid.context.beginPath();
+    //         this.grid.context.moveTo(colX, colHeight - 1);
+    //         this.grid.context.lineTo(colX + colWidth, colHeight - 1);
+    //         this.grid.context.stroke();
+    //       }
+    //     }
+    //     // === Row Headers Highlight === (for all rows in range)
+    //     for (let row = minRow; row <= maxRow; row++) {
+    //       if (row >= startRow && row <= endRow) {
+    //         const rowPos = this.grid.prefixArrayManager.getCellPosition(row, 0);
+    //         const rowY = rowPos.y - scrollTop;
+    //         const rowWidth = this.grid.ROW_HEADER_WIDTH;
+    //         const rowHeight =
+    //           this.grid.ROW_HEIGHTS.get(row) || this.grid.DEFAULT_ROW_HEIGHT;
+    //         // Fill
+    //         this.grid.context.fillStyle = highlightColor;
+    //         this.grid.context.fillRect(0, rowY, rowWidth, rowHeight);
+    //         // Border right
+    //         this.grid.context.strokeStyle = borderColor;
+    //         this.grid.context.lineWidth = 2;
+    //         this.grid.context.beginPath();
+    //         this.grid.context.moveTo(rowWidth - 1, rowY);
+    //         this.grid.context.lineTo(rowWidth - 1, rowY + rowHeight);
+    //         this.grid.context.stroke();
+    //       }
+    //     }
+    //   } else {
+    //     // Handle single cell selection (original behavior)
+    //     const selRow = singleSelRow;
+    //     const selCol = singleSelCol;
+    //     // === Column Header Highlight === (Even if row is out of view)
+    //     if (selCol >= startCol && selCol <= endCol) {
+    //       const colPos = this.grid.prefixArrayManager.getCellPosition(0, selCol);
+    //       const colX = colPos.x - scrollLeft;
+    //       const colWidth =
+    //         this.grid.COL_WIDTHS.get(selCol) ?? this.grid.DEFAULT_COL_WIDTH;
+    //       const colHeight = this.grid.COL_HEADER_HEIGHT;
+    //       // Fill
+    //       this.grid.context.fillStyle = highlightColor;
+    //       this.grid.context.fillRect(colX, 0, colWidth, colHeight);
+    //       // Border bottom
+    //       this.grid.context.strokeStyle = borderColor;
+    //       this.grid.context.lineWidth = 2;
+    //       this.grid.context.beginPath();
+    //       this.grid.context.moveTo(colX, colHeight - 1);
+    //       this.grid.context.lineTo(colX + colWidth, colHeight - 1);
+    //       this.grid.context.stroke();
+    //     }
+    //     // === Row Header Highlight === (Even if col is out of view)
+    //     if (selRow >= startRow && selRow <= endRow) {
+    //       const rowPos = this.grid.prefixArrayManager.getCellPosition(selRow, 0);
+    //       const rowY = rowPos.y - scrollTop;
+    //       const rowWidth = this.grid.ROW_HEADER_WIDTH;
+    //       const rowHeight =
+    //         this.grid.ROW_HEIGHTS.get(selRow) || this.grid.DEFAULT_ROW_HEIGHT;
+    //       // Fill
+    //       this.grid.context.fillStyle = highlightColor;
+    //       this.grid.context.fillRect(0, rowY, rowWidth, rowHeight);
+    //       // Border right
+    //       this.grid.context.strokeStyle = borderColor;
+    //       this.grid.context.lineWidth = 2;
+    //       this.grid.context.beginPath();
+    //       this.grid.context.moveTo(rowWidth - 1, rowY);
+    //       this.grid.context.lineTo(rowWidth - 1, rowY + rowHeight);
+    //       this.grid.context.stroke();
+    //     }
+    //   }
+    //   this.grid.context.restore();
+    // }
     drawSelectedCellCorrepondingRowCol(startRow, endRow, startCol, endCol, scrollLeft, scrollTop) {
-        var _a, _b;
-        if (this.grid.SELECTED_CELL_RANGE == null)
+        const sel = this.grid.SELECTED_CELL_RANGE;
+        if (!sel || this.grid.RESIZING_COL !== -1)
             return;
-        const selStartRow = this.grid.SELECTED_CELL_RANGE.startRow;
-        const selStartCol = this.grid.SELECTED_CELL_RANGE.startCol;
-        const selEndRow = this.grid.SELECTED_CELL_RANGE.endRow;
-        const selEndCol = this.grid.SELECTED_CELL_RANGE.endCol;
-        // Also check for single cell selection for backwards compatibility
-        const singleSelRow = this.grid.SELECTED_CELL.row;
-        const singleSelCol = this.grid.SELECTED_CELL.col;
-        // Determine if we have a range selection or single cell selection
-        const hasRangeSelection = selStartRow !== -1 &&
-            selStartCol !== -1 &&
-            selEndRow !== -1 &&
-            selEndCol !== -1;
-        const hasSingleSelection = singleSelRow !== -1 && singleSelCol !== -1;
-        if (!hasRangeSelection && !hasSingleSelection)
+        const { startRow: sRow, endRow: eRow, startCol: sCol, endCol: eCol } = sel;
+        const hasRange = sRow !== -1 && sCol !== -1 && eRow !== -1 && eCol !== -1;
+        const hasSingle = sRow !== -1 && eRow !== -1;
+        if (!hasRange && !hasSingle)
             return;
-        if (this.grid.RESIZING_COL !== -1)
-            return;
-        const highlightColor = "rgba(173, 235, 193, 0.6)";
-        const borderColor = "#187c44";
-        this.grid.context.save();
-        if (hasRangeSelection) {
-            // Handle range selection
-            const minRow = Math.min(selStartRow, selEndRow);
-            const maxRow = Math.max(selStartRow, selEndRow);
-            const minCol = Math.min(selStartCol, selEndCol);
-            const maxCol = Math.max(selStartCol, selEndCol);
-            // === Column Headers Highlight === (for all columns in range)
-            for (let col = minCol; col <= maxCol; col++) {
-                if (col >= startCol && col <= endCol) {
-                    const colPos = this.grid.prefixArrayManager.getCellPosition(0, col);
-                    const colX = colPos.x - scrollLeft;
-                    const colWidth = (_a = this.grid.COL_WIDTHS.get(col)) !== null && _a !== void 0 ? _a : this.grid.DEFAULT_COL_WIDTH;
-                    const colHeight = this.grid.COL_HEADER_HEIGHT;
-                    // Fill
-                    this.grid.context.fillStyle = highlightColor;
-                    this.grid.context.fillRect(colX, 0, colWidth, colHeight);
-                    // Border bottom
-                    this.grid.context.strokeStyle = borderColor;
-                    this.grid.context.lineWidth = 2;
-                    this.grid.context.beginPath();
-                    this.grid.context.moveTo(colX, colHeight - 1);
-                    this.grid.context.lineTo(colX + colWidth, colHeight - 1);
-                    this.grid.context.stroke();
-                }
+        const ctx = this.grid.context;
+        const getColWidth = (col) => { var _a; return (_a = this.grid.COL_WIDTHS.get(col)) !== null && _a !== void 0 ? _a : this.grid.DEFAULT_COL_WIDTH; };
+        const getRowHeight = (row) => { var _a; return (_a = this.grid.ROW_HEIGHTS.get(row)) !== null && _a !== void 0 ? _a : this.grid.DEFAULT_ROW_HEIGHT; };
+        const getCellPos = this.grid.prefixArrayManager.getCellPosition.bind(this.grid.prefixArrayManager);
+        const fillHeader = (x, y, w, h, borderDir) => {
+            ctx.fillStyle = "rgba(173, 235, 193, 0.6)";
+            ctx.fillRect(x, y, w, h);
+            ctx.strokeStyle = "#187c44";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            if (borderDir === "bottom") {
+                ctx.moveTo(x, y + h - 1);
+                ctx.lineTo(x + w, y + h - 1);
             }
-            // === Row Headers Highlight === (for all rows in range)
+            else {
+                ctx.moveTo(x + w - 1, y);
+                ctx.lineTo(x + w - 1, y + h);
+            }
+            ctx.stroke();
+        };
+        ctx.save();
+        if (hasRange) {
+            const minRow = Math.min(sRow, eRow);
+            const maxRow = Math.max(sRow, eRow);
+            const minCol = Math.min(sCol, eCol);
+            const maxCol = Math.max(sCol, eCol);
+            for (let col = minCol; col <= maxCol; col++) {
+                if (col < startCol || col > endCol)
+                    continue;
+                const { x } = getCellPos(0, col);
+                fillHeader(x - scrollLeft, 0, getColWidth(col), this.grid.COL_HEADER_HEIGHT, "bottom");
+            }
             for (let row = minRow; row <= maxRow; row++) {
-                if (row >= startRow && row <= endRow) {
-                    const rowPos = this.grid.prefixArrayManager.getCellPosition(row, 0);
-                    const rowY = rowPos.y - scrollTop;
-                    const rowWidth = this.grid.ROW_HEADER_WIDTH;
-                    const rowHeight = this.grid.ROW_HEIGHTS.get(row) || this.grid.DEFAULT_ROW_HEIGHT;
-                    // Fill
-                    this.grid.context.fillStyle = highlightColor;
-                    this.grid.context.fillRect(0, rowY, rowWidth, rowHeight);
-                    // Border right
-                    this.grid.context.strokeStyle = borderColor;
-                    this.grid.context.lineWidth = 2;
-                    this.grid.context.beginPath();
-                    this.grid.context.moveTo(rowWidth - 1, rowY);
-                    this.grid.context.lineTo(rowWidth - 1, rowY + rowHeight);
-                    this.grid.context.stroke();
-                }
+                if (row < startRow || row > endRow)
+                    continue;
+                const { y } = getCellPos(row, 0);
+                fillHeader(0, y - scrollTop, this.grid.ROW_HEADER_WIDTH, getRowHeight(row), "right");
             }
         }
         else {
-            // Handle single cell selection (original behavior)
-            const selRow = singleSelRow;
-            const selCol = singleSelCol;
-            // === Column Header Highlight === (Even if row is out of view)
-            if (selCol >= startCol && selCol <= endCol) {
-                const colPos = this.grid.prefixArrayManager.getCellPosition(0, selCol);
-                const colX = colPos.x - scrollLeft;
-                const colWidth = (_b = this.grid.COL_WIDTHS.get(selCol)) !== null && _b !== void 0 ? _b : this.grid.DEFAULT_COL_WIDTH;
-                const colHeight = this.grid.COL_HEADER_HEIGHT;
-                // Fill
-                this.grid.context.fillStyle = highlightColor;
-                this.grid.context.fillRect(colX, 0, colWidth, colHeight);
-                // Border bottom
-                this.grid.context.strokeStyle = borderColor;
-                this.grid.context.lineWidth = 2;
-                this.grid.context.beginPath();
-                this.grid.context.moveTo(colX, colHeight - 1);
-                this.grid.context.lineTo(colX + colWidth, colHeight - 1);
-                this.grid.context.stroke();
+            const col = eCol;
+            const row = sRow;
+            if (col >= startCol && col <= endCol) {
+                const { x } = getCellPos(0, col);
+                fillHeader(x - scrollLeft, 0, getColWidth(col), this.grid.COL_HEADER_HEIGHT, "bottom");
             }
-            // === Row Header Highlight === (Even if col is out of view)
-            if (selRow >= startRow && selRow <= endRow) {
-                const rowPos = this.grid.prefixArrayManager.getCellPosition(selRow, 0);
-                const rowY = rowPos.y - scrollTop;
-                const rowWidth = this.grid.ROW_HEADER_WIDTH;
-                const rowHeight = this.grid.ROW_HEIGHTS.get(selRow) || this.grid.DEFAULT_ROW_HEIGHT;
-                // Fill
-                this.grid.context.fillStyle = highlightColor;
-                this.grid.context.fillRect(0, rowY, rowWidth, rowHeight);
-                // Border right
-                this.grid.context.strokeStyle = borderColor;
-                this.grid.context.lineWidth = 2;
-                this.grid.context.beginPath();
-                this.grid.context.moveTo(rowWidth - 1, rowY);
-                this.grid.context.lineTo(rowWidth - 1, rowY + rowHeight);
-                this.grid.context.stroke();
+            if (row >= startRow && row <= endRow) {
+                const { y } = getCellPos(row, 0);
+                fillHeader(0, y - scrollTop, this.grid.ROW_HEADER_WIDTH, getRowHeight(row), "right");
             }
         }
-        this.grid.context.restore();
+        ctx.restore();
     }
     drawSelectedCellBorder(startRow, endRow, startCol, endCol, scrollLeft, scrollTop) {
         var _a, _b, _c, _d, _e, _f;
@@ -129,7 +198,7 @@ export class Draw {
             startRow: minRow,
             endRow: maxRow,
             startCol: minCol,
-            endCol: maxCol
+            endCol: maxCol,
         };
         // Reject if there's no selection or it's fully outside the visible area
         if (minRow === -1 ||
