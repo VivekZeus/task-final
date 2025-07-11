@@ -10,24 +10,37 @@
   </head>
   <body>
     <div class="actionContainer">
-      <!-- <div class="actions">
+      <div class="actions">
         <div class="insertDataContainer">
           <div class="jsonInputWrapper">
             <input type="file" id="jsonInput" accept=".json" hidden />
             <label for="jsonInput" class="jsonInputLabel">
-              Select JSON File
+              <img src="images/jsonIcon.png" alt="JSON" height="40px" />
             </label>
           </div>
           <div class="csvInputWrapper">
             <input type="file" id="csvInput" accept=".csv" hidden />
             <label for="csvInput" class="csvInputLabel">
-              Select CSV File
+              <img src="images/csv.png" alt="CSV" height="40px" />
             </label>
           </div>
         </div>
-        <div class="textFormattingContainer">txt formta</div>
-        <div class="rowColOperationContainer">row col op</div>
-      </div> -->
+        <div class="rowColOperationContainer">
+          <button class="rowColOptButton" id="addRowAbove">
+            <img src="images/up-arrow.png" alt="" height="30px" />
+          </button>
+          <button class="rowColOptButton" id="addRowBelow">
+            <img src="images/arrow-down.png" alt="" height="30px" />
+          </button>
+          <button class="rowColOptButton" id="addColLeft">
+            <img src="images/arrow.png" alt="" height="30px" />
+          </button>
+          <button class="rowColOptButton" id="addColRight">
+            <img src="images/right-arrow.png" alt="" height="30px" />
+          </button>
+        </div>
+        <div class="textFormattingContainer"></div>
+      </div>
       <div class="info">
         <div id="cellInfo">hello</div>
         <input type="text" id="formulaInput" />

@@ -18,10 +18,10 @@ export class MouseHoverManager implements PointerEventManager {
     x: number,
     y: number,
     e: MouseEvent,
-    startCol: number,
-    endCol: number,
     startRow: number,
     endRow: number,
+    startCol: number,
+    endCol: number,
     scrollLeft:number,
     scrollTop:number
   ): void {
@@ -82,7 +82,7 @@ export class MouseHoverManager implements PointerEventManager {
       if (this.grid.CURRENT_INPUT != null) return;
       for (let i = startRow; i < endRow; i++) {
         currentY +=
-          this.grid.ROW_HEIGHTS.get(i) || this.grid.DEFAULT_ROW_HEIGHT;
+          this.grid.ROW_HEIGHTS.get(i) ?? this.grid.DEFAULT_ROW_HEIGHT;
         if (Math.abs(currentY - y) <= this.grid.CURSOR_CHANGE_THRESHOLD) {
           this.grid.canvas.style.cursor = "row-resize";
           this.grid.HOVERED_ROW = i;

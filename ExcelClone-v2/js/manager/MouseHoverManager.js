@@ -6,7 +6,7 @@ export class MouseHoverManager {
         return this.grid.RESIZING_COL == -1 || this.grid.RESIZING_ROW == -1;
     }
     onPointerDown(x, y, e) { }
-    onPointerMove(x, y, e, startCol, endCol, startRow, endRow, scrollLeft, scrollTop) {
+    onPointerMove(x, y, e, startRow, endRow, startCol, endCol, scrollLeft, scrollTop) {
         const prevHoveredCol = this.grid.HOVERED_COL;
         const prevHoveredRow = this.grid.HOVERED_ROW;
         this.changeCursorStyleBasedOnPos(x, y, startCol, endCol, startRow, endRow);
@@ -25,7 +25,7 @@ export class MouseHoverManager {
     }
     onPointerUp(x, y, e) { }
     changeCursorStyleBasedOnPos(x, y, startCol, endCol, startRow, endRow) {
-        var _a;
+        var _a, _b;
         this.grid.canvas.style.cursor = "cell";
         if (y < this.grid.COL_HEADER_HEIGHT && x > this.grid.ROW_HEADER_WIDTH) {
             this.grid.canvas.style.cursor = "s-resize";
@@ -51,7 +51,7 @@ export class MouseHoverManager {
                 return;
             for (let i = startRow; i < endRow; i++) {
                 currentY +=
-                    this.grid.ROW_HEIGHTS.get(i) || this.grid.DEFAULT_ROW_HEIGHT;
+                    (_b = this.grid.ROW_HEIGHTS.get(i)) !== null && _b !== void 0 ? _b : this.grid.DEFAULT_ROW_HEIGHT;
                 if (Math.abs(currentY - y) <= this.grid.CURSOR_CHANGE_THRESHOLD) {
                     this.grid.canvas.style.cursor = "row-resize";
                     this.grid.HOVERED_ROW = i;

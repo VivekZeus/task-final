@@ -19,6 +19,7 @@ import { DataDrawingTool } from "./draw/DataDrawingTool.js";
 import { ResizingDrawingTool } from "./draw/ResizingDrawingTool.js";
 import { GridDrawingTool } from "./draw/GridDrawingTool.js";
 import { HeaderDrawingTool } from "./draw/HeaderDrawingTool.js";
+import { DataLoaderManager } from "./otherManager/DataLoaderManager.js";
 export class Grid {
     constructor(canvasContainer, canvas, context) {
         this.autoScrollDir = null;
@@ -94,6 +95,7 @@ export class Grid {
         this.resizingDrawingTool = new ResizingDrawingTool(this);
         this.gridDrawingTool = new GridDrawingTool(this);
         this.headerDrawingTool = new HeaderDrawingTool(this);
+        this.dataLoaderManager = new DataLoaderManager(this);
         this.init();
         this.inializeManagers();
     }
@@ -267,6 +269,6 @@ export class Grid {
         this.headerTextDrawingTool.insertColHeaderText(startCol, endCol, scrollLeft);
         this.headerDrawingTool.drawHighlighedColumnHeader(startCol, endCol, scrollLeft);
         this.headerDrawingTool.drawHighlighedRowHeader(startRow, endRow, scrollTop);
-        // this.gridDrawingTool.drawCornerBox();
+        this.gridDrawingTool.drawCornerBox();
     }
 }

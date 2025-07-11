@@ -77,8 +77,9 @@
 }
 .actionContainer .actions .insertDataContainer {
   display: flex;
-  flex-direction: column;
   gap: 2px;
+  background-color: green;
+  padding: 1px;
 }
 .actionContainer .actions .insertDataContainer .jsonInputWrapper {
   display: flex;

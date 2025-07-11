@@ -30,6 +30,7 @@ export class CellInputOrchestrator {
         input.addEventListener("blur", () => {
             if (!this.grid.INPUT_FINALIZED) {
                 this.grid.cellDataManager.saveInputToCell();
+                input.style.display = "none";
             }
             input.style.display = "none";
             this.grid.INPUT_FINALIZED = false;

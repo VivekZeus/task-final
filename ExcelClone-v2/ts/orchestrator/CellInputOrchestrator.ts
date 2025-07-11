@@ -41,10 +41,13 @@ export class CellInputOrchestrator {
     input.addEventListener("blur", () => {
       if (!this.grid.INPUT_FINALIZED) {
         this.grid.cellDataManager.saveInputToCell();
+        input.style.display = "none";
       }
-      input.style.display = "none";
-      this.grid.INPUT_FINALIZED = false;
-      this.grid.CURRENT_INPUT = null;
+        input.style.display = "none";
+        this.grid.INPUT_FINALIZED = false;
+        this.grid.CURRENT_INPUT = null;
+      
+
       this.grid.render();
     });
   }
