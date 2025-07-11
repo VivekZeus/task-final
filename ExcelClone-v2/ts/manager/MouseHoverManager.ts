@@ -36,12 +36,12 @@ export class MouseHoverManager implements PointerEventManager {
 
       // for drawing column indicator
       if (this.grid.HOVERED_COL !== -1) {
-        this.grid.draw.drawResizeIndicator(this.grid.HOVERED_COL, scrollLeft);
+        this.grid.resizingDrawingTool.drawResizeIndicator(this.grid.HOVERED_COL, scrollLeft);
       }
 
       // for drawing row indicator
       if (this.grid.HOVERED_ROW !== -1) {
-        this.grid.draw.drawRowResizeIndicator(this.grid.HOVERED_ROW, scrollTop);
+        this.grid.resizingDrawingTool.drawRowResizeIndicator(this.grid.HOVERED_ROW, scrollTop);
       }
     }
   }

@@ -1,5 +1,5 @@
 import { Grid } from "../Grid.js";
-import { KeyboardKeyHandler } from "../KeyboardKeyHandler.js";
+import { KeyboardKeyHandler } from "../otherManager/KeyboardKeyHandler.js";
 
 export class KeyDownEventOrchestrator {
   grid: Grid;
@@ -38,11 +38,9 @@ export class KeyDownEventOrchestrator {
       );
     } else if (this.keyboardKeyHandler.handleColKeyboardRangeSelection(event)) {
       shouldRender = true;
-    } 
-    else if (this.keyboardKeyHandler.handleRowKeyboardRangeSelection(event)) {
+    } else if (this.keyboardKeyHandler.handleRowKeyboardRangeSelection(event)) {
       shouldRender = true;
-    }
-     else if (event.shiftKey && this.keySet.has(key)) {
+    } else if (event.shiftKey && this.keySet.has(key)) {
       if (this.keyboardKeyHandler.ifCellRangeCanShift(key)) {
         this.keyboardKeyHandler.handleShiftAndArrowKeyOperations(key);
         this.grid.statisticsManager.updateStatistics();

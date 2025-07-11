@@ -1,5 +1,5 @@
-import { Grid } from "./Grid.js";
-import { CellDataRemovalStrategy } from "./startegy/CellDataRemovalStrategy.js";
+import { Grid } from "../Grid.js";
+import { CellDataRemovalStrategy } from "../startegy/CellDataRemovalStrategy.js";
 
 export class KeyboardKeyHandler {
   grid: Grid;

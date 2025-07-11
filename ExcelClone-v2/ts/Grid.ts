@@ -1,5 +1,4 @@
 import { Config } from "./Config.js";
-import { Draw } from "./Draw.js";
 import { PrefixArrayManager } from "./otherManager/PrefixArrayManager.js";
 import { MouseHoverManager } from "./manager/MouseHoverManager.js";
 import { CellDataManager } from "./otherManager/CellDataManager.js";
@@ -14,13 +13,19 @@ import { DoubleClickEventOrchestrator } from "./orchestrator/DoubleClickEventOrc
 import { CellInputOrchestrator } from "./orchestrator/CellInputOrchestrator.js";
 import { PointerOrchestrator } from "./orchestrator/PointerOrchestrator.js";
 import { Utils } from "./Utils.js";
+import { CellRangeDrawingTool } from "./draw/CellRangeDrawingTool.js";
+import { HeaderTextDrawingTool } from "./draw/HeaderTextDrawingTool.js";
+import { DataDrawingTool } from "./draw/DataDrawingTool.js";
+import { ResizingDrawingTool } from "./draw/ResizingDrawingTool.js";
+import { GridDrawingTool } from "./draw/GridDrawingTool.js";
+import { HeaderDrawingTool } from "./draw/HeaderDrawingTool.js";
 
 export class Grid {
   canvasContainer: HTMLDivElement;
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
 
-  draw: Draw;
+  // draw: Draw;
   cellDataManager: CellDataManager;
   keyDownEventOrchestrator: KeyDownEventOrchestrator;
   statisticsManager: StatisticsManager;
@@ -28,6 +33,19 @@ export class Grid {
   doubleClickEventOrchestrator: DoubleClickEventOrchestrator;
   cellInputOrchestrator: CellInputOrchestrator;
   pointerOrchestrator: PointerOrchestrator;
+
+  cellRangeDrawingTool: CellRangeDrawingTool;
+  headerTextDrawingTool: HeaderTextDrawingTool;
+  dataDrawingTool: DataDrawingTool;
+  resizingDrawingTool: ResizingDrawingTool;
+  gridDrawingTool: GridDrawingTool;
+  headerDrawingTool: HeaderDrawingTool;
+
+  viewWidth: number;
+  viewHeight: number;
+
+  autoScrollDir: string | null = null;
+  autoScrollFrameId: number | null = null;
 
   TOTAL_ROWS = structuredClone(Config.TOTAL_ROWS);
   TOTAL_COLUMNS = structuredClone(Config.TOTAL_COLUMNS);
@@ -98,12 +116,6 @@ export class Grid {
 
   prefixArrayManager: PrefixArrayManager;
 
-  viewWidth: number;
-  viewHeight: number;
-
-  autoScrollDir: string | null = null;
-  autoScrollFrameId: number | null = null;
-
   constructor(
     canvasContainer: HTMLDivElement,
     canvas: HTMLCanvasElement,
@@ -115,7 +127,7 @@ export class Grid {
     this.viewWidth = this.canvasContainer.clientWidth;
     this.viewHeight = this.canvasContainer.clientHeight;
 
-    this.draw = new Draw(this);
+    // this.draw = new Draw(this);
 
     this.prefixArrayManager = new PrefixArrayManager(this);
     this.cellDataManager = new CellDataManager(this);
@@ -129,6 +141,12 @@ export class Grid {
     );
     this.cellInputOrchestrator = new CellInputOrchestrator(this);
     this.pointerOrchestrator = new PointerOrchestrator(this);
+    this.cellRangeDrawingTool = new CellRangeDrawingTool(this);
+    this.headerTextDrawingTool = new HeaderTextDrawingTool(this);
+    this.dataDrawingTool = new DataDrawingTool(this);
+    this.resizingDrawingTool = new ResizingDrawingTool(this);
+    this.gridDrawingTool = new GridDrawingTool(this);
+    this.headerDrawingTool = new HeaderDrawingTool(this);
     this.init();
     this.inializeManagers();
   }
@@ -242,7 +260,6 @@ export class Grid {
   }
 
   getVisibleRowCols() {
-    // console.log(this.prefixArrayManager.rowPrefixArray);
     const scrollLeft = this.canvasContainer.scrollLeft;
     const scrollTop = this.canvasContainer.scrollTop;
     const viewportWidth = this.canvasContainer.clientWidth;
@@ -335,11 +352,11 @@ export class Grid {
 
     this.context.beginPath();
 
-    this.draw.drawRowsCols(startRow, startCol, endRow, endCol);
+    this.gridDrawingTool.drawRowsCols(startRow, startCol, endRow, endCol);
 
     Utils.updateCellSelectionInfo(this);
 
-    this.draw.drawSelectedCellBorder(
+    this.cellRangeDrawingTool.drawSelectedCellBorder(
       startRow,
       endRow,
       startCol,
@@ -348,7 +365,7 @@ export class Grid {
       scrollTop
     );
 
-    this.draw.drawVisibleText(
+    this.dataDrawingTool.drawVisibleText(
       startRow,
       endRow,
       startCol,
@@ -357,11 +374,11 @@ export class Grid {
       scrollTop
     );
 
-    this.draw.drawColumnHeader(endCol);
+    this.gridDrawingTool.drawColumnHeader(endCol);
 
-    this.draw.drawRowHeader(endRow);
+    this.gridDrawingTool.drawRowHeader(endRow);
 
-    this.draw.drawSelectedCellCorrepondingRowCol(
+    this.cellRangeDrawingTool.drawSelectedCellCorrepondingRowCol(
       startRow,
       endRow,
       startCol,
@@ -369,12 +386,21 @@ export class Grid {
       scrollLeft,
       scrollTop
     );
-    this.draw.insertRowHeaderText(startRow, endRow, scrollTop);
-    this.draw.insertColHeaderText(startCol, endCol, scrollLeft);
 
-    this.draw.drawHighlighedColumnHeader(startCol, endCol, scrollLeft);
-    this.draw.drawHighlighedRowHeader(startRow, endRow, scrollTop);
+    this.headerTextDrawingTool.insertRowHeaderText(startRow, endRow, scrollTop);
+    this.headerTextDrawingTool.insertColHeaderText(
+      startCol,
+      endCol,
+      scrollLeft
+    );
 
-    this.draw.drawCornerBox();
+    this.headerDrawingTool.drawHighlighedColumnHeader(
+      startCol,
+      endCol,
+      scrollLeft
+    );
+    this.headerDrawingTool.drawHighlighedRowHeader(startRow, endRow, scrollTop);
+
+    // this.gridDrawingTool.drawCornerBox();
   }
 }

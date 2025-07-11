@@ -1,5 +1,4 @@
 import { Config } from "./Config.js";
-import { Draw } from "./Draw.js";
 import { PrefixArrayManager } from "./otherManager/PrefixArrayManager.js";
 import { MouseHoverManager } from "./manager/MouseHoverManager.js";
 import { CellDataManager } from "./otherManager/CellDataManager.js";
@@ -14,8 +13,16 @@ import { DoubleClickEventOrchestrator } from "./orchestrator/DoubleClickEventOrc
 import { CellInputOrchestrator } from "./orchestrator/CellInputOrchestrator.js";
 import { PointerOrchestrator } from "./orchestrator/PointerOrchestrator.js";
 import { Utils } from "./Utils.js";
+import { CellRangeDrawingTool } from "./draw/CellRangeDrawingTool.js";
+import { HeaderTextDrawingTool } from "./draw/HeaderTextDrawingTool.js";
+import { DataDrawingTool } from "./draw/DataDrawingTool.js";
+import { ResizingDrawingTool } from "./draw/ResizingDrawingTool.js";
+import { GridDrawingTool } from "./draw/GridDrawingTool.js";
+import { HeaderDrawingTool } from "./draw/HeaderDrawingTool.js";
 export class Grid {
     constructor(canvasContainer, canvas, context) {
+        this.autoScrollDir = null;
+        this.autoScrollFrameId = null;
         this.TOTAL_ROWS = structuredClone(Config.TOTAL_ROWS);
         this.TOTAL_COLUMNS = structuredClone(Config.TOTAL_COLUMNS);
         this.COL_HEADER_HEIGHT = structuredClone(Config.COL_HEADER_HEIGHT);
@@ -67,14 +74,12 @@ export class Grid {
         this.HEADER_SELECTION_END_COL = -1;
         this.SELECTED_COL_RANGE = null;
         this.SELECTED_ROW_RANGE = null;
-        this.autoScrollDir = null;
-        this.autoScrollFrameId = null;
         this.canvasContainer = canvasContainer;
         this.canvas = canvas;
         this.context = context;
         this.viewWidth = this.canvasContainer.clientWidth;
         this.viewHeight = this.canvasContainer.clientHeight;
-        this.draw = new Draw(this);
+        // this.draw = new Draw(this);
         this.prefixArrayManager = new PrefixArrayManager(this);
         this.cellDataManager = new CellDataManager(this);
         this.keyDownEventOrchestrator = new KeyDownEventOrchestrator(this);
@@ -83,6 +88,12 @@ export class Grid {
         this.doubleClickEventOrchestrator = new DoubleClickEventOrchestrator(this, this.keyDownEventOrchestrator.getKeyboardKeyHandler());
         this.cellInputOrchestrator = new CellInputOrchestrator(this);
         this.pointerOrchestrator = new PointerOrchestrator(this);
+        this.cellRangeDrawingTool = new CellRangeDrawingTool(this);
+        this.headerTextDrawingTool = new HeaderTextDrawingTool(this);
+        this.dataDrawingTool = new DataDrawingTool(this);
+        this.resizingDrawingTool = new ResizingDrawingTool(this);
+        this.gridDrawingTool = new GridDrawingTool(this);
+        this.headerDrawingTool = new HeaderDrawingTool(this);
         this.init();
         this.inializeManagers();
     }
@@ -179,7 +190,6 @@ export class Grid {
     }
     getVisibleRowCols() {
         var _a, _b;
-        // console.log(this.prefixArrayManager.rowPrefixArray);
         const scrollLeft = this.canvasContainer.scrollLeft;
         const scrollTop = this.canvasContainer.scrollTop;
         const viewportWidth = this.canvasContainer.clientWidth;
@@ -246,17 +256,17 @@ export class Grid {
         this.context.save();
         this.context.translate(-scrollLeft, -scrollTop);
         this.context.beginPath();
-        this.draw.drawRowsCols(startRow, startCol, endRow, endCol);
+        this.gridDrawingTool.drawRowsCols(startRow, startCol, endRow, endCol);
         Utils.updateCellSelectionInfo(this);
-        this.draw.drawSelectedCellBorder(startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
-        this.draw.drawVisibleText(startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
-        this.draw.drawColumnHeader(endCol);
-        this.draw.drawRowHeader(endRow);
-        this.draw.drawSelectedCellCorrepondingRowCol(startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
-        this.draw.insertRowHeaderText(startRow, endRow, scrollTop);
-        this.draw.insertColHeaderText(startCol, endCol, scrollLeft);
-        this.draw.drawHighlighedColumnHeader(startCol, endCol, scrollLeft);
-        this.draw.drawHighlighedRowHeader(startRow, endRow, scrollTop);
-        this.draw.drawCornerBox();
+        this.cellRangeDrawingTool.drawSelectedCellBorder(startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
+        this.dataDrawingTool.drawVisibleText(startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
+        this.gridDrawingTool.drawColumnHeader(endCol);
+        this.gridDrawingTool.drawRowHeader(endRow);
+        this.cellRangeDrawingTool.drawSelectedCellCorrepondingRowCol(startRow, endRow, startCol, endCol, scrollLeft, scrollTop);
+        this.headerTextDrawingTool.insertRowHeaderText(startRow, endRow, scrollTop);
+        this.headerTextDrawingTool.insertColHeaderText(startCol, endCol, scrollLeft);
+        this.headerDrawingTool.drawHighlighedColumnHeader(startCol, endCol, scrollLeft);
+        this.headerDrawingTool.drawHighlighedRowHeader(startRow, endRow, scrollTop);
+        // this.gridDrawingTool.drawCornerBox();
     }
 }

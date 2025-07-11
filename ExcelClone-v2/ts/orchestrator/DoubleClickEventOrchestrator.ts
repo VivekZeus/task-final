@@ -1,5 +1,5 @@
 import { Grid } from "../Grid.js";
-import { KeyboardKeyHandler } from "../KeyboardKeyHandler.js";
+import { KeyboardKeyHandler } from "../otherManager/KeyboardKeyHandler.js";
 
 export class DoubleClickEventOrchestrator {
   grid: Grid;

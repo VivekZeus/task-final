@@ -48,19 +48,19 @@ export class ColumnResizingManager implements PointerEventManager {
 
     this.grid.render();
 
-    this.grid.draw.drawVerticalLinesColResizing(
+    this.grid.resizingDrawingTool.drawVerticalLinesColResizing(
       this.grid.RESIZING_COL + 1,
       this.grid.viewHeight
     );
 
     const scrollLeft = this.grid.canvasContainer.scrollLeft;
-    this.grid.draw.drawResizeIndicator(this.grid.RESIZING_COL, scrollLeft);
+    this.grid.resizingDrawingTool.drawResizeIndicator(this.grid.RESIZING_COL, scrollLeft);
 
     if (
       event.clientX >=
       this.grid.prefixArrayManager.getColXPosition(this.grid.RESIZING_COL)
     ) {
-      this.grid.draw.drawVerticalDashedLine(
+      this.grid.resizingDrawingTool.drawVerticalDashedLine(
         this.grid.INITIAL_X,
         this.grid.viewHeight
       );

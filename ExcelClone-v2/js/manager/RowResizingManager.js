@@ -31,12 +31,12 @@ export class RowResizingManager {
         this.grid.ROW_HEIGHTS.set(this.grid.RESIZING_ROW, newHeight);
         this.grid.INITIAL_Y = event.clientY;
         this.grid.render();
-        this.grid.draw.drawHorizontalLinesRowResizing(this.grid.RESIZING_ROW + 1, this.grid.viewWidth);
+        this.grid.resizingDrawingTool.drawHorizontalLinesRowResizing(this.grid.RESIZING_ROW + 1, this.grid.viewWidth);
         const scrollTop = this.grid.canvasContainer.scrollTop;
-        this.grid.draw.drawRowResizeIndicator(this.grid.RESIZING_ROW, scrollTop);
+        this.grid.resizingDrawingTool.drawRowResizeIndicator(this.grid.RESIZING_ROW, scrollTop);
         if (event.clientY >=
             this.grid.prefixArrayManager.getRowYPosition(this.grid.RESIZING_ROW)) {
-            this.grid.draw.drawHorizontalDashedLine(this.grid.INITIAL_Y, this.grid.viewWidth);
+            this.grid.resizingDrawingTool.drawHorizontalDashedLine(this.grid.INITIAL_Y, this.grid.viewWidth);
         }
         // Prevent event propagation
         event.preventDefault();

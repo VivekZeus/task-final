@@ -1,4 +1,4 @@
-import { KeyboardKeyHandler } from "../KeyboardKeyHandler.js";
+import { KeyboardKeyHandler } from "../otherManager/KeyboardKeyHandler.js";
 export class KeyDownEventOrchestrator {
     constructor(grid) {
         this.otherKeySet = new Set(["Tab", "Enter"]);
