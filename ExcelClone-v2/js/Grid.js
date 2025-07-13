@@ -99,6 +99,12 @@ export class Grid {
         this.init();
         this.inializeManagers();
     }
+    isVisible() {
+        const row = this.SELECTED_CELL_RANGE.startRow;
+        const col = this.SELECTED_CELL_RANGE.startCol;
+        const { startRow, endRow, startCol, endCol } = this.getVisibleRowCols();
+        return row >= startRow + 1 && row <= endRow && col >= startCol && col <= endCol;
+    }
     getSelectedCol(startCol, endCol, x) {
         var _a;
         let currentX = this.ROW_HEADER_WIDTH;

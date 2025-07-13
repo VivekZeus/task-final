@@ -1,10 +1,11 @@
 Todo
--> row add
--> column add
-
--> 
+-> command pattern undo redo
 
 Completed
+-> row add
+-> column add
+->backspace and delete on cells
+-> optimize drawing funcs for better functionality
 -> stats calculation and adding to ui
 ->range selection
 -> when shifting cell using arrow keys and when scroll happens then it moves outside of the boundary
@@ -23,6 +24,7 @@ Completed
 -> if cell is selected but not in visible range then also col and row should be highlighted so break the highlighting logic
 
 In progress
-->backspace and delete on cells
--> optimize drawing funcs for better functionality
+-> input position problem fix
+
+
 

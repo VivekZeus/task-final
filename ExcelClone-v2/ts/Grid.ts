@@ -156,6 +156,15 @@ export class Grid {
     this.inializeManagers();
   }
 
+  isVisible(){
+    const row = this.SELECTED_CELL_RANGE.startRow;
+    const col = this.SELECTED_CELL_RANGE.startCol;
+    const { startRow, endRow, startCol, endCol } =
+    this.getVisibleRowCols();
+
+    return row >= startRow+1 && row <= endRow && col >= startCol && col <= endCol;  
+  }
+
   getSelectedCol(startCol: number, endCol: number, x: number) {
     let currentX = this.ROW_HEADER_WIDTH;
     for (let i = startCol; i <= endCol; i++) {

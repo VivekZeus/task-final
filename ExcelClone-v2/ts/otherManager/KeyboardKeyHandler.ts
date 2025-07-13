@@ -160,6 +160,8 @@ export class KeyboardKeyHandler {
   }
 
   handleTabEnterKeyOperations(key: string, shiftKey: boolean = false): boolean {
+    console.log("came in handleTabEnterKeyOperations"
+    )
     if (shiftKey) {
       if (key == "Tab" && this.ifCellCanShift("ArrowLeft")) {
         this.shiftSelectedCell("ArrowLeft");

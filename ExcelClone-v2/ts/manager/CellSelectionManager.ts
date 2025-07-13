@@ -37,6 +37,7 @@ export class CellSelectionManager implements PointerEventManager {
     this.grid.SELECTED_ROW_RANGE = null;
 
     if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
+      console.log("input saved  by cell manager at ",Date.now() / 1000);
       this.grid.cellDataManager.saveInputToCell();
     }
     let selCol = this.grid.getSelectedCol(startCol, endCol, x);
