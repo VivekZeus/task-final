@@ -80,3 +80,72 @@ export class PrefixArrayManager {
     };
   }
 }
+
+
+// export class PrefixArrayManager {
+//     public colPrefixArray: Map<number, number> = new Map();
+//     public rowPrefixArray: Map<number, number> = new Map();
+//     grid:Grid;
+
+//     constructor(grid: Grid) {
+//       this.grid=grid;
+//         this.initializePrefixArrays();
+//     }
+
+//     private initializePrefixArrays(): void {
+//         // Initialize column prefix array
+//         let colSum = 0;
+//         for (let col = 0; col < this.grid.TOTAL_COLUMNS; col++) {
+//             colSum += this.grid.COL_WIDTHS.get(col) ?? this.grid.DEFAULT_COL_WIDTH;
+//             this.colPrefixArray.set(col, colSum);
+//         }
+
+//         // Initialize row prefix array
+//         let rowSum = 0;
+//         for (let row = 0; row < this.grid.TOTAL_ROWS; row++) {
+//             rowSum += this.grid.ROW_HEIGHTS.get(row) ?? this.grid.DEFAULT_ROW_HEIGHT;
+//             this.rowPrefixArray.set(row, rowSum);
+//         }
+//     }
+
+//     public updateColumnPrefix(fromIndex: number): void {
+//         let sum = fromIndex > 0 ? this.colPrefixArray.get(fromIndex - 1) ?? 0 : 0;
+//         for (let col = fromIndex; col < this.grid.TOTAL_COLUMNS; col++) {
+//             sum += this.grid.COL_WIDTHS.get(col) ?? this.grid.DEFAULT_COL_WIDTH;
+//             this.colPrefixArray.set(col, sum);
+//         }
+//     }
+
+//     public updateRowPrefix(fromIndex: number): void {
+//         let sum = fromIndex > 0 ? this.rowPrefixArray.get(fromIndex - 1) ?? 0 : 0;
+//         for (let row = fromIndex; row < this.grid.TOTAL_ROWS; row++) {
+//             sum += this.grid.ROW_HEIGHTS.get(row) ?? this.grid.DEFAULT_ROW_HEIGHT;
+//             this.rowPrefixArray.set(row, sum);
+//         }
+//     }
+
+//     public getColXPosition(colIndex: number): number {
+//         return this.colPrefixArray.get(colIndex) ?? 0;
+//     }
+
+//     public getRowYPosition(rowIndex: number): number {
+//         return this.rowPrefixArray.get(rowIndex) ?? 0;
+//     }
+
+//     // Helper method to create a deep copy of prefix arrays for undo/redo
+//     public clonePrefixArrays(): {
+//         colPrefixArray: Map<number, number>,
+//         rowPrefixArray: Map<number, number>
+//     } {
+//         return {
+//             colPrefixArray: new Map(this.colPrefixArray),
+//             rowPrefixArray: new Map(this.rowPrefixArray)
+//         };
+//     }
+
+//     getCellPosition(row:number,col:number){
+//       const x=this.colPrefixArray.get(col) ?? 0;
+//       const y=this.rowPrefixArray.get(row) ?? 0;
+//       return {x,y};
+//     }
+// }

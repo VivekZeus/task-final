@@ -39,30 +39,48 @@ export class CellInputOrchestrator {
       }
     });
 
-
-    input.addEventListener("blur", () => {
-    const isVisible = this.grid.isVisible();
-
-    if(!isVisible){
-      input.style.display = "none";
-    return;
-    }
-
-      if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT!=null) {
-        console.log("input saved by blur listener at ",Date.now() / 1000);
-        this.grid.cellDataManager.saveInputToCell();
-            this.grid.CURRENT_INPUT = null;
+input.addEventListener("blur", () => {
+  // ✅ Save input regardless of visibility
+  if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
+    console.log("Input saved by blur at", Date.now());
+    this.grid.cellDataManager.saveInputToCell();
+    this.grid.CURRENT_INPUT = null;
     this.grid.INPUT_FINALIZED = true;
-            
-      }
-      else{
+  } else {
+    // Just reset to be safe
+    this.grid.CURRENT_INPUT = null;
+    this.grid.INPUT_FINALIZED = false;
+  }
 
-        this.grid.INPUT_FINALIZED = false;
-        this.grid.CURRENT_INPUT = null;
-      }
-      input.style.display = "none";
-      this.grid.render();
-    });
+  input.style.display = "none";
+  this.grid.render();
+});
+
+
+
+    // input.addEventListener("blur", () => {
+    // const isVisible = this.grid.isVisible();
+
+    // if(!isVisible){
+    //   input.style.display = "none";
+    // return;
+    // }
+
+    //   if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT!=null) {
+    //     console.log("input saved by blur listener at ",Date.now() / 1000);
+    //     this.grid.cellDataManager.saveInputToCell();
+    //         this.grid.CURRENT_INPUT = null;
+    // this.grid.INPUT_FINALIZED = true;
+            
+    //   }
+    //   else{
+
+    //     this.grid.INPUT_FINALIZED = false;
+    //     this.grid.CURRENT_INPUT = null;
+    //   }
+    //   input.style.display = "none";
+    //   this.grid.render();
+    // });
   }
 
   public getInputElement(): HTMLInputElement | null {
@@ -71,47 +89,3 @@ export class CellInputOrchestrator {
 }
 
 
-// export class CellInputOrchestrator {
-
-//     private grid: Grid;
-//      private inputElement: HTMLInputElement | null;
-
-//     constructor(grid: Grid) {
-//         this.grid = grid;
-//             this.inputElement = document.querySelector(".cellInput") as HTMLInputElement;
-//         this.setupInputEvents();
-//     }
-
-//     private setupInputEvents(): void {
-//         const input = this.inputElement!;
-//         input.addEventListener("input", (event: Event) => {
-//             const target = event.target as HTMLInputElement;
-//             this.grid.CURRENT_INPUT = target.value;
-//         });
-
-//         input.addEventListener("keydown", (event: KeyboardEvent) => {
-//             if (event.key === "Enter" || event.key === "Tab") {
-//                 this.grid.cellDataManager.saveInputToCell();
-//                 input.style.display = "none";
-//                 event.preventDefault();
-//                 this.grid.render();
-//             }
-//             if (event.key === "Escape") {
-//                 this.grid.CURRENT_INPUT = null;
-//                 input.style.display = "none";
-//                 this.grid.INPUT_FINALIZED = true;
-//                 event.preventDefault();
-//             }
-//         });
-
-//         input.addEventListener("blur", () => {
-//             if (!this.grid.INPUT_FINALIZED) {
-//                 // Don't save immediately on blur, let the cell manager handle it
-//                 if (this.grid.cellDataManager.isVisible()) {
-//                     this.grid.cellDataManager.saveInputToCell();
-//                 }
-//             }
-//             input.style.display = "none";
-//         });
-//     }
-// }

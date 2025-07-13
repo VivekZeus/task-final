@@ -1,6 +1,11 @@
+import { ResizeRowCommand } from "../ResizeCommands.js";
 export class RowResizingManager {
-    constructor(gridObj) {
-        this.grid = gridObj;
+    // constructor(gridObj: Grid) {
+    //   this.grid = gridObj;
+    // }
+    constructor(grid, commandManager) {
+        this.commandManager = commandManager;
+        this.grid = grid;
     }
     test(x, y, e) {
         return this.grid.HOVERED_ROW !== -1;
@@ -42,27 +47,47 @@ export class RowResizingManager {
         event.preventDefault();
         event.stopPropagation();
     }
+    // onPointerUp(x: number, y: number, e: PointerEvent): void {
+    //   if (this.grid.RESIZING_ROW === -1) return; // Safety check
+    //   this.grid.prefixArrayManager.updateRowHeight(this.grid.RESIZING_ROW);
+    //   if (this.grid.SELECTION_BEFORE_RESIZE) {
+    //     this.grid.SELECTED_COL_HEADER =
+    //       this.grid.SELECTION_BEFORE_RESIZE.selectedColHeader;
+    //     this.grid.SELECTED_ROW_HEADER =
+    //       this.grid.SELECTION_BEFORE_RESIZE.selectedRowHeader;
+    //     this.grid.SELECTED_CELL_RANGE =
+    //       this.grid.SELECTION_BEFORE_RESIZE.selectedCellRange;
+    //     if (this.grid.SELECTED_ROW_HEADER !== -1) {
+    //       let y1Pos = this.grid.prefixArrayManager.getRowYPosition(
+    //         this.grid.SELECTED_ROW_HEADER - 1
+    //       );
+    //       let adjustedY1 = y1Pos - this.grid.canvasContainer.scrollTop;
+    //       this.grid.ADJUSTED_y1 = adjustedY1;
+    //     }
+    //     this.grid.SELECTION_BEFORE_RESIZE = null; // Clear the stored state
+    //   }
+    //   this.grid.RESIZING_ROW = -1;
+    //   this.grid.HOVERED_ROW = -1;
+    //   this.grid.render();
+    //   e.preventDefault();
+    //   e.stopPropagation();
+    // }
     onPointerUp(x, y, e) {
+        var _a;
         if (this.grid.RESIZING_ROW === -1)
-            return; // Safety check
-        this.grid.prefixArrayManager.updateRowHeight(this.grid.RESIZING_ROW);
+            return;
+        const newHeight = (_a = this.grid.ROW_HEIGHTS.get(this.grid.RESIZING_ROW)) !== null && _a !== void 0 ? _a : this.grid.DEFAULT_ROW_HEIGHT;
+        const resizeCommand = new ResizeRowCommand(this.grid, this.grid.RESIZING_ROW, newHeight);
+        this.commandManager.execute(resizeCommand);
+        // Reset states
         if (this.grid.SELECTION_BEFORE_RESIZE) {
-            this.grid.SELECTED_COL_HEADER =
-                this.grid.SELECTION_BEFORE_RESIZE.selectedColHeader;
-            this.grid.SELECTED_ROW_HEADER =
-                this.grid.SELECTION_BEFORE_RESIZE.selectedRowHeader;
-            this.grid.SELECTED_CELL_RANGE =
-                this.grid.SELECTION_BEFORE_RESIZE.selectedCellRange;
-            if (this.grid.SELECTED_ROW_HEADER !== -1) {
-                let y1Pos = this.grid.prefixArrayManager.getRowYPosition(this.grid.SELECTED_ROW_HEADER - 1);
-                let adjustedY1 = y1Pos - this.grid.canvasContainer.scrollTop;
-                this.grid.ADJUSTED_y1 = adjustedY1;
-            }
-            this.grid.SELECTION_BEFORE_RESIZE = null; // Clear the stored state
+            this.grid.SELECTED_COL_HEADER = this.grid.SELECTION_BEFORE_RESIZE.selectedColHeader;
+            this.grid.SELECTED_ROW_HEADER = this.grid.SELECTION_BEFORE_RESIZE.selectedRowHeader;
+            this.grid.SELECTED_CELL_RANGE = this.grid.SELECTION_BEFORE_RESIZE.selectedCellRange;
+            this.grid.SELECTION_BEFORE_RESIZE = null;
         }
         this.grid.RESIZING_ROW = -1;
         this.grid.HOVERED_ROW = -1;
-        this.grid.render();
         e.preventDefault();
         e.stopPropagation();
     }

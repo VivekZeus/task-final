@@ -1,6 +1,8 @@
+import { ResizeColumnCommand } from "../ResizeCommands.js";
 export class ColumnResizingManager {
-    constructor(gridObj) {
+    constructor(gridObj, commandManager) {
         this.grid = gridObj;
+        this.commandManager = commandManager;
     }
     test(x, y, event) {
         return this.grid.HOVERED_COL !== -1;
@@ -44,23 +46,41 @@ export class ColumnResizingManager {
         event.preventDefault();
         event.stopPropagation();
     }
+    // onPointerUp(x: number, y: number, event: PointerEvent): void {
+    //   if (this.grid.RESIZING_COL === -1) return; // Safety check
+    //   this.grid.prefixArrayManager.updateColumnWidth(this.grid.RESIZING_COL);
+    //   // this.grid.canvas.style.cursor = "cell";
+    //   if (this.grid.SELECTION_BEFORE_RESIZE) {
+    //     this.grid.SELECTED_COL_HEADER =
+    //       this.grid.SELECTION_BEFORE_RESIZE.selectedColHeader;
+    //     this.grid.SELECTED_ROW_HEADER =
+    //       this.grid.SELECTION_BEFORE_RESIZE.selectedRowHeader;
+    //     this.grid.SELECTED_CELL_RANGE =
+    //       this.grid.SELECTION_BEFORE_RESIZE.selectedCellRange;
+    //     this.grid.SELECTION_BEFORE_RESIZE = null;
+    //   }
+    //   this.grid.RESIZING_COL = -1;
+    //   this.grid.HOVERED_COL = -1;
+    //   this.grid.render();
+    //   event.preventDefault();
+    //   event.stopPropagation();
+    // }
     onPointerUp(x, y, event) {
+        var _a;
         if (this.grid.RESIZING_COL === -1)
-            return; // Safety check
-        this.grid.prefixArrayManager.updateColumnWidth(this.grid.RESIZING_COL);
-        // this.grid.canvas.style.cursor = "cell";
+            return;
+        const newWidth = (_a = this.grid.COL_WIDTHS.get(this.grid.RESIZING_COL)) !== null && _a !== void 0 ? _a : this.grid.DEFAULT_COL_WIDTH;
+        const resizeCommand = new ResizeColumnCommand(this.grid, this.grid.RESIZING_COL, newWidth);
+        this.commandManager.execute(resizeCommand);
+        // Reset states
         if (this.grid.SELECTION_BEFORE_RESIZE) {
-            this.grid.SELECTED_COL_HEADER =
-                this.grid.SELECTION_BEFORE_RESIZE.selectedColHeader;
-            this.grid.SELECTED_ROW_HEADER =
-                this.grid.SELECTION_BEFORE_RESIZE.selectedRowHeader;
-            this.grid.SELECTED_CELL_RANGE =
-                this.grid.SELECTION_BEFORE_RESIZE.selectedCellRange;
+            this.grid.SELECTED_COL_HEADER = this.grid.SELECTION_BEFORE_RESIZE.selectedColHeader;
+            this.grid.SELECTED_ROW_HEADER = this.grid.SELECTION_BEFORE_RESIZE.selectedRowHeader;
+            this.grid.SELECTED_CELL_RANGE = this.grid.SELECTION_BEFORE_RESIZE.selectedCellRange;
             this.grid.SELECTION_BEFORE_RESIZE = null;
         }
         this.grid.RESIZING_COL = -1;
         this.grid.HOVERED_COL = -1;
-        this.grid.render();
         event.preventDefault();
         event.stopPropagation();
     }

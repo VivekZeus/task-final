@@ -46,4 +46,5 @@ export class CellDataRemovalStrategy {
     }
     return cellValue;
   }
+  
 }

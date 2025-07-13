@@ -10,9 +10,14 @@ export class CellSelectionManager {
         this.grid.SELECTED_ROW_HEADER = -1;
         this.grid.SELECTED_COL_RANGE = null;
         this.grid.SELECTED_ROW_RANGE = null;
+        // if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
+        //   console.log("input saved  by cell manager at ",Date.now() / 1000);
+        //   this.grid.cellDataManager.saveInputToCell();
+        // }
         if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
-            console.log("input saved  by cell manager at ", Date.now() / 1000);
             this.grid.cellDataManager.saveInputToCell();
+            this.grid.CURRENT_INPUT = null;
+            this.grid.INPUT_FINALIZED = true;
         }
         let selCol = this.grid.getSelectedCol(startCol, endCol, x);
         let selRow = this.grid.getSelectedRow(startRow, endRow, y);

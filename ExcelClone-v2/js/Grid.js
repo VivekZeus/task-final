@@ -20,6 +20,7 @@ import { ResizingDrawingTool } from "./draw/ResizingDrawingTool.js";
 import { GridDrawingTool } from "./draw/GridDrawingTool.js";
 import { HeaderDrawingTool } from "./draw/HeaderDrawingTool.js";
 import { DataLoaderManager } from "./otherManager/DataLoaderManager.js";
+import { CommandManager } from "./CommandManager.js";
 export class Grid {
     constructor(canvasContainer, canvas, context) {
         this.autoScrollDir = null;
@@ -96,6 +97,7 @@ export class Grid {
         this.gridDrawingTool = new GridDrawingTool(this);
         this.headerDrawingTool = new HeaderDrawingTool(this);
         this.dataLoaderManager = new DataLoaderManager(this);
+        this.commandManager = new CommandManager();
         this.init();
         this.inializeManagers();
     }
@@ -175,8 +177,8 @@ export class Grid {
     }
     inializeManagers() {
         this.pointerOrchestrator.registerManager(new MouseHoverManager(this));
-        this.pointerOrchestrator.registerManager(new ColumnResizingManager(this));
-        this.pointerOrchestrator.registerManager(new RowResizingManager(this));
+        this.pointerOrchestrator.registerManager(new ColumnResizingManager(this, this.commandManager));
+        this.pointerOrchestrator.registerManager(new RowResizingManager(this, this.commandManager));
         this.pointerOrchestrator.registerManager(new HeaderSelectionManager(this));
         this.pointerOrchestrator.registerManager(new CellSelectionManager(this));
     }

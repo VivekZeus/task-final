@@ -88,7 +88,8 @@ export class CellRangeDrawingTool {
         ctx.save();
         // === SINGLE CELL SELECTION ===
         if (sRow === eRow && sCol === eCol) {
-            const { x, y } = getPos(sRow, sCol);
+            const x = this.grid.prefixArrayManager.getColXPosition(sCol);
+            const y = this.grid.prefixArrayManager.getRowYPosition(sRow);
             const width = getWidth(sCol);
             const height = getHeight(sRow);
             const drawX = x - scrollLeft;
@@ -113,7 +114,8 @@ export class CellRangeDrawingTool {
             const col = minCol + (i % totalCols);
             if (row === sRow && col === sCol)
                 continue;
-            const { x, y } = this.grid.prefixArrayManager.getCellPosition(row, col);
+            const x = this.grid.prefixArrayManager.getColXPosition(col);
+            const y = this.grid.prefixArrayManager.getRowYPosition(row);
             ctx.fillRect(x - scrollLeft, y - scrollTop, getWidth(col), getHeight(row));
         }
         // Fill the starting cell white

@@ -1,12 +1,19 @@
+import { CommandManager } from "../CommandManager.js";
 import { Grid } from "../Grid.js";
 import { PointerEventManager } from "./PointerEventManager.js";
+import { ResizeRowCommand } from "../ResizeCommands.js";
 
 export class RowResizingManager implements PointerEventManager {
   grid: Grid;
+  commandManager:CommandManager;
 
-  constructor(gridObj: Grid) {
-    this.grid = gridObj;
-  }
+  // constructor(gridObj: Grid) {
+  //   this.grid = gridObj;
+  // }
+  constructor( grid: Grid, commandManager: CommandManager) {
+        this.commandManager = commandManager;
+         this.grid = grid;
+    }
   test(x: number, y: number, e: PointerEvent): boolean {
     return this.grid.HOVERED_ROW !== -1;
   }
@@ -68,36 +75,63 @@ export class RowResizingManager implements PointerEventManager {
     event.stopPropagation();
   }
 
-  onPointerUp(x: number, y: number, e: PointerEvent): void {
-    if (this.grid.RESIZING_ROW === -1) return; // Safety check
+  // onPointerUp(x: number, y: number, e: PointerEvent): void {
+  //   if (this.grid.RESIZING_ROW === -1) return; // Safety check
 
-    this.grid.prefixArrayManager.updateRowHeight(this.grid.RESIZING_ROW);
+  //   this.grid.prefixArrayManager.updateRowHeight(this.grid.RESIZING_ROW);
 
-    if (this.grid.SELECTION_BEFORE_RESIZE) {
-      this.grid.SELECTED_COL_HEADER =
-        this.grid.SELECTION_BEFORE_RESIZE.selectedColHeader;
-      this.grid.SELECTED_ROW_HEADER =
-        this.grid.SELECTION_BEFORE_RESIZE.selectedRowHeader;
-      this.grid.SELECTED_CELL_RANGE =
-        this.grid.SELECTION_BEFORE_RESIZE.selectedCellRange;
+  //   if (this.grid.SELECTION_BEFORE_RESIZE) {
+  //     this.grid.SELECTED_COL_HEADER =
+  //       this.grid.SELECTION_BEFORE_RESIZE.selectedColHeader;
+  //     this.grid.SELECTED_ROW_HEADER =
+  //       this.grid.SELECTION_BEFORE_RESIZE.selectedRowHeader;
+  //     this.grid.SELECTED_CELL_RANGE =
+  //       this.grid.SELECTION_BEFORE_RESIZE.selectedCellRange;
 
-      if (this.grid.SELECTED_ROW_HEADER !== -1) {
-        let y1Pos = this.grid.prefixArrayManager.getRowYPosition(
-          this.grid.SELECTED_ROW_HEADER - 1
+  //     if (this.grid.SELECTED_ROW_HEADER !== -1) {
+  //       let y1Pos = this.grid.prefixArrayManager.getRowYPosition(
+  //         this.grid.SELECTED_ROW_HEADER - 1
+  //       );
+  //       let adjustedY1 = y1Pos - this.grid.canvasContainer.scrollTop;
+  //       this.grid.ADJUSTED_y1 = adjustedY1;
+  //     }
+
+  //     this.grid.SELECTION_BEFORE_RESIZE = null; // Clear the stored state
+  //   }
+
+  //   this.grid.RESIZING_ROW = -1;
+  //   this.grid.HOVERED_ROW = -1;
+
+  //   this.grid.render();
+
+  //   e.preventDefault();
+  //   e.stopPropagation();
+  // }
+
+   onPointerUp(x: number, y: number, e: PointerEvent): void {
+        if (this.grid.RESIZING_ROW === -1) return;
+
+        const newHeight = this.grid.ROW_HEIGHTS.get(this.grid.RESIZING_ROW) ?? this.grid.DEFAULT_ROW_HEIGHT;
+        const resizeCommand = new ResizeRowCommand(
+            this.grid,
+            this.grid.RESIZING_ROW,
+            newHeight
         );
-        let adjustedY1 = y1Pos - this.grid.canvasContainer.scrollTop;
-        this.grid.ADJUSTED_y1 = adjustedY1;
-      }
+        this.commandManager.execute(resizeCommand);
 
-      this.grid.SELECTION_BEFORE_RESIZE = null; // Clear the stored state
+        // Reset states
+        if (this.grid.SELECTION_BEFORE_RESIZE) {
+            this.grid.SELECTED_COL_HEADER = this.grid.SELECTION_BEFORE_RESIZE.selectedColHeader;
+            this.grid.SELECTED_ROW_HEADER = this.grid.SELECTION_BEFORE_RESIZE.selectedRowHeader;
+            this.grid.SELECTED_CELL_RANGE = this.grid.SELECTION_BEFORE_RESIZE.selectedCellRange;
+            this.grid.SELECTION_BEFORE_RESIZE = null;
+        }
+
+        this.grid.RESIZING_ROW = -1;
+        this.grid.HOVERED_ROW = -1;
+
+        e.preventDefault();
+        e.stopPropagation();
     }
 
-    this.grid.RESIZING_ROW = -1;
-    this.grid.HOVERED_ROW = -1;
-
-    this.grid.render();
-
-    e.preventDefault();
-    e.stopPropagation();
-  }
 }
