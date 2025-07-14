@@ -6,7 +6,6 @@ export class CommandManager {
     execute(command) {
         command.execute();
         this.undoStack.push(command);
-        // Clear redo stack when a new command is executed
         this.redoStack = [];
     }
     undo() {

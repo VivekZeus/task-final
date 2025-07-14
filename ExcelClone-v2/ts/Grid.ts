@@ -20,7 +20,8 @@ import { ResizingDrawingTool } from "./draw/ResizingDrawingTool.js";
 import { GridDrawingTool } from "./draw/GridDrawingTool.js";
 import { HeaderDrawingTool } from "./draw/HeaderDrawingTool.js";
 import { DataLoaderManager } from "./otherManager/DataLoaderManager.js";
-import { CommandManager } from "./CommandManager.js";
+import { CommandManager } from "./command/CommandManager.js";
+import { RowColAdditionOrchestrator } from "./orchestrator/RowColAdditionOrchestrator.js";
 
 export class Grid {
   canvasContainer: HTMLDivElement;
@@ -44,6 +45,7 @@ export class Grid {
   headerDrawingTool: HeaderDrawingTool;
   dataLoaderManager:DataLoaderManager;
    commandManager: CommandManager;
+   rowColAdditionOrchestrator:RowColAdditionOrchestrator
 
   
 
@@ -155,6 +157,7 @@ export class Grid {
     this.headerDrawingTool = new HeaderDrawingTool(this);
     this.dataLoaderManager=new DataLoaderManager(this);
      this.commandManager = new CommandManager();
+     this.rowColAdditionOrchestrator=new RowColAdditionOrchestrator(this);
     this.init();
     this.inializeManagers();
   }

@@ -1,3 +1,4 @@
+import { InputCommand } from "../command/InputCommand.js";
 export class CellDataManager {
     constructor(gridObj) {
         this.cellData = new Map();
@@ -57,12 +58,31 @@ export class CellDataManager {
     //   }
     //   this.grid.canvasContainer.onscroll = () => this.updateInputPosition(input);
     // }
+    // showCellInputAtPosition(initialChar: string, input: HTMLInputElement) {
+    //   if (!input) return;
+    //   if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
+    //     this.saveInputToCell();
+    //   }
+    //   input.value = ""; // Clear any leftover value first
+    //   input.style.display = "block";
+    //   this.updateInputPosition(input);
+    //   input.value = initialChar;
+    //   this.grid.CURRENT_INPUT = initialChar;
+    //   this.grid.INPUT_FINALIZED = false;
+    //   input.focus();
+    //   input.setSelectionRange(initialChar.length, initialChar.length);
+    //   this.grid.canvasContainer.onscroll = () => this.updateInputPosition(input);
+    // }
     showCellInputAtPosition(initialChar, input) {
         if (!input)
             return;
-        // 💡 Finalize any previous unsaved input
         if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
-            this.saveInputToCell();
+            let row = this.grid.SELECTED_CELL_RANGE.startRow;
+            let col = this.grid.SELECTED_CELL_RANGE.startCol;
+            let prev = this.grid.cellDataManager.getCellValue(row, col);
+            let recent = this.grid.CURRENT_INPUT;
+            let command = new InputCommand(this.grid, row, col, prev, recent);
+            this.grid.commandManager.execute(command);
         }
         input.value = ""; // Clear any leftover value first
         input.style.display = "block";
@@ -71,7 +91,14 @@ export class CellDataManager {
         this.grid.CURRENT_INPUT = initialChar;
         this.grid.INPUT_FINALIZED = false;
         input.focus();
-        input.setSelectionRange(initialChar.length, initialChar.length);
+        // Set cursor position based on initialChar length
+        if (initialChar.length === 1) {
+            input.setSelectionRange(1, 1);
+        }
+        else {
+            const len = input.value.length;
+            input.setSelectionRange(len, len);
+        }
         this.grid.canvasContainer.onscroll = () => this.updateInputPosition(input);
     }
     saveInputToCell() {

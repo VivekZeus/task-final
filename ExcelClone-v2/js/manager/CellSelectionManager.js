@@ -1,3 +1,4 @@
+import { InputCommand } from "../command/InputCommand.js";
 export class CellSelectionManager {
     constructor(gridObj) {
         this.grid = gridObj;
@@ -10,14 +11,16 @@ export class CellSelectionManager {
         this.grid.SELECTED_ROW_HEADER = -1;
         this.grid.SELECTED_COL_RANGE = null;
         this.grid.SELECTED_ROW_RANGE = null;
-        // if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
-        //   console.log("input saved  by cell manager at ",Date.now() / 1000);
-        //   this.grid.cellDataManager.saveInputToCell();
-        // }
         if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
-            this.grid.cellDataManager.saveInputToCell();
-            this.grid.CURRENT_INPUT = null;
-            this.grid.INPUT_FINALIZED = true;
+            // this.grid.cellDataManager.saveInputToCell();
+            // this.grid.CURRENT_INPUT = null;
+            // this.grid.INPUT_FINALIZED = true;
+            let row = this.grid.SELECTED_CELL_RANGE.startRow;
+            let col = this.grid.SELECTED_CELL_RANGE.startCol;
+            let prev = this.grid.cellDataManager.getCellValue(row, col);
+            let recent = this.grid.CURRENT_INPUT;
+            let command = new InputCommand(this.grid, row, col, prev, recent);
+            this.grid.commandManager.execute(command);
         }
         let selCol = this.grid.getSelectedCol(startCol, endCol, x);
         let selRow = this.grid.getSelectedRow(startRow, endRow, y);

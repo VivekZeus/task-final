@@ -110,26 +110,57 @@ export class HeaderDrawingTool {
     ctx.lineWidth = 2;
     ctx.strokeRect(x, 0, colWidth, this.grid.COL_HEADER_HEIGHT);
   }
-  drawSingleRowHeader(row: number, scrollTop: number) {
-    const ctx = this.grid.context;
-    const rowHeight =
-      this.grid.ROW_HEIGHTS.get(row) ?? this.grid.DEFAULT_ROW_HEIGHT;
-    const y = this.grid.getYPosition(row) - scrollTop;
+  // drawSingleRowHeader(row: number, scrollTop: number) {
+  //   const ctx = this.grid.context;
+  //   const rowHeight =
+  //     this.grid.ROW_HEIGHTS.get(row) ?? this.grid.DEFAULT_ROW_HEIGHT;
+  //   const y = this.grid.getYPosition(row) - scrollTop;
 
-    ctx.fillStyle = "#187c44";
-    ctx.fillRect(0, y, this.grid.ROW_HEADER_WIDTH, rowHeight);
+  //   ctx.fillStyle = "#187c44";
+  //   ctx.fillRect(0, y, this.grid.ROW_HEADER_WIDTH, rowHeight);
 
-    ctx.fillStyle = "white";
-    ctx.font = "bold 18px Arial";
-    ctx.textAlign = "center"; // cleaner than calculating textX manually
-    ctx.textBaseline = "middle";
+  //   ctx.fillStyle = "white";
+  //   ctx.font = "bold 18px Arial";
+  //   ctx.textAlign = "center"; // cleaner than calculating textX manually
+  //   ctx.textBaseline = "middle";
 
-    const label = (row + 1).toString();
-    ctx.fillText(label, this.grid.ROW_HEADER_WIDTH / 2, y + rowHeight / 2);
+  //   const label = (row + 1).toString();
+  //   ctx.fillText(label, this.grid.ROW_HEADER_WIDTH / 2, y + rowHeight / 2);
 
-    ctx.strokeStyle = "#187c44";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(0, y, this.grid.ROW_HEADER_WIDTH, rowHeight);
-  }
+  //   ctx.strokeStyle = "#187c44";
+  //   ctx.lineWidth = 2;
+  //   ctx.strokeRect(0, y, this.grid.ROW_HEADER_WIDTH, rowHeight);
+  // }
+
+drawSingleRowHeader(row: number, scrollTop: number) {
+  const ctx = this.grid.context;
+  const rowHeight = this.grid.ROW_HEIGHTS.get(row) ?? this.grid.DEFAULT_ROW_HEIGHT;
+  const y = this.grid.getYPosition(row) - scrollTop;
+
+  const label = (row + 1).toString();
+
+  // === Background ===
+  ctx.fillStyle = "#187c44";
+  ctx.fillRect(0, y, this.grid.ROW_HEADER_WIDTH, rowHeight);
+
+  // === Text ===
+  ctx.font = "bold 18px Arial";
+  ctx.fillStyle = "white";
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "right"; // right-align text
+
+  const paddingRight = 8;
+  const textX = this.grid.ROW_HEADER_WIDTH - paddingRight;
+  const textY = y + rowHeight / 2;
+
+  ctx.fillText(label, textX, textY);
+
+  // === Border ===
+  ctx.strokeStyle = "#187c44";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(0, y, this.grid.ROW_HEADER_WIDTH, rowHeight);
+}
+
+
 
 }

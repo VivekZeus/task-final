@@ -31,47 +31,43 @@ export class KeyDownEventOrchestrator {
 
     let shouldRender = false;
 
-    // if (this.otherKeySet.has(key)) {
-    //   shouldRender = this.keyboardKeyHandler.handleTabEnterKeyOperations(
-    //     key,
-    //     event.shiftKey
-    //   );
 
-     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z' && !event.shiftKey) {
-            if (this.grid.commandManager.canUndo()) {
-                this.grid.commandManager.undo();
-                event.preventDefault();
-            }
-        }
-        
-        // Redo: Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y
-        else if ((event.ctrlKey || event.metaKey) && 
-            ((event.shiftKey && event.key.toLowerCase() === 'z') || 
-             (!event.shiftKey && event.key.toLowerCase() === 'y'))) {
-            if (this.grid.commandManager.canRedo()) {
-                this.grid.commandManager.redo();
-                event.preventDefault();
-            }
-        }
-    
-
-
-
-    else if (this.otherKeySet.has(key)) {
-    event.preventDefault();
-
-    this.keyboardKeyHandler.handleTabEnterKeyOperations(
-      key,
-      event.shiftKey
-    );
-
-    // Show input at new cell
-    const selected = this.grid.SELECTED_CELL_RANGE;
-    if (selected) {
-      this.grid.cellDataManager.showCellInputAtPosition("", input);
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      event.key.toLowerCase() === "z" &&
+      !event.shiftKey
+    ) {
+      if (this.grid.commandManager.canUndo()) {
+        this.grid.commandManager.undo();
+        event.preventDefault();
+        console.log("came to undo");
+        this.grid.render();
+      }
     }
-    }
-     else if (this.keyboardKeyHandler.handleColKeyboardRangeSelection(event)) {
+
+    // Redo: Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y
+    else if (
+      (event.ctrlKey || event.metaKey) &&
+      ((event.shiftKey && event.key.toLowerCase() === "z") ||
+        (!event.shiftKey && event.key.toLowerCase() === "y"))
+    ) {
+      if (this.grid.commandManager.canRedo()) {
+        console.log("came to redo");
+        this.grid.commandManager.redo();
+        event.preventDefault();
+        this.grid.render();
+      }
+    } else if (this.otherKeySet.has(key)) {
+      event.preventDefault();
+
+      this.keyboardKeyHandler.handleTabEnterKeyOperations(key, event.shiftKey);
+
+      // Show input at new cell
+      const selected = this.grid.SELECTED_CELL_RANGE;
+      if (selected) {
+        this.grid.cellDataManager.showCellInputAtPosition("", input);
+      }
+    } else if (this.keyboardKeyHandler.handleColKeyboardRangeSelection(event)) {
       shouldRender = true;
     } else if (this.keyboardKeyHandler.handleRowKeyboardRangeSelection(event)) {
       shouldRender = true;

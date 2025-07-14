@@ -20,24 +20,25 @@ export class KeyDownEventOrchestrator {
             return;
         event.preventDefault();
         let shouldRender = false;
-        // if (this.otherKeySet.has(key)) {
-        //   shouldRender = this.keyboardKeyHandler.handleTabEnterKeyOperations(
-        //     key,
-        //     event.shiftKey
-        //   );
-        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z' && !event.shiftKey) {
+        if ((event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase() === "z" &&
+            !event.shiftKey) {
             if (this.grid.commandManager.canUndo()) {
                 this.grid.commandManager.undo();
                 event.preventDefault();
+                console.log("came to undo");
+                this.grid.render();
             }
         }
         // Redo: Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y
         else if ((event.ctrlKey || event.metaKey) &&
-            ((event.shiftKey && event.key.toLowerCase() === 'z') ||
-                (!event.shiftKey && event.key.toLowerCase() === 'y'))) {
+            ((event.shiftKey && event.key.toLowerCase() === "z") ||
+                (!event.shiftKey && event.key.toLowerCase() === "y"))) {
             if (this.grid.commandManager.canRedo()) {
+                console.log("came to redo");
                 this.grid.commandManager.redo();
                 event.preventDefault();
+                this.grid.render();
             }
         }
         else if (this.otherKeySet.has(key)) {

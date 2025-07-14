@@ -1,3 +1,4 @@
+import { InputCommand } from "../command/InputCommand.js";
 export class CellInputOrchestrator {
     constructor(grid) {
         this.grid = grid;
@@ -14,7 +15,13 @@ export class CellInputOrchestrator {
         });
         input.addEventListener("keydown", (event) => {
             if (event.key === "Enter" || event.key === "Tab") {
-                this.grid.cellDataManager.saveInputToCell();
+                let row = this.grid.SELECTED_CELL_RANGE.startRow;
+                let col = this.grid.SELECTED_CELL_RANGE.startCol;
+                let prev = this.grid.cellDataManager.getCellValue(row, col);
+                let recent = this.grid.CURRENT_INPUT;
+                let command = new InputCommand(this.grid, row, col, prev, recent);
+                this.grid.commandManager.execute(command);
+                // this.grid.cellDataManager.saveInputToCell();
                 input.style.display = "none";
                 input.value = "";
                 event.preventDefault();
@@ -31,9 +38,15 @@ export class CellInputOrchestrator {
             // ✅ Save input regardless of visibility
             if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
                 console.log("Input saved by blur at", Date.now());
-                this.grid.cellDataManager.saveInputToCell();
-                this.grid.CURRENT_INPUT = null;
-                this.grid.INPUT_FINALIZED = true;
+                // this.grid.cellDataManager.saveInputToCell();
+                // this.grid.CURRENT_INPUT = null;
+                // this.grid.INPUT_FINALIZED = true;
+                let row = this.grid.SELECTED_CELL_RANGE.startRow;
+                let col = this.grid.SELECTED_CELL_RANGE.startCol;
+                let prev = this.grid.cellDataManager.getCellValue(row, col);
+                let recent = this.grid.CURRENT_INPUT;
+                let command = new InputCommand(this.grid, row, col, prev, recent);
+                this.grid.commandManager.execute(command);
             }
             else {
                 // Just reset to be safe

@@ -1,5 +1,5 @@
-
-import { Grid } from "../Grid";
+import { Grid } from "../Grid.js";
+import { InputCommand } from "../command/InputCommand.js";
 
 export class CellDataManager {
   cellData: Map<number, any> = new Map();
@@ -9,17 +9,13 @@ export class CellDataManager {
     this.grid = gridObj;
   }
 
-
-    updateInputPosition(input: HTMLInputElement) {
-
-    
+  updateInputPosition(input: HTMLInputElement) {
     if (!input) return;
     console.log("came in event listnerr");
     const row = this.grid.SELECTED_CELL_RANGE.startRow;
     const col = this.grid.SELECTED_CELL_RANGE.startCol;
 
     const isVisible = this.grid.isVisible();
-
 
     if (!isVisible) {
       input.style.display = "none";
@@ -52,18 +48,17 @@ export class CellDataManager {
   }
 
   clearInputState() {
-  this.grid.CURRENT_INPUT = null;
-  this.grid.INPUT_FINALIZED = false;
-}
+    this.grid.CURRENT_INPUT = null;
+    this.grid.INPUT_FINALIZED = false;
+  }
 
-
-  getCellValue(row:number, col:number) {
+  getCellValue(row: number, col: number) {
     const rowMap = this.cellData.get(row);
     if (!rowMap) return undefined;
-    
+
     const cellData = rowMap.get(col);
     return cellData?.value;
-}
+  }
 
   // showCellInputAtPosition(initialChar: string, input: HTMLInputElement) {
   //   if (!input) return;
@@ -85,12 +80,38 @@ export class CellDataManager {
   //   this.grid.canvasContainer.onscroll = () => this.updateInputPosition(input);
   // }
 
-showCellInputAtPosition(initialChar: string, input: HTMLInputElement) {
+  // showCellInputAtPosition(initialChar: string, input: HTMLInputElement) {
+  //   if (!input) return;
+
+  //   if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
+  //     this.saveInputToCell();
+  //   }
+
+  //   input.value = ""; // Clear any leftover value first
+  //   input.style.display = "block";
+  //   this.updateInputPosition(input);
+
+  //   input.value = initialChar;
+  //   this.grid.CURRENT_INPUT = initialChar;
+  //   this.grid.INPUT_FINALIZED = false;
+
+  //   input.focus();
+  //   input.setSelectionRange(initialChar.length, initialChar.length);
+
+  //   this.grid.canvasContainer.onscroll = () => this.updateInputPosition(input);
+  // }
+
+  showCellInputAtPosition(initialChar: string, input: HTMLInputElement) {
   if (!input) return;
 
-  // 💡 Finalize any previous unsaved input
   if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
-    this.saveInputToCell();
+          let row = this.grid.SELECTED_CELL_RANGE.startRow;
+          let col = this.grid.SELECTED_CELL_RANGE.startCol;
+    
+          let prev = this.grid.cellDataManager.getCellValue(row, col);
+          let recent = this.grid.CURRENT_INPUT;
+          let command = new InputCommand(this.grid, row, col, prev, recent);
+          this.grid.commandManager.execute(command);
   }
 
   input.value = ""; // Clear any leftover value first
@@ -102,15 +123,20 @@ showCellInputAtPosition(initialChar: string, input: HTMLInputElement) {
   this.grid.INPUT_FINALIZED = false;
 
   input.focus();
-  input.setSelectionRange(initialChar.length, initialChar.length);
+
+  // Set cursor position based on initialChar length
+  if (initialChar.length === 1) {
+    input.setSelectionRange(1, 1);
+  } else {
+    const len = input.value.length;
+    input.setSelectionRange(len, len);
+  }
 
   this.grid.canvasContainer.onscroll = () => this.updateInputPosition(input);
 }
 
-
-
   saveInputToCell() {
-    if(this.grid.CURRENT_INPUT==null)return;
+    if (this.grid.CURRENT_INPUT == null) return;
     const row = this.grid.SELECTED_CELL_RANGE.startRow;
     const col = this.grid.SELECTED_CELL_RANGE.startCol;
 
@@ -132,4 +158,3 @@ showCellInputAtPosition(initialChar: string, input: HTMLInputElement) {
     // console.log(CellDataManager.CellData);
   }
 }
-

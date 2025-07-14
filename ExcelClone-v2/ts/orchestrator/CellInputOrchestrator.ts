@@ -1,4 +1,5 @@
 import { Grid } from "../Grid.js";
+import { InputCommand } from "../command/InputCommand.js";
 
 export class CellInputOrchestrator {
   private grid: Grid;
@@ -17,16 +18,23 @@ export class CellInputOrchestrator {
     const input = this.inputElement!;
 
     input.addEventListener("input", (event: Event) => {
-      const target:any = event.target;
+      const target: any = event.target;
       this.grid.CURRENT_INPUT = target.value;
     });
 
     input.addEventListener("keydown", (event: KeyboardEvent) => {
       if (event.key === "Enter" || event.key === "Tab") {
-        this.grid.cellDataManager.saveInputToCell();
+        let row = this.grid.SELECTED_CELL_RANGE.startRow;
+        let col = this.grid.SELECTED_CELL_RANGE.startCol;
+
+        let prev = this.grid.cellDataManager.getCellValue(row, col);
+        let recent = this.grid.CURRENT_INPUT;
+        let command = new InputCommand(this.grid, row, col, prev, recent);
+        this.grid.commandManager.execute(command);
+        // this.grid.cellDataManager.saveInputToCell();
         input.style.display = "none";
 
-        input.value="";
+        input.value = "";
         event.preventDefault();
         this.grid.render();
       }
@@ -39,24 +47,29 @@ export class CellInputOrchestrator {
       }
     });
 
-input.addEventListener("blur", () => {
-  // ✅ Save input regardless of visibility
-  if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
-    console.log("Input saved by blur at", Date.now());
-    this.grid.cellDataManager.saveInputToCell();
-    this.grid.CURRENT_INPUT = null;
-    this.grid.INPUT_FINALIZED = true;
-  } else {
-    // Just reset to be safe
-    this.grid.CURRENT_INPUT = null;
-    this.grid.INPUT_FINALIZED = false;
-  }
+    input.addEventListener("blur", () => {
+      // ✅ Save input regardless of visibility
+      if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
+        console.log("Input saved by blur at", Date.now());
+        // this.grid.cellDataManager.saveInputToCell();
+        // this.grid.CURRENT_INPUT = null;
+        // this.grid.INPUT_FINALIZED = true;
+        let row = this.grid.SELECTED_CELL_RANGE.startRow;
+        let col = this.grid.SELECTED_CELL_RANGE.startCol;
 
-  input.style.display = "none";
-  this.grid.render();
-});
+        let prev = this.grid.cellDataManager.getCellValue(row, col);
+        let recent = this.grid.CURRENT_INPUT;
+        let command = new InputCommand(this.grid, row, col, prev, recent);
+        this.grid.commandManager.execute(command);
+      } else {
+        // Just reset to be safe
+        this.grid.CURRENT_INPUT = null;
+        this.grid.INPUT_FINALIZED = false;
+      }
 
-
+      input.style.display = "none";
+      this.grid.render();
+    });
 
     // input.addEventListener("blur", () => {
     // const isVisible = this.grid.isVisible();
@@ -71,7 +84,7 @@ input.addEventListener("blur", () => {
     //     this.grid.cellDataManager.saveInputToCell();
     //         this.grid.CURRENT_INPUT = null;
     // this.grid.INPUT_FINALIZED = true;
-            
+
     //   }
     //   else{
 
@@ -87,5 +100,3 @@ input.addEventListener("blur", () => {
     return this.inputElement;
   }
 }
-
-

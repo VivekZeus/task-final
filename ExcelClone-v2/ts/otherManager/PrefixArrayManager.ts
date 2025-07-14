@@ -1,19 +1,17 @@
-
 import { Grid } from "../Grid.js";
 
 export class PrefixArrayManager {
+  public rowPrefixArray: Array<number> = [];
+  public colPrefixArray: Array<number> = [];
+  public latestEndRow = -1;
+  public latestEndCol = -1;
+  public grid: Grid;
 
-    public rowPrefixArray:Array<number>=[];
-    public colPrefixArray :Array<number>=[];
-    public latestEndRow = -1;
-    public latestEndCol = -1;
-    public grid:Grid;
-
-  constructor(grid:Grid) {
-    this.grid=grid;
+  constructor(grid: Grid) {
+    this.grid = grid;
   }
 
-  createRowPrefixArray(endRow:number) :void{
+  createRowPrefixArray(endRow: number): void {
     if (this.latestEndRow >= endRow) return;
     if (this.rowPrefixArray.length === 0) {
       this.rowPrefixArray[0] = this.grid.COL_HEADER_HEIGHT;
@@ -29,7 +27,7 @@ export class PrefixArrayManager {
     this.latestEndRow = endRow;
   }
 
-  createColPrefixArray(endCol:number) {
+  createColPrefixArray(endCol: number) {
     if (this.latestEndCol >= endCol) return;
     if (this.colPrefixArray.length === 0) {
       this.colPrefixArray[0] = this.grid.ROW_HEADER_WIDTH;
@@ -38,49 +36,93 @@ export class PrefixArrayManager {
 
     for (let i = this.latestEndCol + 1; i <= endCol; i++) {
       this.colPrefixArray.push(
-        this.colPrefixArray[i - 1] + (this.grid.COL_WIDTHS.get(i) ?? this.grid.DEFAULT_COL_WIDTH)
+        this.colPrefixArray[i - 1] +
+          (this.grid.COL_WIDTHS.get(i) ?? this.grid.DEFAULT_COL_WIDTH)
       );
     }
 
     this.latestEndCol = endCol;
   }
 
-  getColXPosition(columnIndex:number) {
+  getColXPosition(columnIndex: number) {
     return this.colPrefixArray[columnIndex];
   }
 
-  getRowYPosition(rowIndex:number) {
+  getRowYPosition(rowIndex: number) {
     return this.rowPrefixArray[rowIndex];
   }
 
-  updateColumnWidth(colIndex:number) {
-    const oldWidth = this.grid.RESIZING_COL_OLD_WIDTH?? this.grid.DEFAULT_COL_WIDTH;
+  updateColumnWidth(colIndex: number) {
+    const oldWidth =
+      this.grid.RESIZING_COL_OLD_WIDTH ?? this.grid.DEFAULT_COL_WIDTH;
     const widthDiff =
-      (this.grid.COL_WIDTHS.get(colIndex) ?? this.grid.DEFAULT_COL_WIDTH) - oldWidth;
+      (this.grid.COL_WIDTHS.get(colIndex) ?? this.grid.DEFAULT_COL_WIDTH) -
+      oldWidth;
 
     for (let i = colIndex + 1; i < this.colPrefixArray.length; i++) {
       this.colPrefixArray[i] += widthDiff;
     }
   }
 
-  updateRowHeight(rowIndex:number) {
-    const oldHeight = this.grid.RESIZING_ROW_OLD_HEIGHT ?? this.grid.DEFAULT_ROW_HEIGHT;
-    const heightDiff =
-      (this.grid.ROW_HEIGHTS.get(rowIndex) ??this.grid.DEFAULT_ROW_HEIGHT) - oldHeight;
+  updateColumnWidthExecute(
+    colIndex: number,
+    oldWidth: number,
+    newWidth: number
+  ) {
+    const widthDiff = newWidth - oldWidth;
+
+    for (let i = colIndex + 1; i < this.colPrefixArray.length; i++) {
+      this.colPrefixArray[i] += widthDiff;
+    }
+  }
+
+  updateColumnWidthUndo(colIndex: number, oldWidth: number, newWidth: number) {
+    const widthDiff = newWidth - oldWidth;
+
+    for (let i = colIndex + 1; i < this.colPrefixArray.length; i++) {
+      this.colPrefixArray[i] -= widthDiff;
+    }
+  }
+
+  updateRowHeightExecute(
+    rowIndex: number,
+    oldHeight: number,
+    newHeight: number
+  ) {
+    const heightDiff = newHeight - oldHeight;
 
     for (let i = rowIndex + 1; i < this.rowPrefixArray.length; i++) {
       this.rowPrefixArray[i] += heightDiff;
     }
   }
 
-  getCellPosition(row:number, col:number){
+  updateRowHeightUndo(rowIndex: number, oldHeight: number, newHeight: number) {
+    const heightDiff = newHeight - oldHeight;
+
+    for (let i = rowIndex + 1; i < this.rowPrefixArray.length; i++) {
+      this.rowPrefixArray[i] -= heightDiff;
+    }
+  }
+
+  updateRowHeight(rowIndex: number) {
+    const oldHeight =
+      this.grid.RESIZING_ROW_OLD_HEIGHT ?? this.grid.DEFAULT_ROW_HEIGHT;
+    const heightDiff =
+      (this.grid.ROW_HEIGHTS.get(rowIndex) ?? this.grid.DEFAULT_ROW_HEIGHT) -
+      oldHeight;
+
+    for (let i = rowIndex + 1; i < this.rowPrefixArray.length; i++) {
+      this.rowPrefixArray[i] += heightDiff;
+    }
+  }
+
+  getCellPosition(row: number, col: number) {
     return {
       x: this.colPrefixArray[col],
       y: this.rowPrefixArray[row],
     };
   }
 }
-
 
 // export class PrefixArrayManager {
 //     public colPrefixArray: Map<number, number> = new Map();

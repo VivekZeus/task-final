@@ -1,16 +1,15 @@
 import { Grid } from "../Grid.js";
 import { PointerEventManager } from "./PointerEventManager.js";
-import { CommandManager } from "../CommandManager.js";
-import { ResizeColumnCommand } from "../ResizeCommands.js";
+import { CommandManager } from "../command/CommandManager.js";
+import { ResizeColumnCommand } from "../command/ResizeColumnCommand.js";
 
 export class ColumnResizingManager implements PointerEventManager {
   grid: Grid;
-  commandManager:CommandManager;
+  commandManager: CommandManager;
 
-  constructor(gridObj: Grid,commandManager: CommandManager) {
+  constructor(gridObj: Grid, commandManager: CommandManager) {
     this.grid = gridObj;
-        this.commandManager = commandManager;
-    
+    this.commandManager = commandManager;
   }
 
   test(x: number, y: number, event: PointerEvent): boolean {
@@ -59,7 +58,10 @@ export class ColumnResizingManager implements PointerEventManager {
     );
 
     const scrollLeft = this.grid.canvasContainer.scrollLeft;
-    this.grid.resizingDrawingTool.drawResizeIndicator(this.grid.RESIZING_COL, scrollLeft);
+    this.grid.resizingDrawingTool.drawResizeIndicator(
+      this.grid.RESIZING_COL,
+      scrollLeft
+    );
 
     if (
       event.clientX >=
@@ -75,53 +77,30 @@ export class ColumnResizingManager implements PointerEventManager {
     event.stopPropagation();
   }
 
-  // onPointerUp(x: number, y: number, event: PointerEvent): void {
-  //   if (this.grid.RESIZING_COL === -1) return; // Safety check
-  //   this.grid.prefixArrayManager.updateColumnWidth(this.grid.RESIZING_COL);
-  //   // this.grid.canvas.style.cursor = "cell";
-
-  //   if (this.grid.SELECTION_BEFORE_RESIZE) {
-  //     this.grid.SELECTED_COL_HEADER =
-  //       this.grid.SELECTION_BEFORE_RESIZE.selectedColHeader;
-  //     this.grid.SELECTED_ROW_HEADER =
-  //       this.grid.SELECTION_BEFORE_RESIZE.selectedRowHeader;
-  //     this.grid.SELECTED_CELL_RANGE =
-  //       this.grid.SELECTION_BEFORE_RESIZE.selectedCellRange;
-  //     this.grid.SELECTION_BEFORE_RESIZE = null;
-  //   }
-
-  //   this.grid.RESIZING_COL = -1;
-  //   this.grid.HOVERED_COL = -1;
-
-  //   this.grid.render();
-
-  //   event.preventDefault();
-  //   event.stopPropagation();
-  // }
-
   onPointerUp(x: number, y: number, event: PointerEvent): void {
-        if (this.grid.RESIZING_COL === -1) return;
 
-        const newWidth = this.grid.COL_WIDTHS.get(this.grid.RESIZING_COL) ?? this.grid.DEFAULT_COL_WIDTH;
-        const resizeCommand = new ResizeColumnCommand(
-            this.grid,
-            this.grid.RESIZING_COL,
-            newWidth
-        );
-        this.commandManager.execute(resizeCommand);
+    const resizeCommand=new ResizeColumnCommand(this.grid,this.grid.RESIZING_COL,this.grid.RESIZING_COL_OLD_WIDTH,(this.grid.COL_WIDTHS.get(this.grid.RESIZING_COL) ?? this.grid.DEFAULT_COL_WIDTH));
+    this.commandManager.execute(resizeCommand);
+    
 
-        // Reset states
-        if (this.grid.SELECTION_BEFORE_RESIZE) {
-            this.grid.SELECTED_COL_HEADER = this.grid.SELECTION_BEFORE_RESIZE.selectedColHeader;
-            this.grid.SELECTED_ROW_HEADER = this.grid.SELECTION_BEFORE_RESIZE.selectedRowHeader;
-            this.grid.SELECTED_CELL_RANGE = this.grid.SELECTION_BEFORE_RESIZE.selectedCellRange;
-            this.grid.SELECTION_BEFORE_RESIZE = null;
-        }
-
-        this.grid.RESIZING_COL = -1;
-        this.grid.HOVERED_COL = -1;
-
-        event.preventDefault();
-        event.stopPropagation();
+    if (this.grid.SELECTION_BEFORE_RESIZE) {
+      this.grid.SELECTED_COL_HEADER =
+        this.grid.SELECTION_BEFORE_RESIZE.selectedColHeader;
+      this.grid.SELECTED_ROW_HEADER =
+        this.grid.SELECTION_BEFORE_RESIZE.selectedRowHeader;
+      this.grid.SELECTED_CELL_RANGE =
+        this.grid.SELECTION_BEFORE_RESIZE.selectedCellRange;
+      this.grid.SELECTION_BEFORE_RESIZE = null;
     }
+
+    this.grid.RESIZING_COL = -1;
+    this.grid.HOVERED_COL = -1;
+
+    this.grid.render();
+
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+
 }
