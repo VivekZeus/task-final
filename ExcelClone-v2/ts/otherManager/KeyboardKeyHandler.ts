@@ -45,6 +45,7 @@ export class KeyboardKeyHandler {
       newScrollTop = y;
     }
 
+
     // Scroll if needed
     this.grid.canvasContainer.scrollTo({
       left: newScrollLeft,

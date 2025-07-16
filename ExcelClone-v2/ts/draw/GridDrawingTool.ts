@@ -25,6 +25,7 @@ export class GridDrawingTool {
         this.grid.prefixArrayManager.getColXPosition(endCol),
         y + additional
       );
+      
     }
 
     // Draw vertical grid lines (column separators)

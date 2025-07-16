@@ -60,6 +60,26 @@ export class CellDataManager {
     return cellData?.value;
   }
 
+  // Basic setCellValue function
+setCellValue(row: number, col: number, value: string): void {
+  // Get or create the row map
+  let rowMap = this.cellData.get(row);
+  if (!rowMap) {
+    rowMap = new Map();
+    this.cellData.set(row, rowMap);
+  }
+
+  // Get existing cell data or create new one
+  let cellData = rowMap.get(col);
+  if (!cellData) {
+    cellData = { value: "" }; // Initialize with empty value or your default cell structure
+    rowMap.set(col, cellData);
+  }
+
+  // Set the new value
+  cellData.value = value;
+}
+
   // showCellInputAtPosition(initialChar: string, input: HTMLInputElement) {
   //   if (!input) return;
 

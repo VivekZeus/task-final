@@ -122,6 +122,7 @@ export class PrefixArrayManager {
       y: this.rowPrefixArray[row],
     };
   }
+
 }
 
 // export class PrefixArrayManager {

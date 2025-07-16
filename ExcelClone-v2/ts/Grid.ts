@@ -22,6 +22,7 @@ import { HeaderDrawingTool } from "./draw/HeaderDrawingTool.js";
 import { DataLoaderManager } from "./otherManager/DataLoaderManager.js";
 import { CommandManager } from "./command/CommandManager.js";
 import { RowColAdditionOrchestrator } from "./orchestrator/RowColAdditionOrchestrator.js";
+import { ClipboardManager } from "./ClipboardManager.js";
 
 export class Grid {
   canvasContainer: HTMLDivElement;
@@ -45,7 +46,8 @@ export class Grid {
   headerDrawingTool: HeaderDrawingTool;
   dataLoaderManager:DataLoaderManager;
    commandManager: CommandManager;
-   rowColAdditionOrchestrator:RowColAdditionOrchestrator
+   rowColAdditionOrchestrator:RowColAdditionOrchestrator;
+    clipboardManager: ClipboardManager;
 
   
 
@@ -158,6 +160,7 @@ export class Grid {
     this.dataLoaderManager=new DataLoaderManager(this);
      this.commandManager = new CommandManager();
      this.rowColAdditionOrchestrator=new RowColAdditionOrchestrator(this);
+       this.clipboardManager = new ClipboardManager(this);
     this.init();
     this.inializeManagers();
   }
@@ -194,7 +197,12 @@ export class Grid {
       }
     }
     return -1;
+
   }
+
+
+
+
 
   getPosition(row: number, col: number) {
     let y = this.COL_HEADER_HEIGHT;

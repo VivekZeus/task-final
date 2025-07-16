@@ -12,9 +12,6 @@ export class CellSelectionManager {
         this.grid.SELECTED_COL_RANGE = null;
         this.grid.SELECTED_ROW_RANGE = null;
         if (!this.grid.INPUT_FINALIZED && this.grid.CURRENT_INPUT != null) {
-            // this.grid.cellDataManager.saveInputToCell();
-            // this.grid.CURRENT_INPUT = null;
-            // this.grid.INPUT_FINALIZED = true;
             let row = this.grid.SELECTED_CELL_RANGE.startRow;
             let col = this.grid.SELECTED_CELL_RANGE.startCol;
             let prev = this.grid.cellDataManager.getCellValue(row, col);

@@ -1,5 +1,8 @@
+import { CopyCommand } from "../CopyCommand.js";
+import { CutCommand } from "../CutCommand.js";
 import { Grid } from "../Grid.js";
 import { KeyboardKeyHandler } from "../otherManager/KeyboardKeyHandler.js";
+import { PasteCommand } from "../PasteCommand.js";
 
 export class KeyDownEventOrchestrator {
   grid: Grid;
@@ -21,6 +24,37 @@ export class KeyDownEventOrchestrator {
     window.addEventListener("keydown", (event) => this.handleKeyDown(event));
   }
 
+    private handleCopy(): void {
+    const range = this.grid.SELECTED_CELL_RANGE;
+    const command = new CopyCommand(this.grid, range);
+    this.grid.commandManager.execute(command);
+  }
+
+  private handleCut(): void {
+    const range = this.grid.SELECTED_CELL_RANGE;
+    const command = new CutCommand(this.grid, range);
+    this.grid.commandManager.execute(command);
+    this.grid.render();
+  }
+
+  private handlePaste(): void {
+    if (!this.grid.clipboardManager.hasCopiedData()) {
+      console.log("No data to paste");
+      return;
+    }
+
+    const targetRange = {
+      startRow: this.grid.SELECTED_CELL_RANGE.startRow,
+      startCol: this.grid.SELECTED_CELL_RANGE.startCol,
+      endRow: this.grid.SELECTED_CELL_RANGE.startRow, // Will be updated by paste command
+      endCol: this.grid.SELECTED_CELL_RANGE.startCol  // Will be updated by paste command
+    };
+
+    const command = new PasteCommand(this.grid, targetRange);
+    this.grid.commandManager.execute(command);
+    this.grid.render();
+  }
+
   private handleKeyDown(event: KeyboardEvent) {
     const key = event.key;
     const input = document.querySelector(".cellInput") as HTMLInputElement;
@@ -32,7 +66,28 @@ export class KeyDownEventOrchestrator {
     let shouldRender = false;
 
 
-    if (
+    // Check for Ctrl+C (Copy)
+    if (event.ctrlKey && event.key === 'c' && this.grid.SELECTED_CELL_RANGE) {
+      event.preventDefault();
+      this.handleCopy();
+    }
+    // Check for Ctrl+X (Cut)
+    else if (event.ctrlKey && event.key === 'x' && this.grid.SELECTED_CELL_RANGE) {
+      event.preventDefault();
+      this.handleCut();
+    }
+    // Check for Ctrl+V (Paste)
+    else if (event.ctrlKey && event.key === 'v' && this.grid.SELECTED_CELL_RANGE) {
+      event.preventDefault();
+      this.handlePaste();
+    }
+  
+
+
+
+
+
+   else if (
       (event.ctrlKey || event.metaKey) &&
       event.key.toLowerCase() === "z" &&
       !event.shiftKey

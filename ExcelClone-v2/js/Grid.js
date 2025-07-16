@@ -22,6 +22,7 @@ import { HeaderDrawingTool } from "./draw/HeaderDrawingTool.js";
 import { DataLoaderManager } from "./otherManager/DataLoaderManager.js";
 import { CommandManager } from "./command/CommandManager.js";
 import { RowColAdditionOrchestrator } from "./orchestrator/RowColAdditionOrchestrator.js";
+import { ClipboardManager } from "./ClipboardManager.js";
 export class Grid {
     constructor(canvasContainer, canvas, context) {
         this.autoScrollDir = null;
@@ -100,6 +101,7 @@ export class Grid {
         this.dataLoaderManager = new DataLoaderManager(this);
         this.commandManager = new CommandManager();
         this.rowColAdditionOrchestrator = new RowColAdditionOrchestrator(this);
+        this.clipboardManager = new ClipboardManager(this);
         this.init();
         this.inializeManagers();
     }
