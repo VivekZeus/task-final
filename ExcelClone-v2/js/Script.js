@@ -1,12 +1,8 @@
 import { Grid } from "./Grid.js";
-const canvasContainer = document.getElementById("canvasContainer");
-const canvas = document.getElementById("excelCanvas");
-const context = canvas.getContext("2d");
-const grid = new Grid(canvasContainer, canvas, context);
+// const canvasContainer = document.getElementById(
+//   "canvasContainer"
+// ) as HTMLDivElement;
+// const canvas = document.getElementById("excelCanvas") as HTMLCanvasElement;
+// const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+const grid = new Grid();
 grid.render();
-canvasContainer.addEventListener("scroll", (e) => {
-    grid.render();
-});
-window.addEventListener("resize", () => {
-    grid.resizeCanvas();
-});

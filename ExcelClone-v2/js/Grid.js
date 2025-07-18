@@ -24,7 +24,8 @@ import { CommandManager } from "./command/CommandManager.js";
 import { RowColAdditionOrchestrator } from "./orchestrator/RowColAdditionOrchestrator.js";
 import { ClipboardManager } from "./ClipboardManager.js";
 export class Grid {
-    constructor(canvasContainer, canvas, context) {
+    constructor() {
+        var _a;
         this.autoScrollDir = null;
         this.autoScrollFrameId = null;
         this.TOTAL_ROWS = structuredClone(Config.TOTAL_ROWS);
@@ -78,9 +79,30 @@ export class Grid {
         this.HEADER_SELECTION_END_COL = -1;
         this.SELECTED_COL_RANGE = null;
         this.SELECTED_ROW_RANGE = null;
-        this.canvasContainer = canvasContainer;
-        this.canvas = canvas;
-        this.context = context;
+        // this.canvasContainer = canvasContainer;
+        // this.canvas = canvas;
+        // this.context = context;
+        const inputEl = document.querySelector(".cellInput");
+        if (!inputEl)
+            throw new Error("Target input not found in DOM");
+        // Create container
+        this.canvasContainer = document.createElement("div");
+        this.canvasContainer.className = "canvas-container";
+        this.canvasContainer.id = "canvasContainer";
+        // Create wrapper
+        const canvasWrapper = document.createElement("div");
+        canvasWrapper.className = "canvas-wrapper";
+        canvasWrapper.id = "canvasWrapper";
+        // Create canvas
+        this.canvas = document.createElement("canvas");
+        this.canvas.className = "excel-canvas";
+        this.canvas.id = "excelCanvas";
+        // Structure it
+        canvasWrapper.appendChild(this.canvas);
+        this.canvasContainer.appendChild(canvasWrapper);
+        // Insert before input
+        (_a = inputEl.parentElement) === null || _a === void 0 ? void 0 : _a.insertBefore(this.canvasContainer, inputEl);
+        this.context = this.canvas.getContext("2d");
         this.viewWidth = this.canvasContainer.clientWidth;
         this.viewHeight = this.canvasContainer.clientHeight;
         // this.draw = new Draw(this);
@@ -104,17 +126,60 @@ export class Grid {
         this.clipboardManager = new ClipboardManager(this);
         this.init();
         this.inializeManagers();
+        this.iniatializeEvents();
+    }
+    iniatializeEvents() {
+        this.canvasContainer.addEventListener("scroll", (e) => {
+            this.render();
+        });
+        window.addEventListener("resize", () => {
+            this.resizeCanvas();
+        });
     }
     isVisible() {
         const row = this.SELECTED_CELL_RANGE.startRow;
         const col = this.SELECTED_CELL_RANGE.startCol;
         const { startRow, endRow, startCol, endCol } = this.getVisibleRowCols();
-        return row >= startRow + 1 && row <= endRow && col >= startCol && col <= endCol;
+        return (row >= startRow + 1 && row <= endRow && col >= startCol && col <= endCol);
     }
+    // getSelectedCol(startCol: number, endCol: number, x: number) {
+    //   let currentX = this.ROW_HEADER_WIDTH;
+    //   for (let i = startCol; i <= endCol; i++) {
+    //     currentX += this.COL_WIDTHS.get(i) ?? this.DEFAULT_COL_WIDTH;
+    //     if (currentX > x) {
+    //       console.log("Column selected:", i);
+    //       return i;
+    //     }
+    //   }
+    //   return -1;
+    // }
+    // getSelectedRow(startRow: number, endRow: number, y: number) {
+    //   let currentY = this.COL_HEADER_HEIGHT;
+    //   for (let i = startRow; i < endRow; i++) {
+    //     currentY += this.ROW_HEIGHTS.get(i) ?? this.DEFAULT_ROW_HEIGHT;
+    //     if (currentY > y) {
+    //       console.log("Row selected:", i);
+    //       return i;
+    //     }
+    //   }
+    //   return -1;
+    // }
+    /**
+     * Determines the column index at a given x-coordinate within the visible range.
+     * @param {number} startCol - The starting column index.
+     * @param {number} endCol - The ending column index.
+     * @param {number} x - The x-coordinate to check.
+     * @returns {number} The selected column index, or -1 if not found.
+     */
     getSelectedCol(startCol, endCol, x) {
         var _a;
-        let currentX = this.ROW_HEADER_WIDTH;
-        for (let i = startCol; i <= endCol; i++) {
+        let currentX = this.prefixArrayManager.getColXPosition(startCol + 1);
+        currentX -= this.canvasContainer.scrollLeft;
+        if (currentX > x) {
+            return startCol;
+        }
+        for (let i = startCol + 1; i <= endCol; i++) {
+            console.log("the col width is ", i, this.COL_WIDTHS.get(i));
             currentX += (_a = this.COL_WIDTHS.get(i)) !== null && _a !== void 0 ? _a : this.DEFAULT_COL_WIDTH;
             if (currentX > x) {
                 console.log("Column selected:", i);
@@ -123,10 +188,21 @@ export class Grid {
         }
         return -1;
     }
+    /**
+     * Determines the row index at a given y-coordinate within the visible range.
+     * @param {number} startRow - The starting row index.
+     * @param {number} endRow - The ending row index.
+     * @param {number} y - The y-coordinate to check.
+     * @returns {number} The selected row index, or -1 if not found.
+     */
     getSelectedRow(startRow, endRow, y) {
         var _a;
-        let currentY = this.COL_HEADER_HEIGHT;
-        for (let i = startRow; i < endRow; i++) {
+        let currentY = this.prefixArrayManager.getRowYPosition(startRow + 1);
+        currentY -= this.canvasContainer.scrollTop;
+        if (currentY > y) {
+            return startRow;
+        }
+        for (let i = startRow + 1; i < endRow; i++) {
             currentY += (_a = this.ROW_HEIGHTS.get(i)) !== null && _a !== void 0 ? _a : this.DEFAULT_ROW_HEIGHT;
             if (currentY > y) {
                 console.log("Row selected:", i);
